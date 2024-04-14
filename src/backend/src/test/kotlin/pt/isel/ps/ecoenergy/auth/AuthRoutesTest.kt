@@ -13,8 +13,17 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.BeforeClass
+import pt.isel.ps.ecoenergy.auth.data.repository.Users
+import pt.isel.ps.ecoenergy.auth.domain.model.Token
+import pt.isel.ps.ecoenergy.auth.http.model.LoginRequest
 import pt.isel.ps.ecoenergy.auth.http.model.SignUpRequest
 import pt.isel.ps.ecoenergy.common.Problem
 import pt.isel.ps.ecoenergy.common.Uris
@@ -22,21 +31,51 @@ import kotlin.test.Test
 
 class AuthRoutesTest {
 
-    private fun ApplicationTestBuilder.testClient(): HttpClient {
-        environment {
-
-        }
-        return createClient {
-            install(ContentNegotiation) {
-                json()
+    companion object {
+        private fun ApplicationTestBuilder.testClient(): HttpClient {
+            environment {
+                config = ApplicationConfig("application-test.conf")
             }
-            // Every request will have the content type application/json
-            defaultRequest {
-                contentType(ContentType.Application.Json)
+
+            return createClient {
+                install(ContentNegotiation) {
+                    json()
+                }
+                // Every request will have the content type application/json
+                defaultRequest {
+                    contentType(ContentType.Application.Json)
+                }
+            }
+        }
+
+        @JvmStatic
+        @BeforeClass
+        fun setDatabase(): Unit = testApplication {
+            environment {
+                config = ApplicationConfig("application-test.conf")
+            }
+            try {
+                val db = Database.connect(
+                    url = "jdbc:postgresql://localhost:5434/testing_db",
+                    driver = "org.postgresql.Driver",
+                    user = "testing_user",
+                    password = "testing_password",
+                )
+
+                transaction {
+                    Users.deleteAll()
+                    Users.insert {
+                        it[username] = "testUser" // pass = "SecurePass123!"
+                        it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+                        it[salt] = "c3f842f3630ebb3d96543709bc316402"
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error connecting to the database: ${e.message}")
+
             }
         }
     }
-
 
     @Test
     fun `User Create - Success`() = testApplication {
@@ -72,11 +111,11 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `User Create - Password dont match`() = testApplication {
+    fun `User Create - Password mismatch`() = testApplication {
         testClient().post(Uris.AUTH_SIGNUP) {
             setBody(SignUpRequest("testUser", "SecurePass123!", "PassSecure123!"))
         }.also { response ->
-            response.body<Problem>().type.shouldBeEqual(Problem.passwordDontMatch.type)
+            response.body<Problem>().type.shouldBeEqual(Problem.passwordMismatch.type)
             response.shouldHaveStatus(HttpStatusCode.BadRequest)
             response.shouldHaveContentType(ContentType.Application.ProblemJson)
         }
@@ -85,11 +124,23 @@ class AuthRoutesTest {
     @Test
     fun `User Create - Insecure Password`() = testApplication {
         testClient().post(Uris.AUTH_SIGNUP) {
-            setBody(SignUpRequest("nonExistUser", "insecure", "insecure"))
+            setBody(SignUpRequest("testUser", "insecure", "insecure"))
         }.also { response ->
             response.body<Problem>().type.shouldBeEqual(Problem.insecurePassword.type)
-            response.shouldHaveStatus(HttpStatusCode.Forbidden)
+            response.shouldHaveStatus(HttpStatusCode.BadRequest)
             response.shouldHaveContentType(ContentType.Application.ProblemJson)
+        }
+    }
+
+    @Test
+    fun `Token Creation - Success`() = testApplication {
+        testClient().post(Uris.AUTH_LOGIN) {
+            setBody(LoginRequest("testUser", "SecurePass123!"))
+        }.also { response ->
+            response.body<Token>().tokenType.shouldBeEqual("Bearer")
+            response.body<Token>().expiresIn.shouldBeEqual(3600000)
+            response.shouldHaveStatus(HttpStatusCode.OK)
+            response.shouldHaveContentType(ContentType.Application.Json)
         }
     }
 }

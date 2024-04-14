@@ -1,6 +1,7 @@
 package pt.isel.ps.ecoenergy.plugins
 
 import io.ktor.server.application.Application
+import io.ktor.server.application.log
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -17,7 +18,6 @@ object DatabaseSingleton {
 
 fun Application.configureDatabases() {
     fun configProperty(propertyName: String) = environment.config.property(propertyName).getString()
-
     val driverClassName = configProperty("storage.driverClassName")
     val jdbcURL = configProperty("storage.jdbcURL")
     val user = configProperty("storage.user")
@@ -32,6 +32,7 @@ fun Application.configureDatabases() {
         )
 
         transaction {
+            log.atInfo().log("Database connected - jdbcURL: $jdbcURL")
             SchemaUtils.create(Users)
         }
     } catch (e: Exception) {

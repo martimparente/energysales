@@ -7,5 +7,4 @@ data class Token(
     val token: String,
     val tokenType: String,
     val expiresIn: Long,
-    // val scopre: String,
 )

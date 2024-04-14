@@ -4,6 +4,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
@@ -16,7 +17,7 @@ import pt.isel.ps.ecoenergy.common.respond
 fun Application.configureRouting(userService: UserService) {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respond(HttpStatusCode.InternalServerError, Problem.internalServerError)
+            call.respond(Problem.internalServerError, HttpStatusCode.InternalServerError)
             //call.respondText(text = "My 500: $cause", status = HttpStatusCode.InternalServerError)
         }
     }
@@ -25,9 +26,10 @@ fun Application.configureRouting(userService: UserService) {
 
     routing {
         authRoutes(userService)
-
-        get("/") {
-            call.respondText("Hello1, world!")
+        authenticate {
+            get("/") {
+                call.respondText("Hello, world!")
+            }
         }
     }
 }

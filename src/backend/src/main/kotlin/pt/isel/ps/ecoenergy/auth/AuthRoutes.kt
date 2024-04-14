@@ -6,13 +6,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.response.header
-import io.ktor.server.response.respondText
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import pt.isel.ps.ecoenergy.auth.domain.service.UserCreationError
 import pt.isel.ps.ecoenergy.auth.domain.service.UserService
+import pt.isel.ps.ecoenergy.auth.http.model.LoginRequest
 import pt.isel.ps.ecoenergy.auth.http.model.SignUpRequest
 import pt.isel.ps.ecoenergy.common.Problem
 import pt.isel.ps.ecoenergy.common.Uris
@@ -31,21 +31,23 @@ fun Route.authRoutes(userService: UserService) {
             }
 
             is Left -> when (res.value) {
-                UserCreationError.InsecurePassword -> call.respond(HttpStatusCode.Forbidden, Problem.insecurePassword)
-                UserCreationError.PasswordDontMatch -> call.respond(HttpStatusCode.BadRequest, Problem.passwordDontMatch)
-                UserCreationError.UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, Problem.userAlreadyExists)
-                UserCreationError.UserIsInvalid -> call.respond(HttpStatusCode.BadRequest, Problem.userIsInvalid)
+                UserCreationError.InsecurePassword -> call.respond(Problem.insecurePassword, HttpStatusCode.BadRequest)
+                UserCreationError.PasswordMisMatch -> call.respond(Problem.passwordMismatch, HttpStatusCode.BadRequest)
+                UserCreationError.UserAlreadyExists -> call.respond(Problem.userAlreadyExists, HttpStatusCode.Conflict)
+                UserCreationError.UserIsInvalid -> call.respond(Problem.userIsInvalid, HttpStatusCode.BadRequest)
             }
         }
     }
 
     route(Uris.AUTH_LOGIN) {
-        get {
-            call.respondText("get login")
-        }
-
         post {
-            call.respondText("post login")
+            val input = call.receive<LoginRequest>()
+            val res = userService.createToken(input.username, input.password)
+
+            when (res) {
+                is Right -> call.respond(res.value)
+                is Left -> call.respond(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
+            }
         }
     }
 }

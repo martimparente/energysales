@@ -16,7 +16,7 @@ class JwtTokenServiceTest {
                 config = MapApplicationConfig("ktor.environment" to "test")
             }
             // Arrange
-            val jwtConfig = JwtConfig("secret", "issuer", "audience", "realm")
+            val jwtConfig = JWTConfig("secret", "issuer", "audience", "realm")
             val jwtTokenService = JwtTokenService(jwtConfig)
 
             // Act

@@ -8,7 +8,7 @@ import java.security.SecureRandom
 @OptIn(ExperimentalStdlibApi::class) // For toHexString
 class SHA256HashingService : HashingService {
     /**
-     * Generates a salted hash for the given password.
+     * Generates a salted hash for the given password
      *
      * @param password The password to hash.
      * @param saltNumOfBytes The number of bytes to use for the salt.
@@ -18,14 +18,10 @@ class SHA256HashingService : HashingService {
         password: CharSequence,
         saltNumOfBytes: Int,
     ): SaltedHash {
-        val salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltNumOfBytes)
-        val saltHex = salt.toHexString()
-        val hash = MessageDigest.getInstance("SHA-256").digest(salt).toHexString()
-
-        return SaltedHash(
-            hash = hash,
-            salt = saltHex,
-        )
+        val saltHex = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltNumOfBytes).toHexString()
+        val saltAndPassword = "$saltHex$password"
+        val hash = MessageDigest.getInstance("SHA-256").digest(saltAndPassword.toByteArray()).toHexString()
+        return SaltedHash(hash = hash, salt = saltHex)
     }
 
     /**
@@ -35,8 +31,9 @@ class SHA256HashingService : HashingService {
      * @param saltedHash The salted hash to match against.
      * @return True if the password matches the salted hash
      */
-    override fun matches(
-        password: CharSequence,
-        saltedHash: SaltedHash,
-    ): Boolean = MessageDigest.getInstance("SHA-256").digest(saltedHash.salt.toByteArray()).toHexString() == saltedHash.hash
+    override fun matches(password: CharSequence, saltedHash: SaltedHash): Boolean {
+        val saltAndPassword = "${saltedHash.salt}$password"
+        val hash = MessageDigest.getInstance("SHA-256").digest(saltAndPassword.toByteArray()).toHexString()
+        return hash == saltedHash.hash
+    }
 }

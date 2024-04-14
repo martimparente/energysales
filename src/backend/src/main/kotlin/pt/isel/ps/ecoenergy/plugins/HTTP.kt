@@ -12,8 +12,8 @@ fun Application.configureHTTP() {
         swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml")
     }
 
+    // will send this header with each response
     install(DefaultHeaders) {
-        header("X-Engine", "Ktor") // will send this header with each response
-        header("Content-Type", ContentType.Application.Json.toString()) // will send this header with each response
+        header("Content-Type", ContentType.Application.Json.toString())
     }
 }

@@ -6,9 +6,9 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import pt.isel.ps.ecoenergy.auth.security.JwtConfig
+import pt.isel.ps.ecoenergy.auth.security.JWTConfig
 
-fun Application.configureSecurity(jwtConfig: JwtConfig) {
+fun Application.configureSecurity(jwtConfig: JWTConfig) {
     authentication {
         jwt {
             realm = jwtConfig.realm

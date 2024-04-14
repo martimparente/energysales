@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * @param problem The problem to be sent in the response body
  * @see Problem
  */
-suspend fun ApplicationCall.respond(status: HttpStatusCode, problem: Problem) {
+suspend fun ApplicationCall.respond(problem: Problem, status: HttpStatusCode) {
     response.header("Content-Type", ContentType.Application.ProblemJson.toString())
     response.status(status)
     val mutatedProblem = problem.copy(instance = request.uri)
@@ -56,13 +56,13 @@ data class Problem(
             ""
         )
         val userIsInvalid = Problem(
-            "User doesn't exist",
+            "User must have between 6 to 15 characters",
             PROBLEM_URL + "userIsInvalid.md",
             ""
         )
-        val passwordDontMatch = Problem(
+        val passwordMismatch = Problem(
             "Passwords don't match",
-            PROBLEM_URL + "passwordDontMatch.md",
+            PROBLEM_URL + "passwordMismatch.md",
             ""
         )
     }

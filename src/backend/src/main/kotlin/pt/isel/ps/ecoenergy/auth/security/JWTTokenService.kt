@@ -6,7 +6,7 @@ import pt.isel.ps.ecoenergy.auth.domain.model.Token
 import pt.isel.ps.ecoenergy.auth.domain.service.TokenService
 import java.util.Date
 
-data class JwtConfig(
+data class JWTConfig(
     val secret: String,
     val issuer: String,
     val audience: String,
@@ -14,7 +14,7 @@ data class JwtConfig(
 )
 
 class JwtTokenService(
-    private val config: JwtConfig,
+    private val config: JWTConfig,
 ) : TokenService {
     override fun generateToken(uid: Int): Token {
         val token =
@@ -23,13 +23,13 @@ class JwtTokenService(
                 .withAudience(config.audience)
                 .withIssuer(config.issuer)
                 .withClaim("uid", uid)
-                .withExpiresAt(Date(System.currentTimeMillis() + 3600000))
+                .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000))
                 .sign(Algorithm.HMAC256(config.secret))
 
         return Token(
             token = token,
             tokenType = "Bearer",
-            expiresIn = 3600000,
+            expiresIn = 3600000, // 1 hour
         )
     }
 }
