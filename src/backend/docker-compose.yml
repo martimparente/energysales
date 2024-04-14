@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  postgres_production:
+    image: postgres:16.2-alpine3.19
+    container_name: postgres_production
+    environment:
+      POSTGRES_DB: production_db
+      POSTGRES_USER: production_user
+      POSTGRES_PASSWORD: production_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_production_data:/var/lib/postgresql/data
+
+  postgres_development:
+    image: postgres:16.2-alpine3.19
+    container_name: postgres_development
+    environment:
+      POSTGRES_DB: development_db
+      POSTGRES_USER: development_user
+      POSTGRES_PASSWORD: development_password
+    ports:
+      - "5433:5432"
+      #volumes:
+      #- postgres_production_data:/var/lib/postgresql/data #dont need this
+      #- ./sql/testing:/docker-entrypoint-initdb.d # it will run the sql scripts in the testing folder
+
+  postgres_testing:
+    image: postgres:16.2-alpine3.19
+    container_name: postgres_testing
+    environment:
+      POSTGRES_DB: testing_db
+      POSTGRES_USER: testing_user
+      POSTGRES_PASSWORD: testing_password
+    ports:
+      - "5434:5432" #HOST:CONTAINER
+
+#  ktor_service:
+volumes:
+  postgres_production_data:

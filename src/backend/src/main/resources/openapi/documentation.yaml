@@ -1,14 +1,14 @@
-openapi: "3.0.3"
+openapi: "3.1.0"
 info:
-  title: "Application API"
-  description: "Application API"
+  title: "pt_isel_ps_ecoenergy API"
+  description: "pt_isel_ps_ecoenergy API"
   version: "1.0.0"
 servers:
-  - url: "http://0.0.0.0:8080"
+  - url: "https://pt_isel_ps_ecoenergy"
 paths:
   /:
     get:
-      description: "Hello, world!"
+      description: ""
       responses:
         "200":
           description: "OK"
@@ -18,6 +18,94 @@ paths:
                 type: "string"
               examples:
                 Example#1:
-                  value: "Hello, world!"
+                  value: "Hello1, world!"
+  /auth/login:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "get login"
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "post login"
+  /auth/signup:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema: { }
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    username: "test"
+                    password: "test"
+                    repeatPassword: "test"
+  /json/kotlinx-serialization:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
 components:
-  schemas: { }
+  schemas:
+    Problem:
+      type: "object"
+      properties:
+        title:
+          type: "string"
+        type:
+          type: "string"
+        instance:
+          type: "string"
+      required:
+        - "title"
+        - "type"
+        - "instance"
+    SignUpRequest:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+        password:
+          type: "string"
+        repeatPassword:
+          type: "string"
+      required:
+        - "username"
+        - "password"
+        - "repeatPassword"
+    Map:
+      type: "object"
+      properties: { }
+    Map_String:
+      type: "string"

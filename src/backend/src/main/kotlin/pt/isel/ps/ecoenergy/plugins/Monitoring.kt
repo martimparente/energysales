@@ -1,4 +1,4 @@
-package pt.isel.ps.plugins
+package pt.isel.ps.ecoenergy.plugins
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
