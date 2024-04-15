@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.auth.security
+package pt.isel.ps.ecoenergy.auth.domain.service.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -6,7 +6,7 @@ import pt.isel.ps.ecoenergy.auth.domain.model.Token
 import pt.isel.ps.ecoenergy.auth.domain.service.TokenService
 import java.util.Date
 
-data class JWTConfig(
+data class JwtConfig(
     val secret: String,
     val issuer: String,
     val audience: String,
@@ -14,7 +14,7 @@ data class JWTConfig(
 )
 
 class JwtTokenService(
-    private val config: JWTConfig,
+    private val config: JwtConfig,
 ) : TokenService {
     override fun generateToken(uid: Int): Token {
         val token =

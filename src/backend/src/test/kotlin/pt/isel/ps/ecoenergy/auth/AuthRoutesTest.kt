@@ -21,12 +21,12 @@ import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.BeforeClass
-import pt.isel.ps.ecoenergy.auth.data.repository.Users
-import pt.isel.ps.ecoenergy.auth.domain.model.Token
+import pt.isel.ps.ecoenergy.Uris
+import pt.isel.ps.ecoenergy.auth.data.Users
 import pt.isel.ps.ecoenergy.auth.http.model.LoginRequest
+import pt.isel.ps.ecoenergy.auth.http.model.LoginResponse
+import pt.isel.ps.ecoenergy.auth.http.model.Problem
 import pt.isel.ps.ecoenergy.auth.http.model.SignUpRequest
-import pt.isel.ps.ecoenergy.common.Problem
-import pt.isel.ps.ecoenergy.common.Uris
 import kotlin.test.Test
 
 class AuthRoutesTest {
@@ -55,7 +55,7 @@ class AuthRoutesTest {
                 config = ApplicationConfig("application-test.conf")
             }
             try {
-                val db = Database.connect(
+                Database.connect(
                     url = "jdbc:postgresql://localhost:5434/testing_db",
                     driver = "org.postgresql.Driver",
                     user = "testing_user",
@@ -78,7 +78,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `User Create - Success`() = testApplication {
+    fun `SignUp - Success`() = testApplication {
         testClient().post(Uris.AUTH_SIGNUP) {
             setBody(SignUpRequest("newTestUser", "SecurePass123!", "SecurePass123!"))
         }.also { response ->
@@ -89,7 +89,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `User Create - Invalid username length`() = testApplication {
+    fun `SignUp - Invalid username length`() = testApplication {
         testClient().post(Uris.AUTH_SIGNUP) {
             setBody(SignUpRequest("123", "SecurePass123!", "SecurePass123!"))
         }.also { response ->
@@ -100,7 +100,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `User Create - Username already exists`() = testApplication {
+    fun `SignUp - Username already exists`() = testApplication {
         testClient().post(Uris.AUTH_SIGNUP) {
             setBody(SignUpRequest("testUser", "SecurePass123!", "SecurePass123!"))
         }.also { response ->
@@ -111,7 +111,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `User Create - Password mismatch`() = testApplication {
+    fun `SignUp - Password mismatch`() = testApplication {
         testClient().post(Uris.AUTH_SIGNUP) {
             setBody(SignUpRequest("testUser", "SecurePass123!", "PassSecure123!"))
         }.also { response ->
@@ -122,7 +122,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `User Create - Insecure Password`() = testApplication {
+    fun `SignUp - Insecure Password`() = testApplication {
         testClient().post(Uris.AUTH_SIGNUP) {
             setBody(SignUpRequest("testUser", "insecure", "insecure"))
         }.also { response ->
@@ -133,14 +133,36 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `Token Creation - Success`() = testApplication {
+    fun `Login - Success`() = testApplication {
         testClient().post(Uris.AUTH_LOGIN) {
             setBody(LoginRequest("testUser", "SecurePass123!"))
         }.also { response ->
-            response.body<Token>().tokenType.shouldBeEqual("Bearer")
-            response.body<Token>().expiresIn.shouldBeEqual(3600000)
+            response.body<LoginResponse>().tokenType.shouldBeEqual("Bearer")
+            response.body<LoginResponse>().expiresIn.shouldBeEqual(3600000)
             response.shouldHaveStatus(HttpStatusCode.OK)
             response.shouldHaveContentType(ContentType.Application.Json)
+        }
+    }
+
+    @Test
+    fun `Login - User not found`() = testApplication {
+        testClient().post(Uris.AUTH_LOGIN) {
+            setBody(LoginRequest("nonExistUser", "SecurePass123!"))
+        }.also { response ->
+            response.body<Problem>().type.shouldBeEqual(Problem.userOrPasswordAreInvalid.type)
+            response.shouldHaveStatus(HttpStatusCode.Forbidden)
+            response.shouldHaveContentType(ContentType.Application.ProblemJson)
+        }
+    }
+
+    @Test
+    fun `Login - Password invalid`() = testApplication {
+        testClient().post(Uris.AUTH_LOGIN) {
+            setBody(LoginRequest("testUser", "wrongPassword"))
+        }.also { response ->
+            response.body<Problem>().type.shouldBeEqual(Problem.userOrPasswordAreInvalid.type)
+            response.shouldHaveStatus(HttpStatusCode.Forbidden)
+            response.shouldHaveContentType(ContentType.Application.ProblemJson)
         }
     }
 }

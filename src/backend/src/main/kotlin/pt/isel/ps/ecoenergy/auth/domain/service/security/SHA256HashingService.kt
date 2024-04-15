@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.auth.security
+package pt.isel.ps.ecoenergy.auth.domain.service.security
 
 import pt.isel.ps.ecoenergy.auth.domain.model.SaltedHash
 import pt.isel.ps.ecoenergy.auth.domain.service.HashingService

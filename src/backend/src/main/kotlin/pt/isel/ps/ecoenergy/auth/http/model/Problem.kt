@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.common
+package pt.isel.ps.ecoenergy.auth.http.model
 
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode

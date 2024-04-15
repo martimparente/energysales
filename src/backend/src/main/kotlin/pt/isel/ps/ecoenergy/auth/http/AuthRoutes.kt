@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.auth
+package pt.isel.ps.ecoenergy.auth.http
 
 import arrow.core.Either.Left
 import arrow.core.Either.Right
@@ -10,13 +10,14 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import pt.isel.ps.ecoenergy.Uris
 import pt.isel.ps.ecoenergy.auth.domain.service.UserCreationError
 import pt.isel.ps.ecoenergy.auth.domain.service.UserService
 import pt.isel.ps.ecoenergy.auth.http.model.LoginRequest
+import pt.isel.ps.ecoenergy.auth.http.model.LoginResponse
+import pt.isel.ps.ecoenergy.auth.http.model.Problem
 import pt.isel.ps.ecoenergy.auth.http.model.SignUpRequest
-import pt.isel.ps.ecoenergy.common.Problem
-import pt.isel.ps.ecoenergy.common.Uris
-import pt.isel.ps.ecoenergy.common.respond
+import pt.isel.ps.ecoenergy.auth.http.model.respond
 
 fun Route.authRoutes(userService: UserService) {
 
@@ -32,7 +33,7 @@ fun Route.authRoutes(userService: UserService) {
 
             is Left -> when (res.value) {
                 UserCreationError.InsecurePassword -> call.respond(Problem.insecurePassword, HttpStatusCode.BadRequest)
-                UserCreationError.PasswordMisMatch -> call.respond(Problem.passwordMismatch, HttpStatusCode.BadRequest)
+                UserCreationError.PasswordMismatch -> call.respond(Problem.passwordMismatch, HttpStatusCode.BadRequest)
                 UserCreationError.UserAlreadyExists -> call.respond(Problem.userAlreadyExists, HttpStatusCode.Conflict)
                 UserCreationError.UserIsInvalid -> call.respond(Problem.userIsInvalid, HttpStatusCode.BadRequest)
             }
@@ -45,7 +46,7 @@ fun Route.authRoutes(userService: UserService) {
             val res = userService.createToken(input.username, input.password)
 
             when (res) {
-                is Right -> call.respond(res.value)
+                is Right -> call.respond(LoginResponse.fromToken(res.value))
                 is Left -> call.respond(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
             }
         }

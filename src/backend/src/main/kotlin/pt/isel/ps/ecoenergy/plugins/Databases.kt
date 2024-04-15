@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import pt.isel.ps.ecoenergy.auth.data.repository.Users
+import pt.isel.ps.ecoenergy.auth.data.Users
 
 // Todo use environment variables to store the database credentials
 object DatabaseSingleton {

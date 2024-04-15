@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.common
+package pt.isel.ps.ecoenergy
 
 object Uris {
 

@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.auth.data.repository
+package pt.isel.ps.ecoenergy.auth.data
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
@@ -9,6 +9,7 @@ import pt.isel.ps.ecoenergy.auth.domain.model.User
 import pt.isel.ps.ecoenergy.auth.domain.repository.UserRepository
 import pt.isel.ps.ecoenergy.plugins.DatabaseSingleton.dbQuery
 
+// Mapping function from ResultRow to User
 private fun ResultRow.toUser(): User =
     User(
         id = this[Users.id],
@@ -17,6 +18,7 @@ private fun ResultRow.toUser(): User =
         salt = this[Users.salt],
     )
 
+// Exposed table for Users
 object Users : Table() {
     val id = integer("id").autoIncrement()
     val username = varchar("username", length = 50)

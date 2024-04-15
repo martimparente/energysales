@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.plugins
+package pt.isel.ps.ecoenergy.auth
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -6,9 +6,10 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import pt.isel.ps.ecoenergy.auth.security.JWTConfig
+import pt.isel.ps.ecoenergy.auth.domain.service.security.JwtConfig
 
-fun Application.configureSecurity(jwtConfig: JWTConfig) {
+
+fun Application.configureAuth(jwtConfig: JwtConfig) {
     authentication {
         jwt {
             realm = jwtConfig.realm

@@ -31,7 +31,7 @@ class UserService(
         repeatPassword: String,
     ): UserCreationResult = either {
         ensure(username.length in 6..15) { UserCreationError.UserIsInvalid }
-        ensure(password == repeatPassword) { UserCreationError.PasswordMisMatch }
+        ensure(password == repeatPassword) { UserCreationError.PasswordMismatch }
         ensure(isSafePassword(password)) { UserCreationError.InsecurePassword }
 
         dbQuery {
@@ -71,7 +71,7 @@ typealias TokenCreationResult = Either<TokenCreationError, Token>
 sealed interface UserCreationError {
     data object UserAlreadyExists : UserCreationError
     data object InsecurePassword : UserCreationError
-    data object PasswordMisMatch : UserCreationError
+    data object PasswordMismatch : UserCreationError
     data object UserIsInvalid : UserCreationError
 }
 
