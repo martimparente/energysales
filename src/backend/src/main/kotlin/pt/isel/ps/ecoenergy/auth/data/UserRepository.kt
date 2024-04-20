@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.auth.domain.repository
+package pt.isel.ps.ecoenergy.auth.data
 
 import pt.isel.ps.ecoenergy.auth.domain.model.User
 
@@ -7,5 +7,5 @@ interface UserRepository {
 
     suspend fun getUserByUsername(username: String): User?
 
-    suspend fun userExistByUserName(username: String): Boolean
+    suspend fun userExists(username: String): Boolean
 }

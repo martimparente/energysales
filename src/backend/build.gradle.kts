@@ -31,6 +31,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-host-common-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-resources:$ktorVersion")
 
     // Serialization
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")

@@ -4,12 +4,15 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.plugins.swagger.swaggerUI
+import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
+import pt.isel.ps.ecoenergy.auth.AuthenticationException
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
-import pt.isel.ps.ecoenergy.auth.http.model.respond
+import pt.isel.ps.ecoenergy.auth.http.model.respondProblem
 
 fun Application.configureHTTP() {
     routing {
@@ -17,8 +20,17 @@ fun Application.configureHTTP() {
     }
 
     install(StatusPages) {
-        exception<Throwable> { call, _ ->
-            call.respond(Problem.internalServerError, HttpStatusCode.InternalServerError)
+        // todo remove comments
+        /*     exception<Throwable> { call, _ ->
+                 call.respondProblem(Problem.internalServerError, HttpStatusCode.InternalServerError)
+             }*/
+        exception<AuthenticationException> { call, _ ->
+            call.respondProblem(Problem.unauthorized, HttpStatusCode.Unauthorized)
+            // call.respond(status = HttpStatusCode.Unauthorized, message = cause.message ?: "Authentication failed!")
+        }
+        exception<BadRequestException> { call, _ ->
+            call.respondProblem(Problem.invalidToken, HttpStatusCode.BadRequest)
+            // call.respond(status = HttpStatusCode.BadRequest, message = cause.message ?: "Bad request!")
         }
     }
     // will send this header with each response

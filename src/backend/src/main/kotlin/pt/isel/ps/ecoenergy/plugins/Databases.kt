@@ -6,9 +6,12 @@ import io.ktor.server.routing.routing
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import pt.isel.ps.ecoenergy.auth.data.Users
+import pt.isel.ps.ecoenergy.team.data.PersonTable
+import pt.isel.ps.ecoenergy.team.data.TeamTable
 
 // Todo use environment variables to store the database credentials
 object DatabaseSingleton {
@@ -24,7 +27,7 @@ fun Application.configureDatabases() {
     val password = configProperty("storage.password")
 
     try {
-        val database = Database.connect(
+        Database.connect(
             url = jdbcURL,
             driver = driverClassName,
             user = user,
@@ -33,7 +36,26 @@ fun Application.configureDatabases() {
 
         transaction {
             log.atInfo().log("Database connected - jdbcURL: $jdbcURL")
+            SchemaUtils.drop(TeamTable)
+            SchemaUtils.drop(PersonTable)
             SchemaUtils.create(Users)
+            SchemaUtils.create(TeamTable)
+            SchemaUtils.create(PersonTable)
+
+
+            for (i in 1..23)
+                TeamTable.insert {
+                    it[name] = "Team $i"
+                    it[location] = "Location $i"
+            }
+            for (i in 1..23)
+                PersonTable.insert {
+                    it[name] = "Name $i"
+                    it[surname] = "Surname $i"
+                    it[email] = "$i@mail.com"
+                    it[role] = "Role $i"
+                }
+
         }
     } catch (e: Exception) {
         println("Error connecting to the database: ${e.message}")

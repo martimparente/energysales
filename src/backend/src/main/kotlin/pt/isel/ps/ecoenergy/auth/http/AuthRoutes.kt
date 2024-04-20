@@ -5,7 +5,6 @@ import arrow.core.Either.Right
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
-import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -17,7 +16,7 @@ import pt.isel.ps.ecoenergy.auth.http.model.LoginRequest
 import pt.isel.ps.ecoenergy.auth.http.model.LoginResponse
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
 import pt.isel.ps.ecoenergy.auth.http.model.SignUpRequest
-import pt.isel.ps.ecoenergy.auth.http.model.respond
+import pt.isel.ps.ecoenergy.auth.http.model.respondProblem
 
 fun Route.authRoutes(userService: UserService) {
 
@@ -28,14 +27,14 @@ fun Route.authRoutes(userService: UserService) {
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
-                call.response.header("Location", "${Uris.USERS}/${res.value}")
+                // todo call.response.header("Location", "${Uris.USERS}/${res.value}")
             }
 
             is Left -> when (res.value) {
-                UserCreationError.InsecurePassword -> call.respond(Problem.insecurePassword, HttpStatusCode.BadRequest)
-                UserCreationError.PasswordMismatch -> call.respond(Problem.passwordMismatch, HttpStatusCode.BadRequest)
-                UserCreationError.UserAlreadyExists -> call.respond(Problem.userAlreadyExists, HttpStatusCode.Conflict)
-                UserCreationError.UserIsInvalid -> call.respond(Problem.userIsInvalid, HttpStatusCode.BadRequest)
+                UserCreationError.InsecurePassword -> call.respondProblem(Problem.insecurePassword, HttpStatusCode.BadRequest)
+                UserCreationError.PasswordMismatch -> call.respondProblem(Problem.passwordMismatch, HttpStatusCode.BadRequest)
+                UserCreationError.UserAlreadyExists -> call.respondProblem(Problem.userAlreadyExists, HttpStatusCode.Conflict)
+                UserCreationError.UserIsInvalid -> call.respondProblem(Problem.userIsInvalid, HttpStatusCode.BadRequest)
             }
         }
     }
@@ -47,7 +46,7 @@ fun Route.authRoutes(userService: UserService) {
 
             when (res) {
                 is Right -> call.respond(LoginResponse.fromToken(res.value))
-                is Left -> call.respond(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
+                is Left -> call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
             }
         }
     }

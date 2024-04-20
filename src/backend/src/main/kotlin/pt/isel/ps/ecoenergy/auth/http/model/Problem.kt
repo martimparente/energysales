@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * @param problem The problem to be sent in the response body
  * @see Problem
  */
-suspend fun ApplicationCall.respond(problem: Problem, status: HttpStatusCode) {
+suspend fun ApplicationCall.respondProblem(problem: Problem, status: HttpStatusCode) {
     response.header("Content-Type", ContentType.Application.ProblemJson.toString())
     response.status(status)
     val mutatedProblem = problem.copy(instance = request.uri)
@@ -29,6 +29,42 @@ data class Problem(
 ) {
     companion object {
         private const val PROBLEM_URL = "https://github.com/martimparente/ecoenergy/docs/client-documentation/problems/"
+
+        val noTeamProvided: Problem = Problem(
+            "No team information provided",
+            PROBLEM_URL + "noTeamProvided.md",
+            ""
+        )
+
+        val invalidToken: Problem = Problem(
+            "Invalid Token",
+            PROBLEM_URL + "invalidToken.md",
+            ""
+        )
+
+        val unauthorized: Problem = Problem(
+            "Unauthorized",
+            PROBLEM_URL + "unauthorized.md",
+            ""
+        )
+
+        val noTeamsFound: Problem = Problem(
+            "No Teams Found",
+            PROBLEM_URL + "noTeamsFound.md",
+            ""
+        )
+
+        val teamNameIsInvalid: Problem = Problem(
+            "Team name is invalid",
+            PROBLEM_URL + "teamNameIsInvalid.md",
+            ""
+        )
+
+        val teamAlreadyExists: Problem = Problem(
+            "Team already exists",
+            PROBLEM_URL + "teamAlreadyExists.md",
+            ""
+        )
 
         val internalServerError = Problem(
             "There was a server error :( Please try again later",

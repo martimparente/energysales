@@ -6,13 +6,31 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.plugins.BadRequestException
 import pt.isel.ps.ecoenergy.auth.domain.service.security.JwtConfig
+
+data class AuthenticationException(
+    override val message: String? = null,
+    override val cause: Throwable? = null
+) : Throwable(message, cause)
 
 
 fun Application.configureAuth(jwtConfig: JwtConfig) {
     authentication {
         jwt {
             realm = jwtConfig.realm
+
+            // This is the function that will be called when no token is provided
+            challenge { _, _ ->
+                call.request.headers["Authorization"]?.let {
+                    if (it.isNotEmpty()) {
+                        throw AuthenticationException("Authorization is invalid!")
+                    } else {
+                        throw BadRequestException("Authorization header can not be blank!")
+                    }
+                } ?: throw BadRequestException("Authorization header can not be blank!")
+            }
+            // This is the verifier that will check if the token is valid
             verifier(
                 JWT
                     .require(Algorithm.HMAC256(jwtConfig.secret))
@@ -20,8 +38,10 @@ fun Application.configureAuth(jwtConfig: JwtConfig) {
                     .withIssuer(jwtConfig.issuer)
                     .build(),
             )
+            // This is the function that will be called when the token is valid
             validate { credential ->
-                if (credential.payload.audience.contains(jwtConfig.audience)) JWTPrincipal(credential.payload) else null
+                if (credential.payload.audience.contains(jwtConfig.audience)) JWTPrincipal(credential.payload)
+                else throw AuthenticationException("Invalid Token")
             }
         }
     }

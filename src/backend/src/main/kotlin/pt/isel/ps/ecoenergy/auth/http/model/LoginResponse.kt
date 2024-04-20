@@ -10,12 +10,10 @@ data class LoginResponse(
     val expiresIn: Long,
 ) {
     companion object {
-        fun fromToken(token: Token): LoginResponse {
-            return LoginResponse(
-                token = token.token,
-                tokenType = token.tokenType,
-                expiresIn = token.expiresIn
-            )
-        }
+        fun fromToken(token: Token) = LoginResponse(
+            token = token.token,
+            tokenType = token.tokenType,
+            expiresIn = token.expiresIn
+        )
     }
 }

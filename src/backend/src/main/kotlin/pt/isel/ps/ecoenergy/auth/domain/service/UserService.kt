@@ -4,10 +4,9 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import pt.isel.ps.ecoenergy.auth.data.UserRepository
 import pt.isel.ps.ecoenergy.auth.domain.model.SaltedHash
 import pt.isel.ps.ecoenergy.auth.domain.model.Token
-import pt.isel.ps.ecoenergy.auth.domain.repository.UserRepository
-import pt.isel.ps.ecoenergy.plugins.DatabaseSingleton.dbQuery
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -33,12 +32,11 @@ class UserService(
         ensure(username.length in 6..15) { UserCreationError.UserIsInvalid }
         ensure(password == repeatPassword) { UserCreationError.PasswordMismatch }
         ensure(isSafePassword(password)) { UserCreationError.InsecurePassword }
+        ensure(!userRepository.userExists(username)) { UserCreationError.UserAlreadyExists }
 
-        dbQuery {
-            ensure(!userRepository.userExistByUserName(username)) { UserCreationError.UserAlreadyExists }
-            val saltedHash = hashingService.generateSaltedHash(password, 16)
-            userRepository.createUser(username, saltedHash.hash, saltedHash.salt)
-        }
+        // todo what happens if the user suddenly exists? Transaction?
+        val saltedHash = hashingService.generateSaltedHash(password, 16)
+        userRepository.createUser(username, saltedHash.hash, saltedHash.salt)
     }
 
     /**
@@ -52,16 +50,14 @@ class UserService(
         password: String,
     ): TokenCreationResult = either {
         ensure(username.isNotBlank() && password.isNotBlank()) { TokenCreationError.UserOrPasswordAreInvalid }
+        // Ensure user exists and password is correct
+        val user = userRepository.getUserByUsername(username)
+        ensureNotNull(user) { TokenCreationError.UserOrPasswordAreInvalid }
+        val passwordIsValid = hashingService.matches(password, SaltedHash(user.password, user.salt))
+        ensure(passwordIsValid) { TokenCreationError.UserOrPasswordAreInvalid }
+        // Generate token
+        tokenService.generateToken(user.id)
 
-        dbQuery {
-            // Ensure user exists and password is correct
-            val user = userRepository.getUserByUsername(username)
-            ensureNotNull(user) { TokenCreationError.UserOrPasswordAreInvalid }
-            val passwordIsValid = hashingService.matches(password, SaltedHash(user.password, user.salt))
-            ensure(passwordIsValid) { TokenCreationError.UserOrPasswordAreInvalid }
-            // Generate token
-            tokenService.generateToken(user.id)
-        }
     }
 }
 
