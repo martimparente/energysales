@@ -7,6 +7,7 @@ import arrow.core.raise.ensureNotNull
 import pt.isel.ps.ecoenergy.auth.data.UserRepository
 import pt.isel.ps.ecoenergy.auth.domain.model.SaltedHash
 import pt.isel.ps.ecoenergy.auth.domain.model.Token
+import pt.isel.ps.ecoenergy.team.data.PersonTable.role
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -59,10 +60,29 @@ class UserService(
         tokenService.generateToken(user.id)
 
     }
+
+    suspend fun getUserRoles(uid: Int): RoleReadingResult = either {
+        ensureNotNull(userRepository.getUserById(uid)) { RoleReadingError.UserNotFound }
+        userRepository.getUserRoles(uid)
+    }
+
+    suspend fun assignRole(uid: Int, role: String): RoleAssignResult = either {
+        ensureNotNull(userRepository.getUserById(uid)) { RoleAssignError.UserDoesNotExist }
+        userRepository.assignRoleToUser(uid, role)
+    }
+
+    suspend fun deleteRole(uid: Int, role: String): RoleDeleteResult = either {
+        ensureNotNull(userRepository.getUserById(uid)) { RoleDeletingError.UserNotFound }
+        ensure(userRepository.getUserRoles(uid).contains(role)) { RoleDeletingError.UserHasNoRole }
+        userRepository.deleteRoleFromUser(uid, role)
+    }
 }
 
 typealias UserCreationResult = Either<UserCreationError, Int>
 typealias TokenCreationResult = Either<TokenCreationError, Token>
+typealias RoleAssignResult = Either<RoleAssignError, Unit>
+typealias RoleReadingResult = Either<RoleReadingError, List<String>>
+typealias RoleDeleteResult = Either<RoleDeletingError, Unit>
 
 sealed interface UserCreationError {
     data object UserAlreadyExists : UserCreationError
@@ -74,6 +94,22 @@ sealed interface UserCreationError {
 sealed interface TokenCreationError {
     data object UserOrPasswordAreInvalid : TokenCreationError
 }
+
+sealed interface RoleReadingError {
+    data object UserNotFound : RoleReadingError
+}
+
+sealed interface RoleAssignError {
+    data object UserDoesNotExist : RoleAssignError
+    data object UserAlreadyHasRole : RoleAssignError
+    data object UserDoesNotHaveRole : RoleAssignError
+}
+
+sealed interface RoleDeletingError {
+    data object UserNotFound : RoleDeletingError
+    data object UserHasNoRole : RoleDeletingError
+}
+
 
 /**
  * Checks if the password is safe.

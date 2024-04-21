@@ -1,5 +1,6 @@
 package pt.isel.ps.ecoenergy.team.domain.model
 
+
 data class Person(
     val uid: Int,
     val name: String,

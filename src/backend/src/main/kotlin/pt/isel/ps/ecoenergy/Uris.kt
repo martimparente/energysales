@@ -15,7 +15,13 @@ object Uris {
     const val AUTH_SIGNUP = "$AUTH/signup"
     const val AUTH_LOGIN = "$AUTH/login"
     const val AUTH_RESET_PASSWORD = "$AUTH/reset-password"
-    const val AUTH_CHANGE_PASSWORD = "$AUTH/change-password"
+
+    // User routes
+    const val USERS = "/users"
+    const val USERS_ROLES = "$USERS/{id}/roles"
+    const val USERS_ROLE = "$USERS/{id}/roles/{role-id}"
+    const val USER_CHANGE_PASSWORD = "$USERS/{id}/change-password"
+
 
     // Admin routes
     const val ADMIN = "/admin"
@@ -28,6 +34,7 @@ object Uris {
 
     // Team routes
     const val TEAMS = "/teams"
+    const val TEAMS_BY_ID = "$TEAMS/{id}"
     const val TEAMS_HOME = "$TEAMS/me"
     const val TEAMS_MEMBERS = "$TEAMS/members"
     const val TEAMS_MEMBER = "$TEAMS/members/{memberId}"

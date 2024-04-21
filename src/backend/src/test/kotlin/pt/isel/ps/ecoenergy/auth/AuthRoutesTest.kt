@@ -7,6 +7,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -23,16 +26,20 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.BeforeClass
 import pt.isel.ps.ecoenergy.Uris
+import pt.isel.ps.ecoenergy.auth.data.Roles
+import pt.isel.ps.ecoenergy.auth.data.UserRoles
 import pt.isel.ps.ecoenergy.auth.data.Users
 import pt.isel.ps.ecoenergy.auth.http.model.LoginRequest
 import pt.isel.ps.ecoenergy.auth.http.model.LoginResponse
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
+import pt.isel.ps.ecoenergy.auth.http.model.RoleRequest
 import pt.isel.ps.ecoenergy.auth.http.model.SignUpRequest
+import javax.management.relation.Role
 import kotlin.test.Test
 
 class AuthRoutesTest {
-
     companion object {
+        lateinit var token: String
         private fun ApplicationTestBuilder.testClient(): HttpClient {
             environment {
                 config = ApplicationConfig("application-test.conf")
@@ -64,14 +71,34 @@ class AuthRoutesTest {
                 )
 
                 transaction {
+                    SchemaUtils.drop(UserRoles)
+                    SchemaUtils.drop(Roles)
                     SchemaUtils.drop(Users)
                     SchemaUtils.create(Users)
-                    Users.deleteAll()
+                    SchemaUtils.create(Roles)
+                    SchemaUtils.create(UserRoles)
+
                     Users.insert {
                         it[username] = "testUser" // pass = "SecurePass123!"
                         it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
                         it[salt] = "c3f842f3630ebb3d96543709bc316402"
                     }
+                    Roles.insert {
+                        it[name] = "admin"
+                    }
+                    Roles.insert {
+                        it[name] = "seller"
+                    }
+                    UserRoles.insert {
+                        it[userId] = 1
+                        it[roleId] = 2
+                    }
+                }
+                testClient().post(Uris.API + Uris.AUTH_LOGIN) {
+                    setBody(LoginRequest("testUser", "SecurePass123!"))
+                }.also { response ->
+                    token = response.body<LoginResponse>().token
+                    println(token)
                 }
             } catch (e: Exception) {
                 println("Error connecting to the database: ${e.message}")
@@ -167,6 +194,40 @@ class AuthRoutesTest {
             response.body<Problem>().type.shouldBeEqual(Problem.userOrPasswordAreInvalid.type)
             response.shouldHaveStatus(HttpStatusCode.Forbidden)
             response.shouldHaveContentType(ContentType.Application.ProblemJson)
+        }
+    }
+
+    @Test
+    fun `Get Roles from User - Success`() = testApplication {
+        testClient().get(Uris.API + Uris.USERS_ROLES) {
+            headers.append("Authorization", "Bearer $token")
+            parameter("id", 1)
+        }.also {
+            it.shouldHaveStatus(HttpStatusCode.OK)
+            it.shouldHaveContentType(ContentType.Application.Json)
+        }
+    }
+
+    @Test
+    fun `Assign Role to User - Success`() = testApplication {
+        testClient().post(Uris.API + Uris.USERS_ROLES) {
+            headers.append("Authorization", "Bearer $token")
+            parameter("id", 1)
+            setBody(RoleRequest("admin"))
+        }.also {
+            it.shouldHaveStatus(HttpStatusCode.Created)
+            it.shouldHaveContentType(ContentType.Application.Json)
+        }
+    }
+    @Test
+    fun `Delete Role from User - Success`() = testApplication {
+        testClient().delete(Uris.API + Uris.USERS_ROLE) {
+            headers.append("Authorization", "Bearer $token")
+            parameter("id", 1)
+            parameter("role-id", "seller")
+        }.also {
+            it.shouldHaveStatus(HttpStatusCode.NoContent)
+            it.shouldHaveContentType(ContentType.Application.Json)
         }
     }
 }

@@ -3,7 +3,7 @@ package pt.isel.ps.ecoenergy.team.http.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PersonResponse(
+data class Person(
     val uid: Int,
     val name: String,
     val surname: String,

@@ -30,6 +30,19 @@ data class Problem(
     companion object {
         private const val PROBLEM_URL = "https://github.com/martimparente/ecoenergy/docs/client-documentation/problems/"
 
+        val badRequest: Problem = Problem(
+            "Some parameters are invalid",
+            PROBLEM_URL + "badRequest.md",
+            ""
+        )
+
+
+        val teamNotFound: Problem = Problem(
+            "Team was not found",
+            PROBLEM_URL + "teamNotFound.md",
+            ""
+        )
+
         val noTeamProvided: Problem = Problem(
             "No team information provided",
             PROBLEM_URL + "noTeamProvided.md",
@@ -54,8 +67,8 @@ data class Problem(
             ""
         )
 
-        val teamNameIsInvalid: Problem = Problem(
-            "Team name is invalid",
+        val teamInfoIsInvalid: Problem = Problem(
+            "The Team information given is invalid",
             PROBLEM_URL + "teamNameIsInvalid.md",
             ""
         )
@@ -94,6 +107,11 @@ data class Problem(
         val userIsInvalid = Problem(
             "User must have between 6 to 15 characters",
             PROBLEM_URL + "userIsInvalid.md",
+            ""
+        )
+        val userNotFound = Problem(
+            "User not found",
+            PROBLEM_URL + "userNotFound.md",
             ""
         )
         val passwordMismatch = Problem(

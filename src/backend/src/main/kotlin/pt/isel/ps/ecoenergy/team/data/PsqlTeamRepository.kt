@@ -9,6 +9,12 @@ import pt.isel.ps.ecoenergy.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.ecoenergy.team.domain.model.Person
 import pt.isel.ps.ecoenergy.team.domain.model.Team
 
+fun TeamEntity.toTeam() = Team(
+    id.value,
+    name,
+    location,
+    manager?.let { Person(it.id.value, it.name, it.surname, it.email, it.role) }
+)
 
 object TeamTable : IntIdTable("teams") {
     val name = varchar("name", 50).uniqueIndex()
@@ -42,12 +48,24 @@ class PersonEntity(id: EntityID<Int>) : Entity<Int>(id) {
 
 
 class PsqlTeamRepository : TeamRepository {
-    override suspend fun getByName(name: String): Team? {
-        TODO("Not yet implemented")
+    override suspend fun getByName(name: String): Team? = dbQuery {
+        TeamEntity.find { TeamTable.name eq name }
+            .firstOrNull()
+            ?.toTeam()
     }
 
-    override suspend fun teamExists(name: String): Boolean = dbQuery {
-        TeamEntity.find { TeamTable.name eq name }.count() > 0
+    override suspend fun getById(id: Int): Team? = dbQuery {
+        TeamEntity.findById(id)?.toTeam()
+    }
+
+
+    override suspend fun teamExists(id: Int): Boolean = dbQuery {
+        TeamEntity.findById(id) != null
+    }
+
+    override suspend fun teamExistsByName(name: String) = dbQuery {
+        TeamEntity.find { TeamTable.name eq name }
+            .firstOrNull() != null
     }
 
     override suspend fun create(team: Team): Int = dbQuery {
@@ -63,15 +81,7 @@ class PsqlTeamRepository : TeamRepository {
 
     override suspend fun getAll(): List<Team> = dbQuery {
         TeamEntity.all()
-            .map { teamEntity ->
-                Team(
-                    teamEntity.name,
-                    teamEntity.location,
-                    teamEntity.manager?.let {
-                        Person(it.id.value, it.name, it.surname, it.email, it.role)
-                    }
-                )
-            }
+            .map{ it.toTeam() }
     }
 
 
@@ -80,33 +90,24 @@ class PsqlTeamRepository : TeamRepository {
             .find { TeamTable.id greaterEq (lastKeySeen ?: 0) }
             .orderBy(TeamTable.id to SortOrder.ASC)
             .limit(pageSize)
-            .map { teamEntity ->
-                Team(
-                    teamEntity.name,
-                    teamEntity.location,
-                    teamEntity.manager?.let {
-                        Person(it.id.value, it.name, it.surname, it.email, it.role)
-                    }
-                )
-            }.toList()
+            .map { it.toTeam() }
+            .toList()
     }
 
-    override suspend fun update(team: Team): Team = dbQuery {
+    override suspend fun update(team: Team): Team? = dbQuery {
         TeamEntity
-            .find { TeamTable.name eq team.name }
-            .first()
-            .apply {
-                name = team.name
-                location = team.location
-                manager = team.manager?.let { PersonEntity.findById(it.uid) }
-            }.let { teamEntity ->
-                Team(
-                    teamEntity.name,
-                    teamEntity.location,
-                    teamEntity.manager?.let {
-                        Person(it.id.value, it.name, it.surname, it.email, it.role)
-                    }
-                )
-            }
+            .findById(team.id)
+            ?.also { teamEntity ->
+                teamEntity.name = team.name
+                teamEntity.location = team.location
+                teamEntity.manager = team.manager?.let { PersonEntity.findById(it.uid) }
+            }?.toTeam()
+    }
+
+    override suspend fun delete(team: Team): Boolean = dbQuery {
+        TeamEntity.find { TeamTable.name eq team.name }
+            .firstOrNull()
+            ?.delete() ?: false
+        true
     }
 }

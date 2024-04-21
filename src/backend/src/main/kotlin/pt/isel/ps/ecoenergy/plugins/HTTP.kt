@@ -29,7 +29,7 @@ fun Application.configureHTTP() {
             // call.respond(status = HttpStatusCode.Unauthorized, message = cause.message ?: "Authentication failed!")
         }
         exception<BadRequestException> { call, _ ->
-            call.respondProblem(Problem.invalidToken, HttpStatusCode.BadRequest)
+            call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
             // call.respond(status = HttpStatusCode.BadRequest, message = cause.message ?: "Bad request!")
         }
     }

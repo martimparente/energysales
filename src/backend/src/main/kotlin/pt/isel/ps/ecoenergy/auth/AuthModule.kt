@@ -23,12 +23,9 @@ fun Application.configureAuth(jwtConfig: JwtConfig) {
             // This is the function that will be called when no token is provided
             challenge { _, _ ->
                 call.request.headers["Authorization"]?.let {
-                    if (it.isNotEmpty()) {
-                        throw AuthenticationException("Authorization is invalid!")
-                    } else {
-                        throw BadRequestException("Authorization header can not be blank!")
-                    }
-                } ?: throw BadRequestException("Authorization header can not be blank!")
+                    throw AuthenticationException("Token is invalid")
+                } ?: throw AuthenticationException("No Authorization Header found")
+
             }
             // This is the verifier that will check if the token is valid
             verifier(
@@ -41,7 +38,7 @@ fun Application.configureAuth(jwtConfig: JwtConfig) {
             // This is the function that will be called when the token is valid
             validate { credential ->
                 if (credential.payload.audience.contains(jwtConfig.audience)) JWTPrincipal(credential.payload)
-                else throw AuthenticationException("Invalid Token")
+                else throw AuthenticationException("Token is invalid")
             }
         }
     }
