@@ -6,14 +6,12 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import io.ktor.server.plugins.BadRequestException
 import pt.isel.ps.ecoenergy.auth.domain.service.security.JwtConfig
 
 data class AuthenticationException(
     override val message: String? = null,
-    override val cause: Throwable? = null
+    override val cause: Throwable? = null,
 ) : Throwable(message, cause)
-
 
 fun Application.configureAuth(jwtConfig: JwtConfig) {
     authentication {
@@ -25,7 +23,6 @@ fun Application.configureAuth(jwtConfig: JwtConfig) {
                 call.request.headers["Authorization"]?.let {
                     throw AuthenticationException("Token is invalid")
                 } ?: throw AuthenticationException("No Authorization Header found")
-
             }
             // This is the verifier that will check if the token is valid
             verifier(
@@ -37,8 +34,11 @@ fun Application.configureAuth(jwtConfig: JwtConfig) {
             )
             // This is the function that will be called when the token is valid
             validate { credential ->
-                if (credential.payload.audience.contains(jwtConfig.audience)) JWTPrincipal(credential.payload)
-                else throw AuthenticationException("Token is invalid")
+                if (credential.payload.audience.contains(jwtConfig.audience)) {
+                    JWTPrincipal(credential.payload)
+                } else {
+                    throw AuthenticationException("Token is invalid")
+                }
             }
         }
     }

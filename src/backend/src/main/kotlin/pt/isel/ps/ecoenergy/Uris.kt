@@ -1,7 +1,6 @@
 package pt.isel.ps.ecoenergy
 
 object Uris {
-
     const val API = "/api"
 
     // General routes
@@ -22,7 +21,6 @@ object Uris {
     const val USERS_ROLE = "$USERS/{id}/roles/{role-id}"
     const val USER_CHANGE_PASSWORD = "$USERS/{id}/change-password"
 
-
     // Admin routes
     const val ADMIN = "/admin"
     const val ADMIN_HOME = "$ADMIN/me"
@@ -39,5 +37,4 @@ object Uris {
     const val TEAMS_MEMBERS = "$TEAMS/members"
     const val TEAMS_MEMBER = "$TEAMS/members/{memberId}"
     const val TEAMS_PROJECTS = "$TEAMS/projects"
-
 }

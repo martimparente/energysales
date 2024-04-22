@@ -8,7 +8,6 @@ import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.plugins.swagger.swaggerUI
-import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import pt.isel.ps.ecoenergy.auth.AuthenticationException
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
@@ -20,8 +19,8 @@ fun Application.configureHTTP() {
     }
 
     install(StatusPages) {
-        // todo remove comments
-        /*     exception<Throwable> { call, _ ->
+        /*  todo remove comments
+            exception<Throwable> { call, _ ->
                  call.respondProblem(Problem.internalServerError, HttpStatusCode.InternalServerError)
              }*/
         exception<AuthenticationException> { call, _ ->

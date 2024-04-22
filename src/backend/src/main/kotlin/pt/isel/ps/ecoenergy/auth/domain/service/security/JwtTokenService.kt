@@ -29,7 +29,7 @@ class JwtTokenService(
         return Token(
             token = token,
             tokenType = "Bearer",
-            expiresIn = 3600000, // 1 hour
+            expiresIn = 3600000,
         )
     }
 }

@@ -31,7 +31,10 @@ class SHA256HashingService : HashingService {
      * @param saltedHash The salted hash to match against.
      * @return True if the password matches the salted hash
      */
-    override fun matches(password: CharSequence, saltedHash: SaltedHash): Boolean {
+    override fun matches(
+        password: CharSequence,
+        saltedHash: SaltedHash,
+    ): Boolean {
         val saltAndPassword = "${saltedHash.salt}$password"
         val hash = MessageDigest.getInstance("SHA-256").digest(saltAndPassword.toByteArray()).toHexString()
         return hash == saltedHash.hash

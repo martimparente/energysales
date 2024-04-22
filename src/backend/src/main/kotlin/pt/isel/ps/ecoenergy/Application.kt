@@ -39,18 +39,15 @@ fun Application.module() {
         UserService(
             userRepository = PsqlUserRepository(),
             tokenService = JwtTokenService(jwtConfig),
-            hashingService = SHA256HashingService()
+            hashingService = SHA256HashingService(),
         )
     }
 
     val teamService by lazy {
         TeamService(
-            teamRepository = PsqlTeamRepository()
-
+            teamRepository = PsqlTeamRepository(),
         )
     }
-
-
 
     install(Resources)
     install(CallLogging) {
