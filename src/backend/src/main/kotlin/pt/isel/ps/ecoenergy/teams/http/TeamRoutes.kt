@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.team.http
+package pt.isel.ps.ecoenergy.teams.http
 
 import arrow.core.Either.Left
 import arrow.core.Either.Right
@@ -16,15 +16,15 @@ import io.ktor.server.routing.Route
 import pt.isel.ps.ecoenergy.Uris
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
 import pt.isel.ps.ecoenergy.auth.http.model.respondProblem
-import pt.isel.ps.ecoenergy.team.domain.model.Person
-import pt.isel.ps.ecoenergy.team.domain.model.Team
-import pt.isel.ps.ecoenergy.team.domain.service.TeamCreationError
-import pt.isel.ps.ecoenergy.team.domain.service.TeamDeletingError
-import pt.isel.ps.ecoenergy.team.domain.service.TeamService
-import pt.isel.ps.ecoenergy.team.domain.service.TeamUpdatingError
-import pt.isel.ps.ecoenergy.team.http.model.CreateTeamRequest
-import pt.isel.ps.ecoenergy.team.http.model.TeamJson
-import pt.isel.ps.ecoenergy.team.http.model.UpdateTeamRequest
+import pt.isel.ps.ecoenergy.teams.domain.model.Person
+import pt.isel.ps.ecoenergy.teams.domain.model.Team
+import pt.isel.ps.ecoenergy.teams.domain.service.TeamCreationError
+import pt.isel.ps.ecoenergy.teams.domain.service.TeamDeletingError
+import pt.isel.ps.ecoenergy.teams.domain.service.TeamService
+import pt.isel.ps.ecoenergy.teams.domain.service.TeamUpdatingError
+import pt.isel.ps.ecoenergy.teams.http.model.CreateTeamRequest
+import pt.isel.ps.ecoenergy.teams.http.model.TeamJSON
+import pt.isel.ps.ecoenergy.teams.http.model.UpdateTeamRequest
 
 @Resource(Uris.TEAMS)
 class TeamResource(
@@ -40,14 +40,14 @@ class TeamResource(
 fun Route.teamRoutes(teamService: TeamService) {
     get<TeamResource> { queryParams ->
         val teams = teamService.getAllTeamsPaging(10, queryParams.lastKeySeen)
-        val teamsResponse = teams.map { team -> TeamJson.fromTeam(team) }
+        val teamsResponse = teams.map { team -> TeamJSON.fromTeam(team) }
         call.respond(teamsResponse)
     }
 
     post<TeamResource> {
         val body = call.receive<CreateTeamRequest>()
-        val res = teamService.createTeam(body.name, body.location, body.manager)
 
+        val res = teamService.createTeam(body.name, body.location, body.manager)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -66,7 +66,7 @@ fun Route.teamRoutes(teamService: TeamService) {
         val team =
             teamService.getById(pathParams.id)
                 ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-        val teamJson = TeamJson.fromTeam(team)
+        val teamJson = TeamJSON.fromTeam(team)
         call.response.status(HttpStatusCode.OK)
         call.respond(teamJson)
     }
@@ -81,7 +81,6 @@ fun Route.teamRoutes(teamService: TeamService) {
                 manager = body.manager?.let { Person.create(it) },
             )
         val res = teamService.updateTeam(updatedTeam)
-
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.OK)

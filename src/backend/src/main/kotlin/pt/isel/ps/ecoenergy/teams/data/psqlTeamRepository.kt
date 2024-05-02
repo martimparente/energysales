@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.team.data
+package pt.isel.ps.ecoenergy.teams.data
 
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
@@ -6,28 +6,25 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SortOrder
 import pt.isel.ps.ecoenergy.plugins.DatabaseSingleton.dbQuery
-import pt.isel.ps.ecoenergy.team.domain.model.Person
-import pt.isel.ps.ecoenergy.team.domain.model.Team
+import pt.isel.ps.ecoenergy.sellers.data.PersonEntity
+import pt.isel.ps.ecoenergy.sellers.data.PersonTable
+import pt.isel.ps.ecoenergy.sellers.data.SellerEntity
+import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
+import pt.isel.ps.ecoenergy.teams.domain.model.Person
+import pt.isel.ps.ecoenergy.teams.domain.model.Team
 
 fun TeamEntity.toTeam() =
     Team(
         id.value,
         name,
         location,
-        manager?.let { Person(it.id.value, it.name, it.surname, it.email, it.role) },
+        manager?.let { Person(it.id.value, it.name, it.surname, it.email, it.role.toString()) },
     )
 
-object TeamTable : IntIdTable("teams") {
+object TeamTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()
     val location = varchar("location", 50)
     val manager = reference("manager", PersonTable).nullable()
-}
-
-object PersonTable : IntIdTable("persons") {
-    val name = varchar("name", 50)
-    val surname = varchar("surname", 50)
-    val email = varchar("email", 50)
-    val role = varchar("role", 50)
 }
 
 class TeamEntity(
@@ -38,17 +35,7 @@ class TeamEntity(
     var name by TeamTable.name
     var location by TeamTable.location
     var manager by PersonEntity optionalReferencedOn TeamTable.manager
-}
-
-class PersonEntity(
-    id: EntityID<Int>,
-) : Entity<Int>(id) {
-    companion object : EntityClass<Int, PersonEntity>(PersonTable)
-
-    var name by PersonTable.name
-    var surname by PersonTable.surname
-    var email by PersonTable.email
-    var role by PersonTable.role
+    var sellers by SellerEntity.via(TeamSeller.team, TeamSeller.seller)
 }
 
 class PsqlTeamRepository : TeamRepository {
@@ -74,7 +61,7 @@ class PsqlTeamRepository : TeamRepository {
         dbQuery {
             TeamEntity
                 .find { TeamTable.name eq name }
-                .firstOrNull() != null
+                .count() > 0
         }
 
     override suspend fun create(team: Team): Int =

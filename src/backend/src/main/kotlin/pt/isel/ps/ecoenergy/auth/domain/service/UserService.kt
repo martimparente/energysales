@@ -33,7 +33,7 @@ class UserService(
         repeatPassword: String,
     ): UserCreationResult =
         either {
-            ensure(username.length in 6..15) { UserCreationError.UserIsInvalid }
+            ensure(username.length in 5..16) { UserCreationError.UserIsInvalid }
             ensure(password == repeatPassword) { UserCreationError.PasswordMismatch }
             ensure(isSafePassword(password)) { UserCreationError.InsecurePassword }
             ensure(!userRepository.userExists(username)) { UserCreationError.UserAlreadyExists }

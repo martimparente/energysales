@@ -14,14 +14,14 @@ import pt.isel.ps.ecoenergy.plugins.DatabaseSingleton.dbQuery
 // Mapping function from ResultRow to User
 private fun ResultRow.toUser() =
     User(
-        id = this[Users.id],
-        username = this[Users.username],
-        password = this[Users.password],
-        salt = this[Users.salt],
+        id = this[UserTable.id],
+        username = this[UserTable.username],
+        password = this[UserTable.password],
+        salt = this[UserTable.salt],
     )
 
 // Exposed table for Users
-object Users : Table() {
+object UserTable : Table() {
     val id = integer("id").autoIncrement()
     val username = varchar("username", length = 50).uniqueIndex()
     val password = varchar("password", length = 255)
@@ -30,7 +30,7 @@ object Users : Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
-object Roles : Table() {
+object RoleTable : Table() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", length = 25).uniqueIndex()
 
@@ -39,8 +39,8 @@ object Roles : Table() {
 
 // Exposed table for UserRoles
 object UserRoles : Table() {
-    val userId = integer("user_id").references(Users.id)
-    val roleId = integer("role_id").references(Roles.id)
+    val userId = integer("user_id").references(UserTable.id)
+    val roleId = integer("role_id").references(RoleTable.id)
 
     override val primaryKey = PrimaryKey(userId, roleId)
 }
@@ -52,40 +52,40 @@ class PsqlUserRepository : UserRepository {
         salt: String,
     ): Int =
         dbQuery {
-            Users.insert {
-                it[Users.username] = username
-                it[Users.password] = password
-                it[Users.salt] = salt
-            } get Users.id
+            UserTable.insert {
+                it[UserTable.username] = username
+                it[UserTable.password] = password
+                it[UserTable.salt] = salt
+            } get UserTable.id
         }
 
     override suspend fun getUserById(uid: Int): User? =
         dbQuery {
-            Users
-                .select { Users.id eq uid }
+            UserTable
+                .select { UserTable.id eq uid }
                 .map(ResultRow::toUser)
                 .singleOrNull()
         }
 
     override suspend fun getUserByUsername(username: String): User? =
         dbQuery {
-            Users
-                .select { Users.username eq username }
+            UserTable
+                .select { UserTable.username eq username }
                 .map(ResultRow::toUser)
                 .singleOrNull()
         }
 
     override suspend fun userExists(username: String): Boolean =
         dbQuery {
-            Users
-                .select { Users.username eq username }
+            UserTable
+                .select { UserTable.username eq username }
                 .count() > 0
         }
 
     override suspend fun updateUser(user: User): Boolean =
         dbQuery {
-            Users
-                .update({ Users.id eq user.id }) {
+            UserTable
+                .update({ UserTable.id eq user.id }) {
                     it[username] = user.username
                     it[password] = user.password
                     it[salt] = user.salt
@@ -99,10 +99,10 @@ class PsqlUserRepository : UserRepository {
         dbQuery {
             // Get the role id
             val roleIdFound =
-                Roles
-                    .select { Roles.name eq role }
+                RoleTable
+                    .select { RoleTable.name eq role }
                     .singleOrNull()
-                    ?.get(Roles.id) ?: return@dbQuery false
+                    ?.get(RoleTable.id) ?: return@dbQuery false
 
             // Assign the role to the user
             UserRoles
@@ -119,10 +119,10 @@ class PsqlUserRepository : UserRepository {
         dbQuery {
             // Get the role id
             val roleIdFound =
-                Roles
-                    .select { Roles.name eq role }
+                RoleTable
+                    .select { RoleTable.name eq role }
                     .singleOrNull()
-                    ?.get(Roles.id) ?: return@dbQuery false
+                    ?.get(RoleTable.id) ?: return@dbQuery false
 
             // Delete the role from user
             UserRoles.deleteWhere {
@@ -135,10 +135,10 @@ class PsqlUserRepository : UserRepository {
             UserRoles
                 .select { UserRoles.userId eq uid }
                 .map {
-                    Roles
-                        .select { Roles.id eq it[UserRoles.roleId] }
+                    RoleTable
+                        .select { RoleTable.id eq it[UserRoles.roleId] }
                         .single()
-                        .get(Roles.name)
+                        .get(RoleTable.name)
                 }
         }
 }

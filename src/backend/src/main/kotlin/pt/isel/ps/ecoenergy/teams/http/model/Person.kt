@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.team.http.model
+package pt.isel.ps.ecoenergy.teams.http.model
 
 import kotlinx.serialization.Serializable
 

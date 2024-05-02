@@ -37,4 +37,13 @@ object Uris {
     const val TEAMS_MEMBERS = "$TEAMS/members"
     const val TEAMS_MEMBER = "$TEAMS/members/{memberId}"
     const val TEAMS_PROJECTS = "$TEAMS/projects"
+
+    // Seller routes
+    const val SELLERS = "/sellers"
+    const val SELLERS_BY_ID = "$SELLERS/{id}"
+    const val SELLERS_HOME = "$SELLERS/me"
+
+    // Product routes
+    const val PRODUCT = "/product"
+    const val PRODUCT_BY_ID = "$PRODUCT/{id}"
 }

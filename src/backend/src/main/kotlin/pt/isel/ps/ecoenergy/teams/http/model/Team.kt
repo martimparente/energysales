@@ -1,10 +1,10 @@
-package pt.isel.ps.ecoenergy.team.http.model
+package pt.isel.ps.ecoenergy.teams.http.model
 
 import kotlinx.serialization.Serializable
-import pt.isel.ps.ecoenergy.team.domain.model.Team
+import pt.isel.ps.ecoenergy.teams.domain.model.Team
 
 @Serializable
-data class TeamJson(
+data class TeamJSON(
     val id: Int,
     val name: String,
     val location: String,
@@ -12,7 +12,7 @@ data class TeamJson(
 ) {
     companion object {
         fun fromTeam(team: Team) =
-            TeamJson(
+            TeamJSON(
                 id = team.id,
                 name = team.name,
                 location = team.location,

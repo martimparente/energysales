@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.team.domain.model
+package pt.isel.ps.ecoenergy.teams.domain.model
 
 data class Team(
     val id: Int,

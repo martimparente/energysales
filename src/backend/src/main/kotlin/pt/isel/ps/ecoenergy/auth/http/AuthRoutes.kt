@@ -60,8 +60,11 @@ fun Route.authRoutes(userService: UserService) {
     authenticate {
         route(Uris.USER_CHANGE_PASSWORD) {
             post {
+                val uid =
+                    call.parameters["id"]?.toIntOrNull()
+                        ?: return@post call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
                 val body = call.receive<ChangePasswordRequest>()
-                val res = userService.changeUserPassword(body.uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
+                val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
 
                 when (res) {
                     is Right -> call.respond(HttpStatusCode.OK)
@@ -72,15 +75,17 @@ fun Route.authRoutes(userService: UserService) {
                                     Problem.insecurePassword,
                                     HttpStatusCode.BadRequest,
                                 )
+
                             ChangeUserPasswordError.PasswordMismatch ->
                                 call.respondProblem(
                                     Problem.passwordMismatch,
                                     HttpStatusCode.BadRequest,
                                 )
+
                             ChangeUserPasswordError.UserOrPasswordAreInvalid ->
                                 call.respondProblem(
-                                    Problem.userIsInvalid,
-                                    HttpStatusCode.BadRequest,
+                                    Problem.userOrPasswordAreInvalid,
+                                    HttpStatusCode.Forbidden,
                                 )
                         }
                 }

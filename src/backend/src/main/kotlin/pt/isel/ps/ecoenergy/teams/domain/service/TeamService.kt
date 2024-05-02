@@ -1,12 +1,12 @@
-package pt.isel.ps.ecoenergy.team.domain.service
+package pt.isel.ps.ecoenergy.teams.domain.service
 
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
-import pt.isel.ps.ecoenergy.team.data.TeamRepository
-import pt.isel.ps.ecoenergy.team.domain.model.Person
-import pt.isel.ps.ecoenergy.team.domain.model.Team
+import pt.isel.ps.ecoenergy.teams.data.TeamRepository
+import pt.isel.ps.ecoenergy.teams.domain.model.Person
+import pt.isel.ps.ecoenergy.teams.domain.model.Team
 
 class TeamService(
     private val teamRepository: TeamRepository,

@@ -8,11 +8,14 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import pt.isel.ps.ecoenergy.auth.data.Roles
+import pt.isel.ps.ecoenergy.auth.data.RoleTable
 import pt.isel.ps.ecoenergy.auth.data.UserRoles
-import pt.isel.ps.ecoenergy.auth.data.Users
-import pt.isel.ps.ecoenergy.team.data.PersonTable
-import pt.isel.ps.ecoenergy.team.data.TeamTable
+import pt.isel.ps.ecoenergy.auth.data.UserTable
+import pt.isel.ps.ecoenergy.products.data.ProductTable
+import pt.isel.ps.ecoenergy.sellers.data.PersonTable
+import pt.isel.ps.ecoenergy.sellers.data.SellerTable
+import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
+import pt.isel.ps.ecoenergy.teams.data.TeamTable
 
 // Todo use environment variables to store the database credentials
 object DatabaseSingleton {
@@ -37,11 +40,7 @@ fun Application.configureDatabases() {
 
         transaction {
             log.atInfo().log("Database connected - jdbcURL: $jdbcURL")
-            SchemaUtils.create(Users)
-            SchemaUtils.create(Roles)
-            SchemaUtils.create(UserRoles)
-            SchemaUtils.create(TeamTable)
-            SchemaUtils.create(PersonTable)
+            SchemaUtils.create(UserTable, RoleTable, UserRoles, TeamTable, PersonTable, SellerTable, TeamSeller, ProductTable)
         }
     } catch (e: Exception) {
         println("Error connecting to the database: ${e.message}")

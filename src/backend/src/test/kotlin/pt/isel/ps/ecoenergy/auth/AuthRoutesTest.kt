@@ -176,9 +176,9 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
                     headers.append("Authorization", "Bearer $token")
+                    parameter("id", 2)
                     setBody(
                         ChangePasswordRequest(
-                            2,
                             "SecurePass123!",
                             "SecurePass123!",
                             "SecurePass123!",
@@ -187,6 +187,48 @@ class AuthRoutesTest : BaseRouteTest() {
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.OK)
                     it.shouldHaveContentType(ContentType.Application.Json)
+                }
+        }
+
+    @Test
+    fun `Change Password - Wrong password`() =
+        testApplication {
+            testClient()
+                .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
+                    headers.append("Authorization", "Bearer $token")
+                    parameter("id", 2)
+                    setBody(
+                        ChangePasswordRequest(
+                            "wrongPassword123!",
+                            "SecurePass123!",
+                            "SecurePass123!",
+                        ),
+                    )
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.userOrPasswordAreInvalid.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
+
+    @Test
+    fun `Change Password - Password mismatch`() =
+        testApplication {
+            testClient()
+                .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
+                    headers.append("Authorization", "Bearer $token")
+                    parameter("id", 2)
+                    setBody(
+                        ChangePasswordRequest(
+                            "SecurePass123!",
+                            "SecurePass123!",
+                            "notMatchingPass!",
+                        ),
+                    )
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.passwordMismatch.type)
+                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
 }

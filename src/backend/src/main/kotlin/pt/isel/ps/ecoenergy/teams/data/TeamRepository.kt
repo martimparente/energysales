@@ -1,6 +1,6 @@
-package pt.isel.ps.ecoenergy.team.data
+package pt.isel.ps.ecoenergy.teams.data
 
-import pt.isel.ps.ecoenergy.team.domain.model.Team
+import pt.isel.ps.ecoenergy.teams.domain.model.Team
 
 interface TeamRepository {
     suspend fun create(team: Team): Int

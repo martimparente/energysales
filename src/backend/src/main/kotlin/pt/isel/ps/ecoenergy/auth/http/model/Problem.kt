@@ -32,6 +32,55 @@ data class Problem(
 ) {
     companion object {
         private const val PROBLEM_URL = "https://github.com/martimparente/ecoenergy/docs/client-documentation/problems/"
+        val productAlreadyExists: Problem =
+            Problem(
+                "todo",
+                PROBLEM_URL + "todo.md",
+                "",
+            )
+        val productNotFound: Problem =
+            Problem(
+                "todo",
+                PROBLEM_URL + "todo.md",
+                "",
+            )
+        val productInfoIsInvalid: Problem =
+            Problem(
+                "todo",
+                PROBLEM_URL + "todo.md",
+                "",
+            )
+        val productEmailAlreadyInUse: Problem =
+            Problem(
+                "todo",
+                PROBLEM_URL + "todo.md",
+                "",
+            )
+
+        val todo: Problem =
+            Problem(
+                "todo",
+                PROBLEM_URL + "todo.md",
+                "",
+            )
+        val sellerNotFound: Problem =
+            Problem(
+                "sellerNotFound",
+                PROBLEM_URL + "sellerNotFound.md",
+                "",
+            )
+        val sellerInfoIsInvalid: Problem =
+            Problem(
+                "sellerInfoIsInvalid",
+                PROBLEM_URL + "sellerInfoIsInvalid.md",
+                "",
+            )
+        val sellerEmailAlreadyInUse: Problem =
+            Problem(
+                "sellerEmailAlreadyInUse",
+                PROBLEM_URL + "sellerEmailAlreadyInUse.md",
+                "",
+            )
 
         val badRequest: Problem =
             Problem(

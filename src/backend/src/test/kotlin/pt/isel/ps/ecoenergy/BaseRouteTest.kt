@@ -18,14 +18,19 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.AfterClass
+import org.junit.Assert
 import org.junit.BeforeClass
-import pt.isel.ps.ecoenergy.auth.data.Roles
+import pt.isel.ps.ecoenergy.auth.data.RoleTable
 import pt.isel.ps.ecoenergy.auth.data.UserRoles
-import pt.isel.ps.ecoenergy.auth.data.Users
+import pt.isel.ps.ecoenergy.auth.data.UserTable
 import pt.isel.ps.ecoenergy.auth.http.model.LoginRequest
 import pt.isel.ps.ecoenergy.auth.http.model.LoginResponse
-import pt.isel.ps.ecoenergy.team.data.PersonTable
-import pt.isel.ps.ecoenergy.team.data.TeamTable
+import pt.isel.ps.ecoenergy.products.data.ProductTable
+import pt.isel.ps.ecoenergy.sellers.data.PersonTable
+import pt.isel.ps.ecoenergy.sellers.data.Role
+import pt.isel.ps.ecoenergy.sellers.data.SellerTable
+import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
+import pt.isel.ps.ecoenergy.teams.data.TeamTable
 
 open class BaseRouteTest {
     companion object {
@@ -65,21 +70,18 @@ open class BaseRouteTest {
                     )
 
                     transaction {
-                        SchemaUtils.create(Users)
-                        SchemaUtils.create(Roles)
-                        SchemaUtils.create(UserRoles)
-                        SchemaUtils.create(TeamTable)
-                        SchemaUtils.create(PersonTable)
+                        SchemaUtils.drop(SellerTable, TeamTable, TeamSeller, PersonTable, UserRoles, RoleTable, UserTable, ProductTable)
+                        SchemaUtils.create(UserTable, RoleTable, UserRoles, TeamTable, PersonTable, SellerTable, TeamSeller, ProductTable)
 
-                        Users.insert {
+                        UserTable.insert {
                             it[username] = "testUser" // pass = "SecurePass123!"
                             it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
                             it[salt] = "c3f842f3630ebb3d96543709bc316402"
                         }
-                        Roles.insert {
+                        RoleTable.insert {
                             it[name] = "admin"
                         }
-                        Roles.insert {
+                        RoleTable.insert {
                             it[name] = "seller"
                         }
                         UserRoles.insert {
@@ -95,8 +97,19 @@ open class BaseRouteTest {
                                 it[name] = "Name $i"
                                 it[surname] = "Surname $i"
                                 it[email] = "$i@mail.com"
-                                it[role] = "Role $i"
+                                it[role] = Role.SELLER
                             }
+                            ProductTable.insert {
+                                it[name] = "Product $i"
+                            }
+                        }
+                        SellerTable.insert {
+                            it[id] = 1
+                            it[totalSales] = 0.0f
+                        }
+                        TeamSeller.insert {
+                            it[team] = 1
+                            it[seller] = 1
                         }
                     }
                     // Login to get the JWT token for testing authenticated routes
@@ -105,10 +118,9 @@ open class BaseRouteTest {
                             setBody(LoginRequest("testUser", "SecurePass123!"))
                         }.also { response ->
                             token = response.body<LoginResponse>().token
-                            println(token)
                         }
                 } catch (e: Exception) {
-                    println("Error connecting to the database: ${e.message}")
+                    Assert.fail("Error connecting to the database: ${e.message}")
                 }
             }
             log.info { "Test are ready to start" }
@@ -119,11 +131,7 @@ open class BaseRouteTest {
         fun afterTest() {
             log.info { "After test" }
             transaction {
-                SchemaUtils.drop(TeamTable)
-                SchemaUtils.drop(PersonTable)
-                SchemaUtils.drop(UserRoles)
-                SchemaUtils.drop(Roles)
-                SchemaUtils.drop(Users)
+                // SchemaUtils.drop(TeamSeller, SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable)
             }
         }
     }

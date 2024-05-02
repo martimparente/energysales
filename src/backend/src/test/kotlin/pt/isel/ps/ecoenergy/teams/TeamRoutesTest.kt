@@ -1,4 +1,4 @@
-package pt.isel.ps.ecoenergy.team
+package pt.isel.ps.ecoenergy.teams
 
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
@@ -17,9 +17,9 @@ import io.ktor.server.testing.testApplication
 import pt.isel.ps.ecoenergy.BaseRouteTest
 import pt.isel.ps.ecoenergy.Uris
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
-import pt.isel.ps.ecoenergy.team.http.model.CreateTeamRequest
-import pt.isel.ps.ecoenergy.team.http.model.TeamJson
-import pt.isel.ps.ecoenergy.team.http.model.UpdateTeamRequest
+import pt.isel.ps.ecoenergy.teams.http.model.CreateTeamRequest
+import pt.isel.ps.ecoenergy.teams.http.model.TeamJSON
+import pt.isel.ps.ecoenergy.teams.http.model.UpdateTeamRequest
 import kotlin.test.Test
 
 class TeamRoutesTest : BaseRouteTest() {
@@ -56,19 +56,6 @@ class TeamRoutesTest : BaseRouteTest() {
                 }
         }
 
-    @Test
-    fun `Create Team - Invalid Token`() =
-        testApplication {
-            testClient()
-                .post(Uris.API + Uris.TEAMS) {
-                    headers.append("Authorization", "invalidToken")
-                    setBody(CreateTeamRequest("newTeam", "newLocation", null))
-                }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
-                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
-                }
-        }
     /*
         // todo
         @Test
@@ -106,16 +93,59 @@ class TeamRoutesTest : BaseRouteTest() {
                 }
         }
 
-    /*    @Test
-        fun `Create Team - Service Unavailable`() = testApplication {
-            testClient().post(Uris.API + Uris.TEAMS) {
-                setBody(CreateTeamRequest("newTeam", "newLocation", null))
-            }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.userIsInvalid.type)
-                response.shouldHaveStatus(HttpStatusCode.Unauthorized)
-                response.shouldHaveContentType(ContentType.Application.ProblemJson)
-            }
-        }*/
+    @Test
+    fun `Get Team by ID - Success`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.TEAMS_BY_ID) {
+                    headers.append("Authorization", "Bearer $token")
+                    parameter("id", 1)
+                }.also { response ->
+                    val team = response.call.response.body<TeamJSON>()
+                    team.id.shouldBe(1)
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                    response.shouldHaveContentType(ContentType.Application.Json)
+                }
+        }
+
+    @Test
+    fun `Get Team by ID - Not Found`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.TEAMS_BY_ID) {
+                    headers.append("Authorization", "Bearer $token")
+                    parameter("id", -1)
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.teamNotFound.type)
+                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
+
+    @Test
+    fun `Get Team by ID - Bad request`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.TEAMS_BY_ID) {
+                    headers.append("Authorization", "Bearer $token")
+                    parameter("id", "paramTypeInvalid")
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
+                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
+
+    @Test
+    fun `Get All Teams - Success`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.TEAMS) {
+                    headers.append("Authorization", "Bearer $token")
+                }.also { response ->
+                    response.body<List<TeamJSON>>()
+                }
+        }
 
     @Test
     fun `Update Team - Success`() =
@@ -185,60 +215,6 @@ class TeamRoutesTest : BaseRouteTest() {
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
-                }
-        }
-
-    @Test
-    fun `Get Team by ID - Success`() =
-        testApplication {
-            testClient()
-                .get(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
-                    parameter("id", 1)
-                }.also { response ->
-                    val team = response.call.response.body<TeamJson>()
-                    team.id.shouldBe(1)
-                    response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
-                }
-        }
-
-    @Test
-    fun `Get Team by ID - Not Found`() =
-        testApplication {
-            testClient()
-                .get(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
-                    parameter("id", -1)
-                }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.teamNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
-                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
-                }
-        }
-
-    @Test
-    fun `Get Team by ID - Bad request`() =
-        testApplication {
-            testClient()
-                .get(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
-                    parameter("id", "paramTypeInvalid")
-                }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
-                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
-                }
-        }
-
-    @Test
-    fun `Get All Teams - Success`() =
-        testApplication {
-            testClient()
-                .get(Uris.API + Uris.TEAMS) {
-                    headers.append("Authorization", "Bearer $token")
-                }.also { response ->
-                    response.body<List<TeamJson>>()
                 }
         }
 

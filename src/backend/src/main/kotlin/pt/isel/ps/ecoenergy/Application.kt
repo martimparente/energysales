@@ -23,9 +23,15 @@ import pt.isel.ps.ecoenergy.auth.http.authRoutes
 import pt.isel.ps.ecoenergy.plugins.configureDatabases
 import pt.isel.ps.ecoenergy.plugins.configureHTTP
 import pt.isel.ps.ecoenergy.plugins.configureSerialization
-import pt.isel.ps.ecoenergy.team.data.PsqlTeamRepository
-import pt.isel.ps.ecoenergy.team.domain.service.TeamService
-import pt.isel.ps.ecoenergy.team.http.teamRoutes
+import pt.isel.ps.ecoenergy.products.data.PsqlProductRepository
+import pt.isel.ps.ecoenergy.products.domain.service.ProductService
+import pt.isel.ps.ecoenergy.products.http.productRoutes
+import pt.isel.ps.ecoenergy.sellers.data.PsqlSellerRepository
+import pt.isel.ps.ecoenergy.sellers.domain.service.SellerService
+import pt.isel.ps.ecoenergy.sellers.http.sellerRoutes
+import pt.isel.ps.ecoenergy.teams.data.PsqlTeamRepository
+import pt.isel.ps.ecoenergy.teams.domain.service.TeamService
+import pt.isel.ps.ecoenergy.teams.http.teamRoutes
 
 fun main(args: Array<String>) = EngineMain.main(args)
 
@@ -48,6 +54,16 @@ fun Application.module() {
             teamRepository = PsqlTeamRepository(),
         )
     }
+    val sellerService by lazy {
+        SellerService(
+            sellerRepository = PsqlSellerRepository(),
+        )
+    }
+    val productService by lazy {
+        ProductService(
+            productRepository = PsqlProductRepository(),
+        )
+    }
 
     install(Resources)
     install(CallLogging) {
@@ -66,6 +82,8 @@ fun Application.module() {
 
             authenticate {
                 teamRoutes(teamService)
+                sellerRoutes(sellerService)
+                productRoutes(productService)
                 get(Uris.HOME) {
                     call.respondText("Hello, world!")
                 }
