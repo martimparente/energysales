@@ -15,6 +15,7 @@ import pt.isel.ps.ecoenergy.products.data.ProductTable
 import pt.isel.ps.ecoenergy.sellers.data.PersonTable
 import pt.isel.ps.ecoenergy.sellers.data.SellerTable
 import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
+import pt.isel.ps.ecoenergy.teams.data.LocationTable
 import pt.isel.ps.ecoenergy.teams.data.TeamTable
 
 // Todo use environment variables to store the database credentials
@@ -40,7 +41,10 @@ fun Application.configureDatabases() {
 
         transaction {
             log.atInfo().log("Database connected - jdbcURL: $jdbcURL")
-            SchemaUtils.create(UserTable, RoleTable, UserRoles, TeamTable, PersonTable, SellerTable, TeamSeller, ProductTable)
+            SchemaUtils.create(
+                UserTable, RoleTable, UserRoles, TeamTable, PersonTable, SellerTable, TeamSeller, ProductTable,
+                LocationTable,
+            )
         }
     } catch (e: Exception) {
         println("Error connecting to the database: ${e.message}")

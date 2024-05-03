@@ -16,6 +16,7 @@ import io.ktor.server.routing.Route
 import pt.isel.ps.ecoenergy.Uris
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
 import pt.isel.ps.ecoenergy.auth.http.model.respondProblem
+import pt.isel.ps.ecoenergy.teams.domain.model.Location
 import pt.isel.ps.ecoenergy.teams.domain.model.Person
 import pt.isel.ps.ecoenergy.teams.domain.model.Team
 import pt.isel.ps.ecoenergy.teams.domain.service.TeamCreationError
@@ -47,7 +48,7 @@ fun Route.teamRoutes(teamService: TeamService) {
     post<TeamResource> {
         val body = call.receive<CreateTeamRequest>()
 
-        val res = teamService.createTeam(body.name, body.location, body.manager)
+        val res = teamService.createTeam(body.name, body.location.district, body.manager)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -77,7 +78,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             Team(
                 id = pathParams.id,
                 name = body.name,
-                location = body.location,
+                location = Location(body.location.district),
                 manager = body.manager?.let { Person.create(it) },
             )
         val res = teamService.updateTeam(updatedTeam)

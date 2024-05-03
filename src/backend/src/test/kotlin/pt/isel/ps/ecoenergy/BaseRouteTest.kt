@@ -30,6 +30,7 @@ import pt.isel.ps.ecoenergy.sellers.data.PersonTable
 import pt.isel.ps.ecoenergy.sellers.data.Role
 import pt.isel.ps.ecoenergy.sellers.data.SellerTable
 import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
+import pt.isel.ps.ecoenergy.teams.data.LocationTable
 import pt.isel.ps.ecoenergy.teams.data.TeamTable
 
 open class BaseRouteTest {
@@ -70,8 +71,16 @@ open class BaseRouteTest {
                     )
 
                     transaction {
-                        SchemaUtils.drop(SellerTable, TeamTable, TeamSeller, PersonTable, UserRoles, RoleTable, UserTable, ProductTable)
-                        SchemaUtils.create(UserTable, RoleTable, UserRoles, TeamTable, PersonTable, SellerTable, TeamSeller, ProductTable)
+                        SchemaUtils
+                            .drop(
+                                SellerTable, TeamTable, TeamSeller, PersonTable,
+                                UserRoles, RoleTable, UserTable, ProductTable, LocationTable,
+                            )
+                        SchemaUtils
+                            .create(
+                                UserTable, RoleTable,
+                                UserRoles, TeamTable, PersonTable, SellerTable, TeamSeller, ProductTable, LocationTable,
+                            )
 
                         UserTable.insert {
                             it[username] = "testUser" // pass = "SecurePass123!"
@@ -89,9 +98,12 @@ open class BaseRouteTest {
                             it[roleId] = 2
                         }
                         for (i in 1..3) {
+                            LocationTable.insert {
+                                it[district] = "Team $i"
+                            }
                             TeamTable.insert {
                                 it[name] = "Team $i"
-                                it[location] = "Location $i"
+                                it[location] = i
                             }
                             PersonTable.insert {
                                 it[name] = "Name $i"

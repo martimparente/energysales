@@ -10,21 +10,32 @@ import pt.isel.ps.ecoenergy.sellers.data.PersonEntity
 import pt.isel.ps.ecoenergy.sellers.data.PersonTable
 import pt.isel.ps.ecoenergy.sellers.data.SellerEntity
 import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
+import pt.isel.ps.ecoenergy.teams.domain.model.Location
 import pt.isel.ps.ecoenergy.teams.domain.model.Person
 import pt.isel.ps.ecoenergy.teams.domain.model.Team
 
-fun TeamEntity.toTeam() =
-    Team(
-        id.value,
-        name,
-        location,
-        manager?.let { Person(it.id.value, it.name, it.surname, it.email, it.role.toString()) },
-    )
-
 object TeamTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()
-    val location = varchar("location", 50)
+    val location = reference("location", LocationTable)
     val manager = reference("manager", PersonTable).nullable()
+}
+
+object LocationTable : IntIdTable() {
+    val district = varchar("district", 50).uniqueIndex()
+}
+
+class LocationEntity(
+    id: EntityID<Int>,
+) : Entity<Int>(id) {
+    companion object : EntityClass<Int, LocationEntity>(LocationTable)
+
+    fun toLocation() =
+        Location(
+            district,
+        )
+
+    var district by LocationTable.district
+    val teams by TeamEntity referrersOn TeamTable.location
 }
 
 class TeamEntity(
@@ -32,8 +43,16 @@ class TeamEntity(
 ) : Entity<Int>(id) {
     companion object : EntityClass<Int, TeamEntity>(TeamTable)
 
+    fun toTeam() =
+        Team(
+            id.value,
+            name,
+            location.toLocation(),
+            manager?.let { Person(it.id.value, it.name, it.surname, it.email, it.role.toString()) },
+        )
+
     var name by TeamTable.name
-    var location by TeamTable.location
+    var location by LocationEntity referencedOn TeamTable.location
     var manager by PersonEntity optionalReferencedOn TeamTable.manager
     var sellers by SellerEntity.via(TeamSeller.team, TeamSeller.seller)
 }
@@ -66,16 +85,19 @@ class PsqlTeamRepository : TeamRepository {
 
     override suspend fun create(team: Team): Int =
         dbQuery {
-            val newTeam =
-                TeamEntity.new {
+            TeamEntity
+                .new {
                     name = team.name
-                    location = team.location
+                    location =
+                        LocationEntity.new {
+                            district = team.location.district
+                        }
                     manager =
                         team.manager?.let {
                             PersonEntity.findById(it.uid)
                         }
-                }
-            newTeam.id.value
+                }.id
+                .value
         }
 
     override suspend fun getAll(): List<Team> =
@@ -102,10 +124,12 @@ class PsqlTeamRepository : TeamRepository {
         dbQuery {
             TeamEntity
                 .findById(team.id)
-                ?.also { teamEntity ->
-                    teamEntity.name = team.name
-                    teamEntity.location = team.location
-                    teamEntity.manager = team.manager?.let { PersonEntity.findById(it.uid) }
+                ?.also {
+                    it.name = team.name
+                    it.location = LocationEntity.findById(it.location.id.value) ?: LocationEntity.new {
+                        district = team.location.district
+                    }
+                    it.manager = team.manager?.let { PersonEntity.findById(it.uid) }
                 }?.toTeam()
         }
 

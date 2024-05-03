@@ -18,6 +18,7 @@ import pt.isel.ps.ecoenergy.BaseRouteTest
 import pt.isel.ps.ecoenergy.Uris
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
 import pt.isel.ps.ecoenergy.teams.http.model.CreateTeamRequest
+import pt.isel.ps.ecoenergy.teams.http.model.LocationJSON
 import pt.isel.ps.ecoenergy.teams.http.model.TeamJSON
 import pt.isel.ps.ecoenergy.teams.http.model.UpdateTeamRequest
 import kotlin.test.Test
@@ -29,7 +30,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.TEAMS) {
                     headers.append("Authorization", "Bearer $token")
-                    setBody(CreateTeamRequest("newTeam", "newLocation", null))
+                    setBody(CreateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.TEAMS}/4")
                     response.shouldHaveStatus(HttpStatusCode.Created)
@@ -48,7 +49,7 @@ class TeamRoutesTest : BaseRouteTest() {
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateTeamRequest("newTeam", "newLocation", null))
+                    setBody(CreateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -85,7 +86,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.TEAMS) {
                     headers.append("Authorization", "Bearer $token")
-                    setBody(CreateTeamRequest("Team 1", "newLocation", null))
+                    setBody(CreateTeamRequest("Team 1", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.teamAlreadyExists.type)
                     response.shouldHaveStatus(HttpStatusCode.Conflict)
@@ -154,7 +155,7 @@ class TeamRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", 2)
-                    setBody(UpdateTeamRequest("updatedTeam", "newLocation", null))
+                    setBody(UpdateTeamRequest("updatedTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
@@ -167,7 +168,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
                     parameter("id", 2)
-                    setBody(UpdateTeamRequest("newTeam", "newLocation", null))
+                    setBody(UpdateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -195,7 +196,7 @@ class TeamRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", -1)
-                    setBody(UpdateTeamRequest("nonExistingTeam", "newLocation", null))
+                    setBody(UpdateTeamRequest("nonExistingTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.teamNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -210,7 +211,7 @@ class TeamRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", "abc")
-                    setBody(UpdateTeamRequest("", "newLocation", null))
+                    setBody(UpdateTeamRequest("", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

@@ -5,6 +5,8 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.ecoenergy.teams.data.TeamRepository
+import pt.isel.ps.ecoenergy.teams.data.TeamTable.location
+import pt.isel.ps.ecoenergy.teams.domain.model.Location
 import pt.isel.ps.ecoenergy.teams.domain.model.Person
 import pt.isel.ps.ecoenergy.teams.domain.model.Team
 
@@ -14,15 +16,15 @@ class TeamService(
     // Create
     suspend fun createTeam(
         name: String,
-        location: String,
+        district: String,
         manager: Int?,
     ): TeamCreationResult =
         either {
             ensure(name.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
-            ensure(location.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
+            ensure(district.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
             ensure(!teamRepository.teamExistsByName(name)) { TeamCreationError.TeamAlreadyExists }
 
-            teamRepository.create(Team(-1, name, location, if (manager != null) Person.create(manager) else null))
+            teamRepository.create(Team(-1, name, Location(district), if (manager != null) Person.create(manager) else null))
         }
 
     // Read
@@ -41,7 +43,7 @@ class TeamService(
     suspend fun updateTeam(team: Team): TeamUpdatingResult =
         either {
             ensure(team.name.length in 3..50) { TeamUpdatingError.TeamInfoIsInvalid }
-            ensure(team.location.length in 3..50) { TeamUpdatingError.TeamInfoIsInvalid }
+            ensure(team.location.district.length in 3..50) { TeamUpdatingError.TeamInfoIsInvalid }
             ensure(teamRepository.teamExists(team.id)) { TeamUpdatingError.TeamNotFound }
             val updatedTeam = teamRepository.update(team)
             ensureNotNull(updatedTeam) { TeamUpdatingError.TeamNotFound } // todo check if this is necessary
