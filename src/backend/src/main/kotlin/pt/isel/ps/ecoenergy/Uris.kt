@@ -34,7 +34,7 @@ object Uris {
     const val TEAMS = "/teams"
     const val TEAMS_BY_ID = "$TEAMS/{id}"
     const val TEAMS_HOME = "$TEAMS/me"
-    const val TEAMS_MEMBERS = "$TEAMS/members"
+    const val TEAMS_SELLERS = "$TEAMS/{id}/sellers"
     const val TEAMS_MEMBER = "$TEAMS/members/{memberId}"
     const val TEAMS_PROJECTS = "$TEAMS/projects"
 

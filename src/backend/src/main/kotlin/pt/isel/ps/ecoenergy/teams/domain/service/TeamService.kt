@@ -4,8 +4,8 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import pt.isel.ps.ecoenergy.sellers.domain.model.Seller
 import pt.isel.ps.ecoenergy.teams.data.TeamRepository
-import pt.isel.ps.ecoenergy.teams.data.TeamTable.location
 import pt.isel.ps.ecoenergy.teams.domain.model.Location
 import pt.isel.ps.ecoenergy.teams.domain.model.Person
 import pt.isel.ps.ecoenergy.teams.domain.model.Team
@@ -55,12 +55,20 @@ class TeamService(
             ensureNotNull(team) { TeamDeletingError.TeamNotFound }
             teamRepository.delete(team)
         }
+
+    suspend fun getTeamSellers(id: Int): TeamSellersReadingResult =
+        either {
+            ensure(teamRepository.teamExists(id)) { TeamSellersReadingError.TeamNotFound }
+            teamRepository.getTeamSellers(id)
+        }
 }
 
 typealias TeamCreationResult = Either<TeamCreationError, Int>
 typealias TeamReadingResult = Either<TeamReadingError, Team>
 typealias TeamUpdatingResult = Either<TeamUpdatingError, Team>
 typealias TeamDeletingResult = Either<TeamDeletingError, Boolean>
+
+typealias TeamSellersReadingResult = Either<TeamSellersReadingError, List<Seller>>
 
 sealed interface TeamCreationError {
     data object TeamAlreadyExists : TeamCreationError
@@ -84,4 +92,8 @@ sealed interface TeamDeletingError {
     data object TeamNotFound : TeamDeletingError
 
     data object TeamInfoIsInvalid : TeamDeletingError
+}
+
+sealed interface TeamSellersReadingError {
+    data object TeamNotFound : TeamSellersReadingError
 }

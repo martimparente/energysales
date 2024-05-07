@@ -7,14 +7,14 @@ import pt.isel.ps.ecoenergy.sellers.domain.model.Seller
 data class SellerJSON(
     val person: PersonJSON,
     val totalSales: Float,
-    val teams: List<Int>,
+    val team: Int?,
 ) {
     companion object {
         fun fromSeller(seller: Seller) =
             SellerJSON(
                 PersonJSON.fromPerson(seller.person),
                 seller.totalSales,
-                seller.teams,
+                seller.team,
             )
     }
 }
@@ -24,7 +24,7 @@ data class CreateSellerRequest(
     val name: String,
     val surname: String,
     val email: String,
-    val teams: List<Int>,
+    val team: Int? = null,
 )
 
 @Serializable
@@ -33,5 +33,5 @@ data class UpdateSellerRequest(
     val surname: String,
     val email: String,
     val totalSales: Float,
-    val teams: List<Int>,
+    val team: Int? = null,
 )

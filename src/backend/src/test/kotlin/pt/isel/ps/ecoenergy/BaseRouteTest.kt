@@ -29,7 +29,6 @@ import pt.isel.ps.ecoenergy.products.data.ProductTable
 import pt.isel.ps.ecoenergy.sellers.data.PersonTable
 import pt.isel.ps.ecoenergy.sellers.data.Role
 import pt.isel.ps.ecoenergy.sellers.data.SellerTable
-import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
 import pt.isel.ps.ecoenergy.teams.data.LocationTable
 import pt.isel.ps.ecoenergy.teams.data.TeamTable
 
@@ -59,9 +58,11 @@ open class BaseRouteTest {
         fun beforeTest() {
             log.info { "Before test" }
             testApplication {
+                // Load the application-test.conf file to use the test database
                 environment {
                     config = ApplicationConfig("application-test.conf")
                 }
+                // Connect to the test database
                 try {
                     Database.connect(
                         url = "jdbc:postgresql://localhost:5434/testing_db",
@@ -69,17 +70,29 @@ open class BaseRouteTest {
                         user = "testing_user",
                         password = "testing_password",
                     )
-
+                    // Create the tables and insert the data needed for the tests
                     transaction {
                         SchemaUtils
                             .drop(
-                                SellerTable, TeamTable, TeamSeller, PersonTable,
-                                UserRoles, RoleTable, UserTable, ProductTable, LocationTable,
+                                SellerTable,
+                                TeamTable,
+                                PersonTable,
+                                UserRoles,
+                                RoleTable,
+                                UserTable,
+                                ProductTable,
+                                LocationTable,
                             )
                         SchemaUtils
                             .create(
-                                UserTable, RoleTable,
-                                UserRoles, TeamTable, PersonTable, SellerTable, TeamSeller, ProductTable, LocationTable,
+                                UserTable,
+                                RoleTable,
+                                UserRoles,
+                                TeamTable,
+                                PersonTable,
+                                SellerTable,
+                                ProductTable,
+                                LocationTable,
                             )
 
                         UserTable.insert {
@@ -114,14 +127,10 @@ open class BaseRouteTest {
                             ProductTable.insert {
                                 it[name] = "Product $i"
                             }
-                        }
-                        SellerTable.insert {
-                            it[id] = 1
-                            it[totalSales] = 0.0f
-                        }
-                        TeamSeller.insert {
-                            it[team] = 1
-                            it[seller] = 1
+                            SellerTable.insert {
+                                it[id] = i
+                                it[totalSales] = 0.0f
+                            }
                         }
                     }
                     // Login to get the JWT token for testing authenticated routes
@@ -143,7 +152,7 @@ open class BaseRouteTest {
         fun afterTest() {
             log.info { "After test" }
             transaction {
-                // SchemaUtils.drop(TeamSeller, SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable)
+                SchemaUtils.drop(SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable)
             }
         }
     }

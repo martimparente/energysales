@@ -80,7 +80,7 @@ fun Route.sellerRoutes(sellerService: SellerService) {
             Seller(
                 Person(pathParams.id, body.name, body.surname, body.email),
                 totalSales = body.totalSales,
-                teams = body.teams,
+                team = body.team,
             )
         val res = sellerService.updateSeller(updatedSeller)
         when (res) {

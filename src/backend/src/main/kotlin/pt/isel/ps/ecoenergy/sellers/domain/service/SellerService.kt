@@ -28,7 +28,7 @@ class SellerService(
                 Seller(
                     person = Person(-1, name, surname, email, Role.SELLER),
                     totalSales = 0.0f,
-                    teams = emptyList(),
+                    team = null,
                 ),
             )
         }

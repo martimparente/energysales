@@ -9,7 +9,8 @@ import pt.isel.ps.ecoenergy.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.ecoenergy.sellers.data.PersonEntity
 import pt.isel.ps.ecoenergy.sellers.data.PersonTable
 import pt.isel.ps.ecoenergy.sellers.data.SellerEntity
-import pt.isel.ps.ecoenergy.sellers.data.TeamSeller
+import pt.isel.ps.ecoenergy.sellers.data.SellerTable
+import pt.isel.ps.ecoenergy.sellers.domain.model.Seller
 import pt.isel.ps.ecoenergy.teams.domain.model.Location
 import pt.isel.ps.ecoenergy.teams.domain.model.Person
 import pt.isel.ps.ecoenergy.teams.domain.model.Team
@@ -54,7 +55,7 @@ class TeamEntity(
     var name by TeamTable.name
     var location by LocationEntity referencedOn TeamTable.location
     var manager by PersonEntity optionalReferencedOn TeamTable.manager
-    var sellers by SellerEntity.via(TeamSeller.team, TeamSeller.seller)
+    val sellers by SellerEntity optionalReferrersOn SellerTable.team
 }
 
 class PsqlTeamRepository : TeamRepository {
@@ -140,5 +141,14 @@ class PsqlTeamRepository : TeamRepository {
                 .firstOrNull()
                 ?.delete() ?: false
             true
+        }
+
+    override suspend fun getTeamSellers(id: Int): List<Seller> =
+        dbQuery {
+            TeamEntity
+                .findById(id)
+                ?.sellers
+                ?.map { it.toSeller() }
+                ?: emptyList()
         }
 }

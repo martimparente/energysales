@@ -29,7 +29,7 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
                     headers.append("Authorization", "Bearer $token")
-                    setBody(CreateSellerRequest("name", "surname", "email@email", emptyList()))
+                    setBody(CreateSellerRequest("name", "surname", "email@email"))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/4")
                     response.shouldHaveStatus(HttpStatusCode.Created)
@@ -48,7 +48,7 @@ class SellerRoutesTest : BaseRouteTest() {
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateSellerRequest("newSeller", "newLocation", "test@test.pt", emptyList()))
+                    setBody(CreateSellerRequest("newSeller", "newLocation", "test@test.pt"))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -85,7 +85,7 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
                     headers.append("Authorization", "Bearer $token")
-                    setBody(CreateSellerRequest("name", "surname", "1@mail.com", emptyList()))
+                    setBody(CreateSellerRequest("name", "surname", "1@mail.com"))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.sellerEmailAlreadyInUse.type)
                     response.shouldHaveStatus(HttpStatusCode.Conflict)
@@ -144,6 +144,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $token")
                 }.also { response ->
                     response.body<List<SellerJSON>>()
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -154,7 +156,7 @@ class SellerRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", 1)
-                    setBody(UpdateSellerRequest("newSeller", "newLocation", "1@mail.com", 0.0f, emptyList()))
+                    setBody(UpdateSellerRequest("newSeller", "newLocation", "1@mail.com", 0.0f))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
@@ -167,7 +169,7 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
                     parameter("id", 2)
-                    setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f, emptyList()))
+                    setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -195,7 +197,7 @@ class SellerRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", -1)
-                    setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f, emptyList()))
+                    setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.sellerNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -210,7 +212,7 @@ class SellerRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", "abc")
-                    setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f, emptyList()))
+                    setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
@@ -224,7 +226,7 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
-                    parameter("id", 1)
+                    parameter("id", 3)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NoContent)
                 }
@@ -236,7 +238,7 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Invalid Token")
-                    parameter("id", 1)
+                    parameter("id", 3)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
                 }

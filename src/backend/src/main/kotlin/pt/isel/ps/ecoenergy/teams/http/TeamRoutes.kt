@@ -16,11 +16,13 @@ import io.ktor.server.routing.Route
 import pt.isel.ps.ecoenergy.Uris
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
 import pt.isel.ps.ecoenergy.auth.http.model.respondProblem
+import pt.isel.ps.ecoenergy.sellers.http.model.SellerJSON
 import pt.isel.ps.ecoenergy.teams.domain.model.Location
 import pt.isel.ps.ecoenergy.teams.domain.model.Person
 import pt.isel.ps.ecoenergy.teams.domain.model.Team
 import pt.isel.ps.ecoenergy.teams.domain.service.TeamCreationError
 import pt.isel.ps.ecoenergy.teams.domain.service.TeamDeletingError
+import pt.isel.ps.ecoenergy.teams.domain.service.TeamSellersReadingError
 import pt.isel.ps.ecoenergy.teams.domain.service.TeamService
 import pt.isel.ps.ecoenergy.teams.domain.service.TeamUpdatingError
 import pt.isel.ps.ecoenergy.teams.http.model.CreateTeamRequest
@@ -35,7 +37,12 @@ class TeamResource(
     class Id(
         val parent: TeamResource = TeamResource(),
         val id: Int,
-    )
+    ) {
+        @Resource(Uris.SELLERS)
+        class Sellers(
+            val parent: Id,
+        )
+    }
 }
 
 fun Route.teamRoutes(teamService: TeamService) {
@@ -70,6 +77,21 @@ fun Route.teamRoutes(teamService: TeamService) {
         val teamJson = TeamJSON.fromTeam(team)
         call.response.status(HttpStatusCode.OK)
         call.respond(teamJson)
+    }
+
+    get<TeamResource.Id.Sellers> { pathParams ->
+        val res = teamService.getTeamSellers(pathParams.parent.id)
+        when (res) {
+            is Right -> {
+                val sellersJson = res.value.map { seller -> SellerJSON.fromSeller(seller) }
+                call.respond(sellersJson)
+            }
+
+            is Left ->
+                when (res.value) {
+                    TeamSellersReadingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                }
+        }
     }
 
     put<TeamResource.Id> { pathParams ->

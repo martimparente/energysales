@@ -8,7 +8,6 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.Table
 import pt.isel.ps.ecoenergy.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.ecoenergy.sellers.domain.model.Person
 import pt.isel.ps.ecoenergy.sellers.domain.model.Seller
@@ -26,13 +25,8 @@ object PersonTable : IntIdTable() {
 
 object SellerTable : IdTable<Int>() {
     val totalSales = float("total_sales").default(0.0f)
+    val team = reference("team_id", TeamTable.id, ReferenceOption.SET_NULL).nullable()
     override val id: Column<EntityID<Int>> = reference("person_id", PersonTable.id).uniqueIndex()
-}
-
-object TeamSeller : Table() {
-    val team = reference("team_id", TeamTable.id, onDelete = ReferenceOption.CASCADE).uniqueIndex()
-    val seller = reference("person_id", SellerTable.id, onDelete = ReferenceOption.CASCADE).uniqueIndex()
-    override val primaryKey = PrimaryKey(team, seller)
 }
 
 open class PersonEntity(
@@ -64,12 +58,12 @@ class SellerEntity(
         Seller(
             person.toPerson(),
             totalSales,
-            teams.map { id.value },
+            team?.id?.value,
         )
 
     var person by PersonEntity referencedOn SellerTable.id
+    var team by TeamEntity optionalReferencedOn SellerTable.team
     var totalSales by SellerTable.totalSales
-    var teams by TeamEntity.via(TeamSeller.seller, TeamSeller.team)
 }
 
 class PsqlSellerRepository : SellerRepository {
@@ -92,7 +86,7 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun create(seller: Seller): Int =
         dbQuery {
-            var person =
+            val person =
                 PersonEntity.new {
                     name = seller.person.name
                     surname = seller.person.surname
@@ -111,8 +105,8 @@ class PsqlSellerRepository : SellerRepository {
         dbQuery {
             SellerEntity
                 .all()
-                .with(SellerEntity::teams)
-                .map { Seller(it.person.toPerson(), it.totalSales, it.teams.map { team -> team.id.value }) } // todo teams empty?
+                .with(SellerEntity::team)
+                .map { Seller(it.person.toPerson(), it.totalSales, it.team?.id?.value) } // todo teams empty?
                 .toList()
         }
 
@@ -146,9 +140,9 @@ class PsqlSellerRepository : SellerRepository {
                     sellerEntity.person.surname = seller.person.surname
                     sellerEntity.person.email = seller.person.email
                     sellerEntity.totalSales = seller.totalSales
-                    sellerEntity.teams = TeamEntity.forIds(seller.teams)
+                    sellerEntity.team = seller.team?.let { TeamEntity.findById(it) }
                 }
-            Seller(seller.person, seller.totalSales, seller.teams)
+            Seller(seller.person, seller.totalSales, seller.team)
         }
 
     override suspend fun delete(seller: Seller): Boolean =

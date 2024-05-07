@@ -1,5 +1,6 @@
 package pt.isel.ps.ecoenergy.teams.data
 
+import pt.isel.ps.ecoenergy.sellers.domain.model.Seller
 import pt.isel.ps.ecoenergy.teams.domain.model.Team
 
 interface TeamRepository {
@@ -23,4 +24,6 @@ interface TeamRepository {
     suspend fun update(team: Team): Team?
 
     suspend fun delete(team: Team): Boolean
+
+    suspend fun getTeamSellers(id: Int): List<Seller>
 }

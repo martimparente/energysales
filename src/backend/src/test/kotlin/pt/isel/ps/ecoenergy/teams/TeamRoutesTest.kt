@@ -237,7 +237,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Invalid Token")
-                    parameter("id", 1)
+                    parameter("id", 3)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
                 }
@@ -245,18 +245,6 @@ class TeamRoutesTest : BaseRouteTest() {
 
     @Test
     fun `Delete Team - Not Found`() =
-        testApplication {
-            testClient()
-                .delete(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
-                    parameter("id", -1)
-                }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
-                }
-        }
-
-    @Test
-    fun `Delete Team - Team Not Found`() =
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
@@ -278,4 +266,18 @@ class TeamRoutesTest : BaseRouteTest() {
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
                 }
         }
+
+   /* @Test
+    fun `Get Team Sellers - Success`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.TEAMS_SELLERS) {
+                    headers.append("Authorization", "Bearer $token")
+                    parameter("id", "1")
+                }.also { response ->
+                    response.body<List<SellerJSON>>()
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                    response.shouldHaveContentType(ContentType.Application.Json)
+                }
+        }*/
 }
