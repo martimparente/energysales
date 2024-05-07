@@ -10,6 +10,9 @@ import pt.isel.ps.ecoenergy.products.domain.model.Product
 
 object ProductTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()
+    val price = double("price")
+    val description = varchar("description", 255)
+    val image = varchar("image", 255)
 }
 
 class ProductEntity(
@@ -17,9 +20,12 @@ class ProductEntity(
 ) : IntEntity(id) {
     companion object : IntEntityClass<ProductEntity>(ProductTable)
 
-    fun toProduct() = Product(id.value, name)
+    fun toProduct() = Product(id.value, name, price, description, image)
 
     var name by ProductTable.name
+    var price by ProductTable.price
+    var description by ProductTable.description
+    var image by ProductTable.image
 }
 
 class PsqlProductRepository : ProductRepository {
@@ -45,8 +51,10 @@ class PsqlProductRepository : ProductRepository {
             ProductEntity
                 .new {
                     name = product.name
-                }.id
-                .value
+                    price = product.price
+                    description = product.description
+                    image = product.image
+                }.id.value
         }
 
     override suspend fun getAll(): List<Product> =

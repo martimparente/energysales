@@ -17,6 +17,7 @@ import io.ktor.server.testing.testApplication
 import pt.isel.ps.ecoenergy.BaseRouteTest
 import pt.isel.ps.ecoenergy.Uris
 import pt.isel.ps.ecoenergy.auth.http.model.Problem
+import pt.isel.ps.ecoenergy.sellers.http.model.SellerJSON
 import pt.isel.ps.ecoenergy.teams.http.model.CreateTeamRequest
 import pt.isel.ps.ecoenergy.teams.http.model.LocationJSON
 import pt.isel.ps.ecoenergy.teams.http.model.TeamJSON
@@ -267,7 +268,7 @@ class TeamRoutesTest : BaseRouteTest() {
                 }
         }
 
-   /* @Test
+    @Test
     fun `Get Team Sellers - Success`() =
         testApplication {
             testClient()
@@ -279,5 +280,5 @@ class TeamRoutesTest : BaseRouteTest() {
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }
-        }*/
+        }
 }

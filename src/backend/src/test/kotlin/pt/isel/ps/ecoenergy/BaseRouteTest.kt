@@ -126,6 +126,9 @@ open class BaseRouteTest {
                             }
                             ProductTable.insert {
                                 it[name] = "Product $i"
+                                it[price] = 0.0
+                                it[description] = "Description $i"
+                                it[image] = "Image $i"
                             }
                             SellerTable.insert {
                                 it[id] = i

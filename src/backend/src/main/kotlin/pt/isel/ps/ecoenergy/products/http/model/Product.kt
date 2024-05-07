@@ -20,9 +20,15 @@ data class ProductJSON(
 @Serializable
 data class CreateProductRequest(
     val name: String,
+    val price: Double,
+    val description: String,
+    val image: String,
 )
 
 @Serializable
 data class UpdateProductRequest(
     val name: String,
+    val price: Double,
+    val description: String,
+    val image: String,
 )

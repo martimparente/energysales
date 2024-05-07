@@ -145,7 +145,7 @@ class PsqlTeamRepository : TeamRepository {
 
     override suspend fun getTeamSellers(id: Int): List<Seller> =
         dbQuery {
-            TeamEntity
+           TeamEntity
                 .findById(id)
                 ?.sellers
                 ?.map { it.toSeller() }

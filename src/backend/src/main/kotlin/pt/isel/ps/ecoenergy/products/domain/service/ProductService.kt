@@ -11,13 +11,13 @@ class ProductService(
     private val productRepository: ProductRepository,
 ) {
     // Create
-    suspend fun createProduct(name: String): ProductCreationResult =
+    suspend fun createProduct(name: String, price: Double, description: String, image: String): ProductCreationResult =
         either {
             ensure(name.length in 2..16) { ProductCreationError.ProductNameIsInvalid }
             ensure(!productRepository.productExistsByName(name)) { ProductCreationError.ProductAlreadyExists }
 
             productRepository.create(
-                Product(id = -1, name = name),
+                Product(-1, name, 0.0, "", ""),
             )
         }
 
