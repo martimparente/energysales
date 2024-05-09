@@ -54,7 +54,8 @@ class PsqlProductRepository : ProductRepository {
                     price = product.price
                     description = product.description
                     image = product.image
-                }.id.value
+                }.id
+                .value
         }
 
     override suspend fun getAll(): List<Product> =

@@ -1,10 +1,12 @@
 package pt.isel.ps.ecoenergy.plugins
 
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.plugins.swagger.swaggerUI
@@ -36,4 +38,13 @@ fun Application.configureHTTP() {
     install(DefaultHeaders) {
         header("Content-Type", ContentType.Application.Json.toString())
     }
+
+    install(CORS) {
+        anyHost()
+        allowHeaders { true }
+        HttpMethod.DefaultMethods.forEach { method(it) }
+    }
+}
+
+fun method(options: HttpMethod) {
 }

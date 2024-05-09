@@ -112,7 +112,7 @@ open class BaseRouteTest {
                         }
                         for (i in 1..3) {
                             LocationTable.insert {
-                                it[district] = "Team $i"
+                                it[district] = "Location $i"
                             }
                             TeamTable.insert {
                                 it[name] = "Team $i"

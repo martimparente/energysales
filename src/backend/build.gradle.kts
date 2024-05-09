@@ -59,6 +59,7 @@ dependencies {
     // HTTP
     implementation("io.ktor:ktor-server-default-headers-jvm")
     implementation("io.ktor:ktor-server-status-pages-jvm")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
 
     // Arrow - Functional Programming Library
     implementation("io.arrow-kt:arrow-core:1.2.1")
