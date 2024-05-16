@@ -114,7 +114,7 @@ class PsqlTeamRepository : TeamRepository {
     ): List<Team> =
         dbQuery {
             TeamEntity
-                .find { TeamTable.id greaterEq (lastKeySeen ?: 0) }
+                .find { TeamTable.id greater (lastKeySeen ?: 0) }
                 .orderBy(TeamTable.id to SortOrder.ASC)
                 .limit(pageSize)
                 .map { it.toTeam() }

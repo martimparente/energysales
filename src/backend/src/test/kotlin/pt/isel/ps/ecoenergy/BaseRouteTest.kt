@@ -72,17 +72,8 @@ open class BaseRouteTest {
                     )
                     // Create the tables and insert the data needed for the tests
                     transaction {
-                        SchemaUtils
-                            .drop(
-                                SellerTable,
-                                TeamTable,
-                                PersonTable,
-                                UserRoles,
-                                RoleTable,
-                                UserTable,
-                                ProductTable,
-                                LocationTable,
-                            )
+                       SchemaUtils.drop(SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable, ProductTable, LocationTable)
+
                         SchemaUtils
                             .create(
                                 UserTable,
@@ -155,7 +146,7 @@ open class BaseRouteTest {
         fun afterTest() {
             log.info { "After test" }
             transaction {
-                SchemaUtils.drop(SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable)
+                SchemaUtils.drop(SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable, ProductTable, LocationTable)
             }
         }
     }
