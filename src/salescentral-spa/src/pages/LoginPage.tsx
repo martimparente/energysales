@@ -1,0 +1,84 @@
+import {
+  Paper,
+  TextInput,
+  PasswordInput,
+  Checkbox,
+  Button,
+  Title,
+  Text,
+  Anchor,
+} from '@mantine/core';
+import classes from './AuthenticationImage.module.css';
+import { useForm } from '@mantine/form';
+import { useLogin } from '@refinedev/core';
+
+type LoginVariables = {
+  username: string;
+  password: string;
+};
+
+export function LoginPage() {
+  const form = useForm({
+    initialValues: {
+      username: '',
+      password: '',
+      terms: true,
+    },
+
+    validate: {
+      username: (val) => ((val.length <= 5 && val.length <= 16)  ? null : 'Invalid username'),
+      password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
+    },
+  });
+
+  const { mutate: login } = useLogin<LoginVariables>();
+
+  return (
+    <div className={classes.wrapper}>
+      <Paper className={classes.form} radius={0} p={30}>
+        <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
+          Welcome back to SalesCentral!
+        </Title>
+
+        <form onSubmit={form.onSubmit((values) => login({
+          username: values.username,
+          password: values.password,
+        }))}>
+          <TextInput
+            required
+            label="Username"
+            placeholder="Your Username"
+            value={form.values.username}
+            onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
+            error={form.errors.username && 'Invalid username'}
+            radius="md"
+          />
+          <PasswordInput
+            required
+            label="Password"
+            placeholder="Your password"
+            mt="md" size="md"
+            value={form.values.password}
+            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
+            error={form.errors.password && 'Password should include at least 6 characters'}
+            radius="md"
+          />
+          <Checkbox
+            label="Keep me logged in"
+            mt="xl" size="md"
+            checked={form.values.terms}
+            onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
+          />
+          <Button type="submit" fullWidth mt="xl" size="md">Login</Button>
+
+          <Text ta="center" mt="md">
+            Don&apos;t have an account?{' '}
+            <Anchor<'a'> href="#" fw={700} onClick={(event) => event.preventDefault()}>
+              Register
+            </Anchor>
+          </Text>
+        </form>
+      </Paper>
+    </div>
+  );
+}

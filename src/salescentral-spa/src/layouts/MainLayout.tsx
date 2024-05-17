@@ -5,8 +5,11 @@ import { Outlet } from 'react-router-dom';
 
 const sideBarSections = [
          { name: 'Home', url: '/' },
+         { name: 'Login', url: '/login' },
+         { name: 'Forgot Password', url: '/forgotpassword' },
          { name: 'Teams', url: '/teams' },
          { name: 'Sellers', url: '/sellers' }
+         
      ];
 
 export default function MainLayout() {
