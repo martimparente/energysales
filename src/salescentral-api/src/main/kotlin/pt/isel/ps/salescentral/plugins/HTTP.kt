@@ -40,11 +40,12 @@ fun Application.configureHTTP() {
     }
 
     install(CORS) {
-        anyHost()
-        allowHeaders { true }
-        HttpMethod.DefaultMethods.forEach { method(it) }
+        anyHost() // This allows any host to access your API, which is fine for development but should be restricted in production.
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
+        allowSameOrigin = true
+        allowMethod(HttpMethod.Delete) // Explicitly allow DELETE requests
+        allowHeaders { true } // Allow all headers
     }
 }
 
-fun method(options: HttpMethod) {
-}
