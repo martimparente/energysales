@@ -1,5 +1,5 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import MainLayout from './layouts/MainLayout'
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { MainLayout } from './layouts/MainLayout'
 import { HomePage } from './pages/HomePage';
 import { TeamPage } from './pages/TeamPage';
 import { TeamsPage } from './pages/TeamsPage';
@@ -8,39 +8,24 @@ import { LoginPage } from './pages/LoginPage';
 import { ForgotPassword } from './pages/ForgotPasswordPage';
 import { Authenticated } from "@refinedev/core";
 
+const routes = [
+  { path: "/", element: <HomePage />, },
+  { path: "/login", element: <LoginPage />, },
+  { path: "/forgotpassword", element: <ForgotPassword /> },
+  { path: "/teams", element: <Authenticated key="teams222"><TeamsPage /></Authenticated>, },
+  { path: "/teams/:id", element: <TeamPage /> },
+  { path: "/sellers", element: <SellersPage />, }
+]
+
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <MainLayout />,
-    children: [
-      {
-        path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "/login",
-        element: <LoginPage />,
-      },
-      {
-        path: "/forgotpassword",
-        element: <ForgotPassword />,
-      },
-      {
-        path: "/teams",
-        element: <Authenticated key="teams222"><TeamsPage /></Authenticated>,
-      },
-      {
-        path: "/teams/:id",
-        element: <TeamPage />,
-      },
-      {
-        path: "/sellers",
-        element: <SellersPage />,
-      },
-    ]
-  },
-
-]);
+    element: <>
+      <MainLayout />
+      <Outlet /> {/* An <Outlet> should be used in parent route elements to render their child route elements. */}
+    </>,
+    children: [...routes],
+  }
+])
 
 export function Router() {
   return <RouterProvider router={router} />;

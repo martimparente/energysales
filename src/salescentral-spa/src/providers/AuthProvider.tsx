@@ -28,8 +28,8 @@ export const authProvider: AuthProvider = {
          },
          check: async () => {
                   console.log("AUTH CHECKING")
-                  if (localStorage.getItem("token")) {
-
+                  const token = localStorage.getItem("token");
+                  if (token) {
                            console.log("AUTH TOKEN")
                            return {
                                     authenticated: true,
