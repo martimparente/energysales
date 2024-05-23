@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useGetTeam } from '../services/TeamsService';
+import { useGetTeam } from '../../../services/TeamsService';
 
 export function TeamPage() {
   const { id } = useParams<string>();

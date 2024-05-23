@@ -1,8 +1,8 @@
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { MainLayout } from './layouts/MainLayout'
 import { HomePage } from './pages/HomePage';
-import { TeamPage } from './pages/TeamPage';
-import { TeamsPage } from './pages/TeamsPage';
+import { TeamPage } from './pages/Teams/Team/TeamPage';
+import { TeamsPage } from './pages/Teams/Teams';
 import { SellersPage } from './pages/SellersPage';
 import { LoginPage } from './pages/LoginPage';
 import { ForgotPassword } from './pages/ForgotPasswordPage';

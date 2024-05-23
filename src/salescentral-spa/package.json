@@ -16,7 +16,7 @@
     "@mantine/core": "^7.9.1",
     "@mantine/dates": "^7.9.1",
     "@mantine/dropzone": "^7.9.1",
-    "@mantine/form": "^7.9.1",
+    "@mantine/form": "^7.9.2",
     "@mantine/hooks": "^7.9.1",
     "@mantine/modals": "^7.9.1",
     "@mantine/notifications": "^7.9.1",
@@ -28,14 +28,18 @@
     "@refinedev/react-router-v6": "^4.5.9",
     "@tabler/icons-react": "^3.4.0",
     "@tanstack/react-query": "^5.35.5",
+    "ag-grid-react": "^31.3.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.11",
+    "mantine-contextmenu": "^7.9.1",
+    "mantine-datatable": "^7.9.1",
     "mantine-react-table": "^2.0.0-beta.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.0",
     "react-toastify": "^10.0.5",
-    "recharts": "^2.12.7"
+    "recharts": "^2.12.7",
+    "tabler-icons-react": "^1.56.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",

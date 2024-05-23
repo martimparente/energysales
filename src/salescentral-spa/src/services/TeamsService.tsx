@@ -1,31 +1,24 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Team } from "../interfaces/Teams";
-import { ApiUris } from "./ApiUris"; // Adjust the import path as necessary
+import { ApiUris } from "./ApiUris";
+import { CreateTeamInputModel, CreateTeamOutputModel, UpdateTeamInputModel } from "./models/TeamModel";
 
 const AUTHORIZATION_HEADER = {
   "Content-Type": "application/json",
   Authorization: "Bearer " + localStorage.getItem("token"),
 }
 
-//CREATE hook (post new team to api)
 export function useCreateTeam() {
   return useMutation({
-    mutationFn: async (team: Team) => {
-      const teamPayload = {
-        name: team.name,
-        manager: team.manager,
-        location: { district: team.district },
-      };
-      return fetch(ApiUris.createTeam, {
+    mutationFn: async (input: CreateTeamInputModel) =>
+      fetch(ApiUris.createTeam, {
         method: "POST",
         headers: AUTHORIZATION_HEADER,
-        body: JSON.stringify(teamPayload),
-      });
-    },
+        body: JSON.stringify(input),
+      })
   });
 }
 
-//READ hook (get teams from api)
 export function useGetTeams(lastKeySeen: string = "0") {
   return useQuery<Team[]>({
     queryKey: ["teams", lastKeySeen],
@@ -46,18 +39,16 @@ export function useGetTeam(id: string) {
   })
 }
 
-
-//UPDATE hook (put team in api)
 export function useUpdateTeam() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (newTeamInfo: Team) =>
+    mutationFn: (newTeamInfo: UpdateTeamInputModel) =>
       fetch(ApiUris.updateTeam(newTeamInfo.id), {
         method: "PUT",
         headers: AUTHORIZATION_HEADER,
         body: JSON.stringify(newTeamInfo),
       }),
-    onMutate: (newTeamInfo: Team) => {
+    onMutate: (newTeamInfo: UpdateTeamInputModel) => {
       queryClient.setQueryData(["teams"], (prevTeams: any) =>
         prevTeams?.map((prevTeam: Team) =>
           prevTeam.id === newTeamInfo.id ? newTeamInfo : prevTeam
