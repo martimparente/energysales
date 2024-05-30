@@ -44,8 +44,10 @@ fun Application.configureHTTP() {
         allowCredentials = true
         allowNonSimpleContentTypes = true
         allowSameOrigin = true
-        allowMethod(HttpMethod.Delete) // Explicitly allow DELETE requests
+        // allow all methods
+        HttpMethod.DefaultMethods.forEach {
+            allowMethod(it)
+        }
         allowHeaders { true } // Allow all headers
     }
 }
-

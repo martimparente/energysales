@@ -14,6 +14,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import pt.isel.ps.salescentral.Uris
 import pt.isel.ps.salescentral.auth.domain.service.ChangeUserPasswordError
+import pt.isel.ps.salescentral.auth.domain.service.ResetPasswordError
 import pt.isel.ps.salescentral.auth.domain.service.RoleReadingError
 import pt.isel.ps.salescentral.auth.domain.service.UserCreationError
 import pt.isel.ps.salescentral.auth.domain.service.UserService
@@ -21,6 +22,7 @@ import pt.isel.ps.salescentral.auth.http.model.ChangePasswordRequest
 import pt.isel.ps.salescentral.auth.http.model.LoginRequest
 import pt.isel.ps.salescentral.auth.http.model.LoginResponse
 import pt.isel.ps.salescentral.auth.http.model.Problem
+import pt.isel.ps.salescentral.auth.http.model.ResetPasswordRequest
 import pt.isel.ps.salescentral.auth.http.model.RoleRequest
 import pt.isel.ps.salescentral.auth.http.model.SignUpRequest
 import pt.isel.ps.salescentral.auth.http.model.respondProblem
@@ -45,15 +47,30 @@ fun Route.authRoutes(userService: UserService) {
                 }
         }
     }
-    route(Uris.AUTH_LOGIN) {
-        post {
-            val body = call.receive<LoginRequest>()
-            val res = userService.createToken(body.username, body.password)
+    post(Uris.AUTH_LOGIN) {
+        val body = call.receive<LoginRequest>()
+        val res = userService.createToken(body.username, body.password)
 
-            when (res) {
-                is Right -> call.respond(LoginResponse.fromToken(res.value))
-                is Left -> call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
+        when (res) {
+            is Right -> call.respond(LoginResponse.fromToken(res.value))
+            is Left -> call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
+        }
+    }
+    post(Uris.AUTH_RESET_PASSWORD) {
+        val body = call.receive<ResetPasswordRequest>()
+        val res = userService.resetPassword(body.email)
+
+        when (res) {
+            is Right -> {
+                call.response.status(HttpStatusCode.OK)
             }
+
+            is Left ->
+                when (res.value) {
+                    ResetPasswordError.EmailIsInvalid -> TODO()
+                    ResetPasswordError.EmailNotFound -> TODO()
+                    ResetPasswordError.ResetEmailSendingError -> TODO()
+                }
         }
     }
 

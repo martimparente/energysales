@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Camada_1" data-name="Camada 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 391.01 53">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: #191a36;
-        font-family: MartelSans-Regular, 'Martel Sans';
-        font-size: 39px;
-        letter-spacing: .21em;
-      }
-    </style>
-  </defs>
-  <text class="cls-1" transform="translate(0 32.76)"><tspan x="0" y="0">SALESCENTRAL</tspan></text>
+    <defs>
+        <style>
+            .cls-1 {
+            fill: #191a36;
+            font-family: MartelSans-Regular, 'Martel Sans';
+            font-size: 39px;
+            letter-spacing: .21em;
+            }
+        </style>
+    </defs>
+    <text class="cls-1" transform="translate(0 32.76)">
+        <tspan x="0" y="0">SALESCENTRAL</tspan>
+    </text>
 </svg>

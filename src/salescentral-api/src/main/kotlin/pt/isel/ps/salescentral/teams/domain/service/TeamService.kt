@@ -9,6 +9,7 @@ import pt.isel.ps.salescentral.teams.data.TeamRepository
 import pt.isel.ps.salescentral.teams.domain.model.Location
 import pt.isel.ps.salescentral.teams.domain.model.Person
 import pt.isel.ps.salescentral.teams.domain.model.Team
+import pt.isel.ps.salescentral.teams.domain.model.TeamDetails
 
 class TeamService(
     private val teamRepository: TeamRepository,
@@ -39,6 +40,8 @@ class TeamService(
 
     suspend fun getById(id: Int): Team? = teamRepository.getById(id)
 
+    suspend fun getByIdWithMembers(id: Int): TeamDetails? = teamRepository.getByIdWithMembers(id)
+
     // Update
     suspend fun updateTeam(team: Team): TeamUpdatingResult =
         either {
@@ -61,6 +64,15 @@ class TeamService(
             ensure(teamRepository.teamExists(id)) { TeamSellersReadingError.TeamNotFound }
             teamRepository.getTeamSellers(id)
         }
+
+    suspend fun addSellerToTeam(
+        teamId: Int,
+        sellerId: Int,
+    ): TeamAddSellerResult =
+        either {
+            ensure(teamRepository.teamExists(teamId)) { TeamSellersReadingError.TeamNotFound }
+            teamRepository.addSellerToTeam(teamId, sellerId)
+        }
 }
 
 typealias TeamCreationResult = Either<TeamCreationError, Int>
@@ -69,6 +81,7 @@ typealias TeamUpdatingResult = Either<TeamUpdatingError, Team>
 typealias TeamDeletingResult = Either<TeamDeletingError, Boolean>
 
 typealias TeamSellersReadingResult = Either<TeamSellersReadingError, List<Seller>>
+typealias TeamAddSellerResult = Either<TeamSellersReadingError, Boolean>
 
 sealed interface TeamCreationError {
     data object TeamAlreadyExists : TeamCreationError
@@ -96,4 +109,10 @@ sealed interface TeamDeletingError {
 
 sealed interface TeamSellersReadingError {
     data object TeamNotFound : TeamSellersReadingError
+}
+
+sealed interface TeamAddSellerError {
+    data object TeamNotFound : TeamSellersReadingError
+
+    data object SellerNotFound : TeamSellersReadingError
 }

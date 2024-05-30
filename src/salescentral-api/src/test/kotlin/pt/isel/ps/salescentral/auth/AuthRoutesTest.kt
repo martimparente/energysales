@@ -97,7 +97,7 @@ class AuthRoutesTest : BaseRouteTest() {
                     response.body<LoginResponse>().tokenType.shouldBeEqual("Bearer")
                     val a = response.body<LoginResponse>().token
                     println(a)
-                    response.body<LoginResponse>().expiresIn.shouldBeEqual(3600000)
+                    response.body<LoginResponse>().expiresIn.shouldBeEqual(36000000000)
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }
@@ -176,7 +176,7 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
                     headers.append("Authorization", "Bearer $token")
-                    parameter("id", 2)
+                    parameter("id", 1)
                     setBody(
                         ChangePasswordRequest(
                             "SecurePass123!",

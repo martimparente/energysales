@@ -106,11 +106,23 @@ class UserService(
             ensure(userRepository.getUserRoles(uid).contains(role)) { RoleDeletingError.UserHasNoRole }
             userRepository.deleteRoleFromUser(uid, role)
         }
+
+    fun resetPassword(email: String): Either<ResetPasswordError, Unit> =
+        either {
+            ensure(isValidEmail(email)) { ResetPasswordError.EmailIsInvalid }
+            // val user = userRepository.getUserByEmail(email)
+            // ensureNotNull(user) { ResetPasswordError.EmailNotFound }
+
+            // send email with reset password link
+            // todo
+        }
 }
 
 typealias UserCreationResult = Either<UserCreationError, Int>
 typealias TokenCreationResult = Either<TokenCreationError, Token>
 typealias ChangeUserPasswordResult = Either<ChangeUserPasswordError, Boolean>
+typealias ResetPasswordResult = Either<ResetPasswordError, Boolean>
+
 typealias RoleAssignResult = Either<RoleAssignError, Unit>
 typealias RoleReadingResult = Either<RoleReadingError, List<String>>
 typealias RoleDeleteResult = Either<RoleDeletingError, Unit>
@@ -135,6 +147,14 @@ sealed interface ChangeUserPasswordError {
     data object InsecurePassword : ChangeUserPasswordError
 
     data object PasswordMismatch : ChangeUserPasswordError
+}
+
+sealed interface ResetPasswordError {
+    data object EmailNotFound : ResetPasswordError
+
+    data object EmailIsInvalid : ResetPasswordError
+
+    data object ResetEmailSendingError : ResetPasswordError
 }
 
 sealed interface RoleReadingError {
@@ -166,4 +186,9 @@ fun isSafePassword(password: String): Boolean {
     val pattern: Pattern = Pattern.compile(charPattern)
     val matcher: Matcher = pattern.matcher(password)
     return matcher.matches()
+}
+
+private fun isValidEmail(email: String): Boolean {
+    val emailRegex = "^[A-Za-z0-9+_.-]+@(.+)\$".toRegex()
+    return emailRegex.matches(email)
 }

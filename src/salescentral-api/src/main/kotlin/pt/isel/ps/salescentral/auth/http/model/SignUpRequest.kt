@@ -8,3 +8,8 @@ data class SignUpRequest(
     val password: String,
     val repeatPassword: String,
 )
+
+@Serializable
+data class ResetPasswordRequest(
+    val email: String,
+)

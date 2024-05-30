@@ -14,6 +14,7 @@ import pt.isel.ps.salescentral.sellers.domain.model.Seller
 import pt.isel.ps.salescentral.teams.domain.model.Location
 import pt.isel.ps.salescentral.teams.domain.model.Person
 import pt.isel.ps.salescentral.teams.domain.model.Team
+import pt.isel.ps.salescentral.teams.domain.model.TeamDetails
 
 object TeamTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()
@@ -70,6 +71,18 @@ class PsqlTeamRepository : TeamRepository {
     override suspend fun getById(id: Int): Team? =
         dbQuery {
             TeamEntity.findById(id)?.toTeam()
+        }
+
+    override suspend fun getByIdWithMembers(id: Int): TeamDetails =
+        dbQuery {
+            TeamEntity
+                .findById(id)
+                ?.let {
+                    TeamDetails(
+                        it.toTeam(),
+                        it.sellers.map { it.toSeller() },
+                    )
+                } ?: throw IllegalArgumentException("Team not found")
         }
 
     override suspend fun teamExists(id: Int): Boolean =
@@ -150,5 +163,15 @@ class PsqlTeamRepository : TeamRepository {
                 ?.sellers
                 ?.map { it.toSeller() }
                 ?: emptyList()
+        }
+
+    override suspend fun addSellerToTeam(
+        teamId: Int,
+        sellerId: Int,
+    ): Boolean =
+        dbQuery {
+            val seller = SellerEntity.findById(sellerId) ?: return@dbQuery false
+            seller.team = TeamEntity.findById(teamId) ?: return@dbQuery false
+            true
         }
 }

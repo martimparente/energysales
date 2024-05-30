@@ -46,7 +46,7 @@ fun Route.productRoutes(productService: ProductService) {
     post<ProductResource> {
         val body = call.receive<CreateProductRequest>()
 
-        val res = productService.createProduct(body.name, body.price, body.description, body.image)
+        val res = productService.createProduct(body.name, body.price, body.description, null)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -85,7 +85,7 @@ fun Route.productRoutes(productService: ProductService) {
 
     put<ProductResource.Id> { pathParams ->
         val body = call.receive<UpdateProductRequest>()
-        val updatedProduct = Product(pathParams.id, body.name, body.price, body.description, body.image)
+        val updatedProduct = Product(pathParams.id, body.name, body.price, body.description, null)
 
         val res = productService.updateProduct(updatedProduct)
         when (res) {

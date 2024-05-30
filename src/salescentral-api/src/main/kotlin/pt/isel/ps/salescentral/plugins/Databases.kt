@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import pt.isel.ps.salescentral.auth.data.RoleTable
 import pt.isel.ps.salescentral.auth.data.UserRoles
 import pt.isel.ps.salescentral.auth.data.UserTable
+import pt.isel.ps.salescentral.clients.data.ClientTable
 import pt.isel.ps.salescentral.products.data.ProductTable
 import pt.isel.ps.salescentral.sellers.data.PersonTable
 import pt.isel.ps.salescentral.sellers.data.Role
@@ -42,7 +43,7 @@ fun Application.configureDatabases() {
 
         transaction {
             log.atInfo().log("Database connected - jdbcURL: $jdbcURL")
-            SchemaUtils.drop(SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable, ProductTable, LocationTable)
+            SchemaUtils.drop(SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable, ProductTable, LocationTable, ClientTable)
             SchemaUtils.create(
                 UserTable,
                 RoleTable,
@@ -52,6 +53,7 @@ fun Application.configureDatabases() {
                 SellerTable,
                 ProductTable,
                 LocationTable,
+                ClientTable,
             )
             UserTable.insert {
                 it[username] = "testUser" // pass = "SecurePass123!"
@@ -70,7 +72,7 @@ fun Application.configureDatabases() {
             }
             for (i in 1..50) {
                 LocationTable.insert {
-                    it[district] = "Location $i"
+                    it[district] = "District $i"
                 }
                 TeamTable.insert {
                     it[name] = "Team $i"
@@ -84,13 +86,23 @@ fun Application.configureDatabases() {
                 }
                 ProductTable.insert {
                     it[name] = "Product $i"
-                    it[price] = 0.0
+                    it[price] = (Math.random() * 1000)
                     it[description] = "Description $i"
                     it[image] = "Image $i"
                 }
+
                 SellerTable.insert {
-                    it[id] = i
                     it[totalSales] = 0.0f
+                    it[team] = if (i % 2 == 0) 1 else null
+                    it[person] = i
+                }
+
+                ClientTable.insert {
+                    it[name] = "Client $i"
+                    // random number of exactly 9 digits
+                    it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
+                    it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
+                    it[location] = i
                 }
             }
         }

@@ -12,7 +12,7 @@ object ProductTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()
     val price = double("price")
     val description = varchar("description", 255)
-    val image = varchar("image", 255)
+    val image = varchar("image", 255).nullable()
 }
 
 class ProductEntity(

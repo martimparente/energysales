@@ -5,7 +5,7 @@ import pt.isel.ps.salescentral.sellers.domain.model.Person
 
 @Serializable
 data class PersonJSON(
-    val id: Int,
+    val id: String,
     val name: String,
     val surname: String,
     val email: String,
@@ -14,7 +14,7 @@ data class PersonJSON(
     companion object {
         fun fromPerson(person: Person) =
             PersonJSON(
-                person.id,
+                person.id.toString(),
                 person.name,
                 person.surname,
                 person.email,

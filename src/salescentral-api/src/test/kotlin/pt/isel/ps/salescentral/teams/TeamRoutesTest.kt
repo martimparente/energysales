@@ -18,6 +18,7 @@ import pt.isel.ps.salescentral.BaseRouteTest
 import pt.isel.ps.salescentral.Uris
 import pt.isel.ps.salescentral.auth.http.model.Problem
 import pt.isel.ps.salescentral.sellers.http.model.SellerJSON
+import pt.isel.ps.salescentral.teams.http.model.AddTeamSellerRequest
 import pt.isel.ps.salescentral.teams.http.model.CreateTeamRequest
 import pt.isel.ps.salescentral.teams.http.model.LocationJSON
 import pt.isel.ps.salescentral.teams.http.model.TeamJSON
@@ -33,7 +34,7 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $token")
                     setBody(CreateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.TEAMS}/4")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.TEAMS}/51")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }
@@ -101,10 +102,10 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
-                    parameter("id", 1)
+                    parameter("id", "1")
                 }.also { response ->
                     val team = response.call.response.body<TeamJSON>()
-                    team.id.shouldBe(1)
+                    team.id.shouldBe("1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }
@@ -277,6 +278,20 @@ class TeamRoutesTest : BaseRouteTest() {
                     parameter("id", "1")
                 }.also { response ->
                     response.body<List<SellerJSON>>()
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                    response.shouldHaveContentType(ContentType.Application.Json)
+                }
+        }
+
+    @Test
+    fun `Add Seller to Team - Success`() =
+        testApplication {
+            testClient()
+                .put(Uris.API + Uris.TEAMS_SELLERS) {
+                    headers.append("Authorization", "Bearer $token")
+                    parameter("id", "1")
+                    setBody(AddTeamSellerRequest("1", "1"))
+                }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }

@@ -3,11 +3,11 @@ package pt.isel.ps.salescentral.sellers.data
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.and
 import pt.isel.ps.salescentral.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.salescentral.sellers.domain.model.Person
 import pt.isel.ps.salescentral.sellers.domain.model.Seller
@@ -23,10 +23,10 @@ object PersonTable : IntIdTable() {
     val role = enumerationByName("role", 255, Role::class).nullable()
 }
 
-object SellerTable : IdTable<Int>() {
+object SellerTable : IntIdTable() {
     val totalSales = float("total_sales").default(0.0f)
     val team = reference("team_id", TeamTable.id, ReferenceOption.SET_NULL).nullable()
-    override val id: Column<EntityID<Int>> = reference("person_id", PersonTable.id).uniqueIndex()
+    val person = reference("person_id", PersonTable.id).uniqueIndex()
 }
 
 open class PersonEntity(
@@ -54,16 +54,16 @@ class SellerEntity(
 ) : IntEntity(id) {
     companion object : IntEntityClass<SellerEntity>(SellerTable)
 
+    var person by PersonEntity referencedOn SellerTable.person
+    var totalSales by SellerTable.totalSales
+    var team by TeamEntity optionalReferencedOn SellerTable.team
+
     fun toSeller() =
         Seller(
             person.toPerson(),
             totalSales,
             team?.id?.value,
         )
-
-    var person by PersonEntity referencedOn SellerTable.id
-    var team by TeamEntity optionalReferencedOn SellerTable.team
-    var totalSales by SellerTable.totalSales
 }
 
 class PsqlSellerRepository : SellerRepository {
@@ -86,7 +86,7 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun create(seller: Seller): Int =
         dbQuery {
-            val person =
+            val newPerson =
                 PersonEntity.new {
                     name = seller.person.name
                     surname = seller.person.surname
@@ -94,10 +94,11 @@ class PsqlSellerRepository : SellerRepository {
                     role = seller.person.role
                 }
             SellerEntity
-                .new(person.id.value) {
+                .new {
                     totalSales = seller.totalSales
-                }.person
-                .id
+                    person = newPerson
+                    team = seller.team?.let { TeamEntity.findById(it) }
+                }.id
                 .value
         }
 
@@ -113,22 +114,17 @@ class PsqlSellerRepository : SellerRepository {
     override suspend fun getAllKeyPaging(
         pageSize: Int,
         lastKeySeen: Int?,
+        noTeam: Boolean,
     ): List<Seller> =
         dbQuery {
-            println(
-                SellerEntity
-                    .find { SellerTable.id eq 1 }
-                    .firstOrNull()
-                    ?.person
-                    ?.name,
-            )
-            /*SellerEntity
-                .find { SellerTable.id greaterEq (lastKeySeen ?: 0) }
-                .orderBy(SellerTable.id to SortOrder.ASC)
+            SellerEntity
+                .find {
+                    SellerTable.id greater (lastKeySeen ?: 0) and
+                        (if (noTeam) SellerTable.team.isNull() else SellerTable.team.isNotNull())
+                }.orderBy(SellerTable.id to SortOrder.ASC)
                 .limit(pageSize)
-                .map { Seller(it.toPerson(), it.totalSales, it.teams.map { team -> team.id.value }) }
-                .toList()*/
-            emptyList()
+                .map { it.toSeller() }
+                .toList()
         }
 
     override suspend fun update(seller: Seller): Seller? =

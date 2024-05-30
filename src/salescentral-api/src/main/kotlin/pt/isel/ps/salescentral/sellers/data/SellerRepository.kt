@@ -10,6 +10,7 @@ interface SellerRepository {
     suspend fun getAllKeyPaging(
         pageSize: Int,
         lastKeySeen: Int? = null,
+        noTeam: Boolean,
     ): List<Seller>
 
     suspend fun getById(id: Int): Seller?

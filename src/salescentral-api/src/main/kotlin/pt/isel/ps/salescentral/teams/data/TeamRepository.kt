@@ -2,6 +2,7 @@ package pt.isel.ps.salescentral.teams.data
 
 import pt.isel.ps.salescentral.sellers.domain.model.Seller
 import pt.isel.ps.salescentral.teams.domain.model.Team
+import pt.isel.ps.salescentral.teams.domain.model.TeamDetails
 
 interface TeamRepository {
     suspend fun create(team: Team): Int
@@ -17,6 +18,8 @@ interface TeamRepository {
 
     suspend fun getById(id: Int): Team?
 
+    suspend fun getByIdWithMembers(id: Int): TeamDetails?
+
     suspend fun teamExists(id: Int): Boolean
 
     suspend fun teamExistsByName(name: String): Boolean
@@ -26,4 +29,9 @@ interface TeamRepository {
     suspend fun delete(team: Team): Boolean
 
     suspend fun getTeamSellers(id: Int): List<Seller>
+
+    suspend fun addSellerToTeam(
+        teamId: Int,
+        sellerId: Int,
+    ): Boolean
 }

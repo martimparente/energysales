@@ -31,7 +31,7 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $token")
                     setBody(CreateSellerRequest("name", "surname", "email@email"))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/4")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/51")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }
@@ -102,7 +102,7 @@ class SellerRoutesTest : BaseRouteTest() {
                     parameter("id", 1)
                 }.also { response ->
                     val seller = response.call.response.body<SellerJSON>()
-                    seller.person.id.shouldBe(1)
+                    seller.person.id.shouldBe("1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }

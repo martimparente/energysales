@@ -29,6 +29,7 @@ import pt.isel.ps.salescentral.sellers.http.model.UpdateSellerRequest
 @Resource(Uris.SELLERS)
 class SellerResource(
     val lastKeySeen: Int? = null,
+    val noTeam: Boolean = false,
 ) {
     @Resource("{id}")
     class Id(
@@ -39,7 +40,7 @@ class SellerResource(
 
 fun Route.sellerRoutes(sellerService: SellerService) {
     get<SellerResource> { queryParams ->
-        val sellers = sellerService.getAllSellersPaging(10, queryParams.lastKeySeen)
+        val sellers = sellerService.getAllSellersPaging(10, queryParams.lastKeySeen, queryParams.noTeam)
         val sellersResponse = sellers.map { seller -> SellerJSON.fromSeller(seller) }
         call.respond(sellersResponse)
     }

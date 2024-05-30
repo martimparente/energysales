@@ -29,9 +29,9 @@ class ProductRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.PRODUCT) {
                     headers.append("Authorization", "Bearer $token")
-                    setBody(CreateProductRequest("newProduct", 0.0, "", ""))
+                    setBody(CreateProductRequest("newProduct", 0.0, ""))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.PRODUCT}/4")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.PRODUCT}/51")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }
@@ -48,7 +48,7 @@ class ProductRoutesTest : BaseRouteTest() {
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateProductRequest("newProduct", 0.0, "", ""))
+                    setBody(CreateProductRequest("newProduct", 0.0, ""))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -85,7 +85,7 @@ class ProductRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.PRODUCT) {
                     headers.append("Authorization", "Bearer $token")
-                    setBody(CreateProductRequest("Product 1", 0.0, "", ""))
+                    setBody(CreateProductRequest("Product 1", 0.0, ""))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.productAlreadyExists.type)
                     response.shouldHaveStatus(HttpStatusCode.Conflict)
@@ -154,7 +154,7 @@ class ProductRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.PRODUCT_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", 2)
-                    setBody(UpdateProductRequest("updatedProduct", 0.0, "", ""))
+                    setBody(UpdateProductRequest("updatedProduct", 0.0, ""))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
@@ -167,7 +167,7 @@ class ProductRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.PRODUCT_BY_ID) {
                     parameter("id", 2)
-                    setBody(UpdateProductRequest("newProduct", 0.0, "", ""))
+                    setBody(UpdateProductRequest("newProduct", 0.0, ""))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -195,7 +195,7 @@ class ProductRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.PRODUCT_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", -1)
-                    setBody(UpdateProductRequest("nonExistingProduct", 0.0, "", ""))
+                    setBody(UpdateProductRequest("nonExistingProduct", 0.0, ""))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.productNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -210,7 +210,7 @@ class ProductRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.PRODUCT_BY_ID) {
                     headers.append("Authorization", "Bearer $token")
                     parameter("id", "abc")
-                    setBody(UpdateProductRequest("", 0.0, "", ""))
+                    setBody(UpdateProductRequest("", 0.0, ""))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

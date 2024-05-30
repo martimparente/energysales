@@ -39,7 +39,8 @@ class SellerService(
     suspend fun getAllSellersPaging(
         pageSize: Int,
         lastKeySeen: Int?,
-    ) = sellerRepository.getAllKeyPaging(pageSize, lastKeySeen)
+        noTeam: Boolean,
+    ) = sellerRepository.getAllKeyPaging(pageSize, lastKeySeen, noTeam)
 
     // suspend fun getByName(name: String): Seller? = sellerRepository.getByName(name)
 

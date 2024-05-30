@@ -20,6 +20,9 @@ import pt.isel.ps.salescentral.auth.domain.service.security.JwtConfig
 import pt.isel.ps.salescentral.auth.domain.service.security.JwtTokenService
 import pt.isel.ps.salescentral.auth.domain.service.security.SHA256HashingService
 import pt.isel.ps.salescentral.auth.http.authRoutes
+import pt.isel.ps.salescentral.clients.data.PsqlClientRepository
+import pt.isel.ps.salescentral.clients.domain.service.ClientService
+import pt.isel.ps.salescentral.clients.http.clientRoutes
 import pt.isel.ps.salescentral.plugins.configureDatabases
 import pt.isel.ps.salescentral.plugins.configureHTTP
 import pt.isel.ps.salescentral.plugins.configureSerialization
@@ -64,6 +67,11 @@ fun Application.module() {
             productRepository = PsqlProductRepository(),
         )
     }
+    val clientService by lazy {
+        ClientService(
+            clientRepository = PsqlClientRepository(),
+        )
+    }
 
     install(Resources)
     install(CallLogging) {
@@ -84,6 +92,7 @@ fun Application.module() {
                 teamRoutes(teamService)
                 sellerRoutes(sellerService)
                 productRoutes(productService)
+                clientRoutes(clientService)
                 get(Uris.HOME) {
                     call.respondText("Hello, world!")
                 }

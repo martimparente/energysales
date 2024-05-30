@@ -15,7 +15,7 @@ class ProductService(
         name: String,
         price: Double,
         description: String,
-        image: String,
+        image: String?,
     ): ProductCreationResult =
         either {
             ensure(name.length in 2..16) { ProductCreationError.ProductNameIsInvalid }
