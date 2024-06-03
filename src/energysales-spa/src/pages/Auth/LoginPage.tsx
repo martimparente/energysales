@@ -29,7 +29,7 @@ export function LoginPage() {
         <div className={classes.wrapper}>
             <Paper className={classes.form} radius={0} p={30}>
                 <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
-                    Welcome back to SalesCentral!
+                    Welcome back to EnergySales!
                 </Title>
 
                 <form onSubmit={form.onSubmit((values) => login({

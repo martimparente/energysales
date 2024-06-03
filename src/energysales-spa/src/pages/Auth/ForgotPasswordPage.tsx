@@ -28,7 +28,7 @@ export function ForgotPassword() {
                 <TextInput
                     required
                     label="Email"
-                    placeholder="hello@salescentral.pt"
+                    placeholder="hello@energysales.pt"
                     value={form.values.email}
                     onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
                     error={form.errors.email && 'Invalid email'}
