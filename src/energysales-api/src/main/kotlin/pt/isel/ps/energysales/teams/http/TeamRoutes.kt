@@ -35,20 +35,20 @@ import pt.isel.ps.energysales.teams.http.model.UpdateTeamRequest
 class TeamResource(
     val lastKeySeen: Int? = null,
 ) {
-    @Resource("{id}")
-    class Id(
+    @Resource("{teamId}")
+    class TeamId(
         val parent: TeamResource = TeamResource(),
-        val id: Int,
+        val teamId: Int,
         val include: String? = null,
     ) {
         @Resource(Uris.SELLERS)
         class Sellers(
-            val parent: Id,
+            val parent: TeamId,
         ) {
             @Resource("{sellerId}")
-            class Id(
+            class SellerId(
                 val parent: Sellers,
-                val id: Int,
+                val sellerId: Int,
             )
         }
     }
@@ -79,18 +79,18 @@ fun Route.teamRoutes(teamService: TeamService) {
         }
     }
 
-    get<TeamResource.Id> { pathParams ->
+    get<TeamResource.TeamId> { pathParams ->
         val res =
             if (pathParams.include == "members") {
                 val res =
-                    teamService.getByIdWithMembers(pathParams.id)
+                    teamService.getByIdWithMembers(pathParams.teamId)
                         ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 val teamDetailsJson = TeamDetailsJSON.fromTeamDetails(res)
                 call.response.status(HttpStatusCode.OK)
                 call.respond(teamDetailsJson)
             } else {
                 val res =
-                    teamService.getById(pathParams.id)
+                    teamService.getById(pathParams.teamId)
                         ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 val teamJson = TeamJSON.fromTeam(res)
                 call.response.status(HttpStatusCode.OK)
@@ -98,11 +98,11 @@ fun Route.teamRoutes(teamService: TeamService) {
             }
     }
 
-    put<TeamResource.Id> { pathParams ->
+    put<TeamResource.TeamId> { pathParams ->
         val body = call.receive<UpdateTeamRequest>()
         val updatedTeam =
             Team(
-                id = pathParams.id,
+                id = pathParams.teamId,
                 name = body.name,
                 location = Location(body.location.district),
                 manager = body.manager?.let { Person.create(it) },
@@ -122,8 +122,8 @@ fun Route.teamRoutes(teamService: TeamService) {
         }
     }
 
-    delete<TeamResource.Id> { pathParams ->
-        val res = teamService.deleteTeam(pathParams.id)
+    delete<TeamResource.TeamId> { pathParams ->
+        val res = teamService.deleteTeam(pathParams.teamId)
 
         when (res) {
             is Right -> call.respond(HttpStatusCode.NoContent)
@@ -135,8 +135,8 @@ fun Route.teamRoutes(teamService: TeamService) {
         }
     }
 
-    get<TeamResource.Id.Sellers> { pathParams ->
-        val res = teamService.getTeamSellers(pathParams.parent.id)
+    get<TeamResource.TeamId.Sellers> { pathParams ->
+        val res = teamService.getTeamSellers(pathParams.parent.teamId)
         when (res) {
             is Right -> {
                 val sellersJson = res.value.map { seller -> SellerJSON.fromSeller(seller) }
@@ -150,8 +150,8 @@ fun Route.teamRoutes(teamService: TeamService) {
         }
     }
 
-    put<TeamResource.Id.Sellers> { pathParams ->
-        val teamId = pathParams.parent.id
+    put<TeamResource.TeamId.Sellers> { pathParams ->
+        val teamId = pathParams.parent.teamId
         val body = call.receive<AddTeamSellerRequest>()
         if (teamId != body.teamId.toInt()) {
             call.respondProblem(
@@ -160,7 +160,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             ) // id from path and from payload are diff
         }
 
-        val res = teamService.addSellerToTeam(pathParams.parent.id, body.sellerId.toInt())
+        val res = teamService.addSellerToTeam(pathParams.parent.teamId, body.sellerId.toInt())
 
         when (res) {
             is Right -> {
@@ -174,8 +174,8 @@ fun Route.teamRoutes(teamService: TeamService) {
         }
     }
 
-    delete<TeamResource.Id.Sellers.Id> { pathParams ->
-        val sellerId = pathParams.parent.parent.id
+    delete<TeamResource.TeamId.Sellers.SellerId> { pathParams ->
+        val sellerId = pathParams.sellerId
         val res = teamService.deleteSellerFromTeam(sellerId)
 
         when (res) {

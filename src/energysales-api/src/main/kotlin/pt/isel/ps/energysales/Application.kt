@@ -80,7 +80,7 @@ fun Application.module() {
     }
 
     configureSerialization()
-    configureDatabases()
+    //configureDatabases()
     configureAuth(jwtConfig)
     configureHTTP()
 
