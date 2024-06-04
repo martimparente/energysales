@@ -16,7 +16,7 @@ class JwtTokenService(
     private val config: JwtConfig,
 ) : TokenService {
     override fun generateJwtToken(
-        uid: Int,
+        username: String,
         roles: List<String>,
         expireInt: Int,
     ): String =
@@ -24,7 +24,7 @@ class JwtTokenService(
             .create()
             .withAudience(config.audience)
             .withIssuer(config.issuer)
-            .withClaim("uid", uid)
+            .withClaim("username", username)
             .withClaim("roles", roles)
             .withExpiresAt(Date(System.currentTimeMillis() + expireInt))
             .sign(Algorithm.HMAC256(config.secret))
