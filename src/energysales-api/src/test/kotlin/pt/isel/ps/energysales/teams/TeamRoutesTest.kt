@@ -31,7 +31,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.TEAMS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.TEAMS}/51")
@@ -59,35 +59,26 @@ class TeamRoutesTest : BaseRouteTest() {
                 }
         }
 
-    /*
-        // todo
-        @Test
-        fun `Create Team - Forbidden - No permission Roles`() = testApplication {
-            testClient().post(Uris.API + Uris.TEAMS) {
-                headers.append("Authorization", "Bearer $token")
-                setBody(CreateTeamRequest("newTeam", "newLocation", null))
-            }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.userIsInvalid.type)
-                response.shouldHaveStatus(HttpStatusCode.Forbidden)
-                response.shouldHaveContentType(ContentType.Application.ProblemJson)
-            }
+    @Test
+    fun `Create Team - Forbidden - No permission Role`() =
+        testApplication {
+            testClient()
+                .post(Uris.API + Uris.TEAMS) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                    setBody(CreateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
         }
-        @Test
-        fun `Create Team - Bad Request`() = testApplication {
-            testClient().post(Uris.API + Uris.TEAMS) {
-            }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.noTeamProvided.type)
-                response.shouldHaveStatus(HttpStatusCode.BadRequest)
-                response.shouldHaveContentType(ContentType.Application.ProblemJson)
-            }
-        }*/
 
     @Test
     fun `Create Team - Team already exists`() =
         testApplication {
             testClient()
                 .post(Uris.API + Uris.TEAMS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateTeamRequest("Team 1", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.teamAlreadyExists.type)
@@ -101,7 +92,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "1")
                 }.also { response ->
                     val team = response.call.response.body<TeamJSON>()
@@ -116,7 +107,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", -1)
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.teamNotFound.type)
@@ -130,7 +121,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "paramTypeInvalid")
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
@@ -140,11 +131,25 @@ class TeamRoutesTest : BaseRouteTest() {
         }
 
     @Test
+    fun `Get Team by ID - xxx`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.TEAMS_BY_ID) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                    parameter("teamId", "1")
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
+
+    @Test
     fun `Get All Teams - Success`() =
         testApplication {
             testClient()
                 .get(Uris.API + Uris.TEAMS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                 }.also { response ->
                     response.body<List<TeamJSON>>()
                 }
@@ -155,7 +160,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", 2)
                     setBody(UpdateTeamRequest("updatedTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
@@ -178,25 +183,27 @@ class TeamRoutesTest : BaseRouteTest() {
                 }
         }
 
-    /*
-      // todo
-      @Test
-        fun `Update Team - Forbidden`() = testApplication {
-            testClient().put(Uris.API + Uris.TEAMS_BY_ID) {
-                setBody(UpdateTeamRequest("newTeam", "newLocation", null))
-            }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                response.shouldHaveStatus(HttpStatusCode.Forbidden)
-                response.shouldHaveContentType(ContentType.Application.ProblemJson)
-            }
-        }*/
+    @Test
+    fun `Update Team - xxx`() =
+        testApplication {
+            testClient()
+                .put(Uris.API + Uris.TEAMS_BY_ID) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                    parameter("teamId", 2)
+                    setBody(UpdateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
 
     @Test
     fun `Update Team - Not Found`() =
         testApplication {
             testClient()
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", -1)
                     setBody(UpdateTeamRequest("nonExistingTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
@@ -211,7 +218,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "abc")
                     setBody(UpdateTeamRequest("", LocationJSON("newDistrict"), null))
                 }.also { response ->
@@ -226,7 +233,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", 3)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NoContent)
@@ -250,7 +257,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", -1)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -262,10 +269,24 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "paramTypeInvalid")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                }
+        }
+
+    @Test
+    fun `Delete Team - xxx`() =
+        testApplication {
+            testClient()
+                .delete(Uris.API + Uris.TEAMS_BY_ID) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                    parameter("teamId", "2")
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
 
@@ -274,7 +295,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.TEAMS_SELLERS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "1")
                 }.also { response ->
                     response.body<List<SellerJSON>>()
@@ -283,12 +304,14 @@ class TeamRoutesTest : BaseRouteTest() {
                 }
         }
 
+    // TODO MORE TESTES
+
     @Test
     fun `Add Seller to Team - Success`() =
         testApplication {
             testClient()
                 .put(Uris.API + Uris.TEAMS_SELLERS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "1")
                     setBody(AddTeamSellerRequest("1", "1"))
                 }.also { response ->
@@ -302,7 +325,7 @@ class TeamRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_SELLER) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "1")
                     parameter("sellerId", "1")
                 }.also { response ->

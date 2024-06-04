@@ -8,16 +8,18 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
+import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.User
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 
 // Mapping function from ResultRow to User
-private fun ResultRow.toUser() =
+private fun ResultRow.toUser(roles: Set<Role>) =
     User(
         id = this[UserTable.id],
         username = this[UserTable.username],
         password = this[UserTable.password],
         salt = this[UserTable.salt],
+        role = roles,
     )
 
 // Exposed table for Users
@@ -38,9 +40,9 @@ object RoleTable : Table() {
 }
 
 // Exposed table for UserRoles
-object UserRoles : Table() {
-    val userId = integer("user_id").references(UserTable.id)
-    val roleId = integer("role_id").references(RoleTable.id)
+object UserRolesTable : Table() {
+    val userId = reference("user_id", UserTable.id)
+    val roleId = reference("role_id", RoleTable.id)
 
     override val primaryKey = PrimaryKey(userId, roleId)
 }
@@ -50,29 +52,77 @@ class PsqlUserRepository : UserRepository {
         username: String,
         password: String,
         salt: String,
+        roles: Set<String>,
     ): Int =
         dbQuery {
-            UserTable.insert {
-                it[UserTable.username] = username
-                it[UserTable.password] = password
-                it[UserTable.salt] = salt
-            } get UserTable.id
+            // Check if all roles exist
+            val existingRoles =
+                RoleTable
+                    .select { RoleTable.name inList roles.toList() }
+                    .map { it[RoleTable.name] }
+                    .toSet()
+
+            if (existingRoles.size != roles.size) {
+                throw IllegalArgumentException("One or more roles do not exist")
+            }
+            // Insert user and get the generated ID
+            val userId =
+                UserTable.insert {
+                    it[UserTable.username] = username
+                    it[UserTable.password] = password
+                    it[UserTable.salt] = salt
+                } get UserTable.id
+
+            // Insert user-role relationships
+            roles.forEach { roleName ->
+                val roleId =
+                    RoleTable
+                        .select { RoleTable.name eq roleName }
+                        .single()[RoleTable.id]
+
+                UserRolesTable.insert {
+                    it[this.userId] = userId
+                    it[this.roleId] = roleId
+                }
+            }
+            userId
         }
 
     override suspend fun getUserById(uid: Int): User? =
         dbQuery {
-            UserTable
-                .select { UserTable.id eq uid }
-                .map(ResultRow::toUser)
-                .singleOrNull()
+            val userRow = UserTable.select { UserTable.id eq uid }.singleOrNull() ?: return@dbQuery null
+            // If the user exists, get its roles
+            val roleRows =
+                UserRolesTable
+                    .innerJoin(RoleTable)
+                    .select { UserRolesTable.userId eq uid }
+            // Map the roles to the Role enum
+            val roles =
+                roleRows
+                    .mapNotNull { row ->
+                        Role.entries.find { it.name == row[RoleTable.name] }
+                    }.toSet()
+
+            userRow.toUser(roles)
         }
 
     override suspend fun getUserByUsername(username: String): User? =
         dbQuery {
-            UserTable
-                .select { UserTable.username eq username }
-                .map(ResultRow::toUser)
-                .singleOrNull()
+            val userRow = UserTable.select { UserTable.username eq username }.singleOrNull() ?: return@dbQuery null
+
+            // If the user exists, get its roles
+            val roleRows =
+                UserRolesTable
+                    .innerJoin(RoleTable)
+                    .select { UserRolesTable.userId eq userRow[UserTable.id] }
+            // Map the roles to the Role enum
+            val roles =
+                roleRows
+                    .mapNotNull { row ->
+                        Role.entries.find { it.name == row[RoleTable.name] }
+                    }.toSet()
+
+            userRow.toUser(roles)
         }
 
     override suspend fun userExists(username: String): Boolean =
@@ -94,18 +144,18 @@ class PsqlUserRepository : UserRepository {
 
     override suspend fun assignRoleToUser(
         uid: Int,
-        role: String,
+        roleName: String,
     ): Boolean =
         dbQuery {
             // Get the role id
             val roleIdFound =
                 RoleTable
-                    .select { RoleTable.name eq role }
+                    .select { RoleTable.name eq roleName }
                     .singleOrNull()
                     ?.get(RoleTable.id) ?: return@dbQuery false
 
             // Assign the role to the user
-            UserRoles
+            UserRolesTable
                 .insert {
                     it[userId] = uid
                     it[roleId] = roleIdFound
@@ -114,31 +164,29 @@ class PsqlUserRepository : UserRepository {
 
     override suspend fun deleteRoleFromUser(
         uid: Int,
-        role: String,
+        roleName: String,
     ): Boolean =
         dbQuery {
             // Get the role id
             val roleIdFound =
                 RoleTable
-                    .select { RoleTable.name eq role }
+                    .select { RoleTable.name eq roleName }
                     .singleOrNull()
                     ?.get(RoleTable.id) ?: return@dbQuery false
 
             // Delete the role from user
-            UserRoles.deleteWhere {
-                (userId eq uid) and (roleId eq roleIdFound)
+            UserRolesTable.deleteWhere {
+                (userId eq uid) and (this.roleId eq roleIdFound)
             } > 0 // Returns true if at least one row was deleted
         }
 
-    override suspend fun getUserRoles(uid: Int): List<String> =
+    override suspend fun getUserRoles(uid: Int): Set<Role> =
         dbQuery {
-            UserRoles
-                .select { UserRoles.userId eq uid }
-                .map {
-                    RoleTable
-                        .select { RoleTable.id eq it[UserRoles.roleId] }
-                        .single()
-                        .get(RoleTable.name)
-                }
+            (UserRolesTable innerJoin RoleTable)
+                .slice(RoleTable.name)
+                .select { UserRolesTable.userId eq uid }
+                .map { row ->
+                    Role.valueOf(row[RoleTable.name])
+                }.toSet()
         }
 }

@@ -28,7 +28,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateSellerRequest("name", "surname", "email@email"))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/51")
@@ -56,35 +56,29 @@ class SellerRoutesTest : BaseRouteTest() {
                 }
         }
 
-    /*
-        // todo
-        @Test
-        fun `Create Seller - Forbidden - No permission Roles`() = testApplication {
-            testClient().post(Uris.API + Uris.SELLERS) {
-                headers.append("Authorization", "Bearer $token")
-                setBody(CreateSellerRequest("newSeller", "newLocation", null))
-            }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.userIsInvalid.type)
-                response.shouldHaveStatus(HttpStatusCode.Forbidden)
-                response.shouldHaveContentType(ContentType.Application.ProblemJson)
-            }
+    @Test
+    fun `Create Seller - Forbidden - No permission Roles`() =
+        testApplication {
+            testClient()
+                .post(Uris.API + Uris.SELLERS) {
+                    headers.append(
+                        "Authorization",
+                        "Bearer $sellerToken",
+                    )
+                    setBody(CreateSellerRequest("newSeller", "newLocation", "test@test.pt"))
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
         }
-        @Test
-        fun `Create Seller - Bad Request`() = testApplication {
-            testClient().post(Uris.API + Uris.SELLERS) {
-            }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.noSellerProvided.type)
-                response.shouldHaveStatus(HttpStatusCode.BadRequest)
-                response.shouldHaveContentType(ContentType.Application.ProblemJson)
-            }
-        }*/
 
     @Test
     fun `Create Seller - email already in use`() =
         testApplication {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateSellerRequest("name", "surname", "1@mail.com"))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.sellerEmailAlreadyInUse.type)
@@ -98,7 +92,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                 }.also { response ->
                     val seller = response.call.response.body<SellerJSON>()
@@ -113,7 +107,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.sellerNotFound.type)
@@ -127,7 +121,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
@@ -141,7 +135,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                 }.also { response ->
                     response.body<List<SellerJSON>>()
                     response.shouldHaveStatus(HttpStatusCode.OK)
@@ -154,7 +148,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                     setBody(UpdateSellerRequest("newSeller", "newLocation", "1@mail.com", 0.0f))
                 }.also { response ->
@@ -177,25 +171,27 @@ class SellerRoutesTest : BaseRouteTest() {
                 }
         }
 
-    /*
-      // todo
-      @Test
-        fun `Update Seller - Forbidden`() = testApplication {
-            testClient().put(Uris.API + Uris.SELLERS_BY_ID) {
-                setBody(UpdateSellerRequest("newSeller", "newLocation", null))
-            }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                response.shouldHaveStatus(HttpStatusCode.Forbidden)
-                response.shouldHaveContentType(ContentType.Application.ProblemJson)
-            }
-        }*/
+    @Test
+    fun `Update Seller - Forbidden`() =
+        testApplication {
+            testClient()
+                .put(Uris.API + Uris.SELLERS_BY_ID) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                    parameter("id", 2)
+                    setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f))
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
 
     @Test
     fun `Update Seller - Not Found`() =
         testApplication {
             testClient()
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                     setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f))
                 }.also { response ->
@@ -210,7 +206,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
                     setBody(UpdateSellerRequest("newSeller", "newLocation", "test@test.pt", 0.0f))
                 }.also { response ->
@@ -225,7 +221,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NoContent)
@@ -249,7 +245,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -261,7 +257,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -273,7 +269,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

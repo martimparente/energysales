@@ -32,10 +32,16 @@ data class Problem(
 ) {
     companion object {
         private const val PROBLEM_URL = "https://github.com/martimparente/ecoenergy/docs/client-documentation/problems/"
+        val forbidden: Problem =
+            Problem(
+                "forbidden",
+                PROBLEM_URL + "forbidden.md",
+                "",
+            )
         val clientAlreadyExists: Problem =
             Problem(
-                "todo",
-                PROBLEM_URL + "todo.md",
+                "clientAlreadyExists",
+                PROBLEM_URL + "clientAlreadyExists.md",
                 "",
             )
         val clientNotFound: Problem =

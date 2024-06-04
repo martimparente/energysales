@@ -5,8 +5,8 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.auth.data.UserRepository
+import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.SaltedHash
-import pt.isel.ps.energysales.auth.domain.model.Token
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -31,6 +31,7 @@ class UserService(
         username: String,
         password: String,
         repeatPassword: String,
+        roles: Set<String>,
     ): UserCreationResult =
         either {
             ensure(username.length in 5..16) { UserCreationError.UserIsInvalid }
@@ -40,7 +41,7 @@ class UserService(
 
             // todo what happens if the user suddenly exists? Transaction?
             val saltedHash = hashingService.generateSaltedHash(password, SALT_NUM_OF_BYTES)
-            userRepository.createUser(username, saltedHash.hash, saltedHash.salt)
+            userRepository.createUser(username, saltedHash.hash, saltedHash.salt, roles)
         }
 
     /**
@@ -60,8 +61,9 @@ class UserService(
             ensureNotNull(user) { TokenCreationError.UserOrPasswordAreInvalid }
             val passwordIsValid = hashingService.matches(password, SaltedHash(user.password, user.salt))
             ensure(passwordIsValid) { TokenCreationError.UserOrPasswordAreInvalid }
-            // Generate token
-            tokenService.generateToken(user.id)
+            val roles = userRepository.getUserRoles(user.id).map { it.name }.toSet()
+            // Generate token TODO HARDCODED EXPIRATION TIME
+            tokenService.generateJwtToken(user.username, roles.toList(), 3600000)
         }
 
     suspend fun changeUserPassword(
@@ -99,12 +101,16 @@ class UserService(
 
     suspend fun deleteRole(
         uid: Int,
-        role: String,
+        roleName: String,
     ): RoleDeleteResult =
         either {
             ensureNotNull(userRepository.getUserById(uid)) { RoleDeletingError.UserNotFound }
-            ensure(userRepository.getUserRoles(uid).contains(role)) { RoleDeletingError.UserHasNoRole }
-            userRepository.deleteRoleFromUser(uid, role)
+            ensure(
+                userRepository
+                    .getUserRoles(uid)
+                    .any { role -> role.name == roleName },
+            ) { RoleDeletingError.UserHasNoRole }
+            userRepository.deleteRoleFromUser(uid, roleName)
         }
 
     fun resetPassword(email: String): Either<ResetPasswordError, Unit> =
@@ -119,12 +125,12 @@ class UserService(
 }
 
 typealias UserCreationResult = Either<UserCreationError, Int>
-typealias TokenCreationResult = Either<TokenCreationError, Token>
+typealias TokenCreationResult = Either<TokenCreationError, String>
 typealias ChangeUserPasswordResult = Either<ChangeUserPasswordError, Boolean>
 typealias ResetPasswordResult = Either<ResetPasswordError, Boolean>
 
 typealias RoleAssignResult = Either<RoleAssignError, Unit>
-typealias RoleReadingResult = Either<RoleReadingError, List<String>>
+typealias RoleReadingResult = Either<RoleReadingError, Set<Role>>
 typealias RoleDeleteResult = Either<RoleDeletingError, Unit>
 
 sealed interface UserCreationError {

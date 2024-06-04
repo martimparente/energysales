@@ -57,8 +57,18 @@ fun Route.sellerRoutes(sellerService: SellerService) {
 
             is Left ->
                 when (res.value) {
-                    SellerCreationError.SellerAlreadyExists -> call.respondProblem(Problem.sellerEmailAlreadyInUse, HttpStatusCode.Conflict)
-                    SellerCreationError.SellerInfoIsInvalid -> call.respondProblem(Problem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
+                    SellerCreationError.SellerAlreadyExists ->
+                        call.respondProblem(
+                            Problem.sellerEmailAlreadyInUse,
+                            HttpStatusCode.Conflict,
+                        )
+
+                    SellerCreationError.SellerInfoIsInvalid ->
+                        call.respondProblem(
+                            Problem.sellerInfoIsInvalid,
+                            HttpStatusCode.BadRequest,
+                        )
+
                     SellerCreationError.SellerEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
                     SellerCreationError.SellerNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
                     SellerCreationError.SellerSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
@@ -92,7 +102,12 @@ fun Route.sellerRoutes(sellerService: SellerService) {
             is Left -> {
                 when (res.value) {
                     SellerUpdatingError.SellerNotFound -> call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
-                    SellerUpdatingError.SellerInfoIsInvalid -> call.respondProblem(Problem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
+                    SellerUpdatingError.SellerInfoIsInvalid ->
+                        call.respondProblem(
+                            Problem.sellerInfoIsInvalid,
+                            HttpStatusCode.BadRequest,
+                        )
+
                     SellerUpdatingError.SellerEmailIsInvalid -> TODO()
                     SellerUpdatingError.SellerNameIsInvalid -> TODO()
                     SellerUpdatingError.SellerSurnameIsInvalid -> TODO()
@@ -109,7 +124,11 @@ fun Route.sellerRoutes(sellerService: SellerService) {
             is Left ->
                 when (res.value) {
                     SellerDeletingError.SellerNotFound -> call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
-                    SellerDeletingError.SellerInfoIsInvalid -> call.respondProblem(Problem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
+                    SellerDeletingError.SellerInfoIsInvalid ->
+                        call.respondProblem(
+                            Problem.sellerInfoIsInvalid,
+                            HttpStatusCode.BadRequest,
+                        )
                 }
         }
     }
