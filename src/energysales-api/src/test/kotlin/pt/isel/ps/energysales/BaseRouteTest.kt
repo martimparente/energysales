@@ -21,7 +21,7 @@ import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.BeforeClass
 import pt.isel.ps.energysales.auth.data.RoleTable
-import pt.isel.ps.energysales.auth.data.UserRoles
+import pt.isel.ps.energysales.auth.data.UserRolesTable
 import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.auth.http.model.LoginRequest
 import pt.isel.ps.energysales.auth.http.model.LoginResponse
@@ -77,7 +77,7 @@ open class BaseRouteTest {
                             SellerTable,
                             TeamTable,
                             PersonTable,
-                            UserRoles,
+                            UserRolesTable,
                             RoleTable,
                             UserTable,
                             ProductTable,
@@ -88,7 +88,7 @@ open class BaseRouteTest {
                             .create(
                                 UserTable,
                                 RoleTable,
-                                UserRoles,
+                                UserRolesTable,
                                 TeamTable,
                                 PersonTable,
                                 SellerTable,
@@ -103,15 +103,13 @@ open class BaseRouteTest {
                             it[salt] = "c3f842f3630ebb3d96543709bc316402"
                         }
                         RoleTable.insert {
-                            it[name] = "admin"
+                            it[name] = "SELLER"
                         }
+
                         RoleTable.insert {
-                            it[name] = "seller"
+                            it[name] = "ADMIN"
                         }
-                        UserRoles.insert {
-                            it[userId] = 1
-                            it[roleId] = 2
-                        }
+
                         for (i in 1..3) {
                             LocationTable.insert {
                                 it[district] = "Location $i"
@@ -143,6 +141,15 @@ open class BaseRouteTest {
                                 it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
                                 it[location] = i
                             }
+                            UserTable.insert {
+                                it[username] = i.toString() // pass = "SecurePass123!"
+                                it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+                                it[salt] = "c3f842f3630ebb3d96543709bc316402"
+                            }
+                            UserRolesTable.insert {
+                                it[userId] = i
+                                it[roleId] = 1
+                            }
                         }
                     }
                     // Login to get the JWT token for testing authenticated routes
@@ -168,7 +175,7 @@ open class BaseRouteTest {
                     SellerTable,
                     TeamTable,
                     PersonTable,
-                    UserRoles,
+                    UserRolesTable,
                     RoleTable,
                     UserTable,
                     ProductTable,

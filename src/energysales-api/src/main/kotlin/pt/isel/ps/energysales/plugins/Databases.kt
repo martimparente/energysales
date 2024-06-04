@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import pt.isel.ps.energysales.auth.data.RoleTable
-import pt.isel.ps.energysales.auth.data.UserRoles
+import pt.isel.ps.energysales.auth.data.UserRolesTable
 import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.clients.data.ClientTable
 import pt.isel.ps.energysales.products.data.ProductTable
@@ -43,11 +43,12 @@ fun Application.configureDatabases() {
 
         transaction {
             log.atInfo().log("Database connected - jdbcURL: $jdbcURL")
-            SchemaUtils.drop(SellerTable, TeamTable, PersonTable, UserRoles, RoleTable, UserTable, ProductTable, LocationTable, ClientTable)
+            SchemaUtils
+                .drop(SellerTable, TeamTable, PersonTable, UserRolesTable, RoleTable, UserTable, ProductTable, LocationTable, ClientTable)
             SchemaUtils.create(
                 UserTable,
                 RoleTable,
-                UserRoles,
+                UserRolesTable,
                 TeamTable,
                 PersonTable,
                 SellerTable,
@@ -61,15 +62,12 @@ fun Application.configureDatabases() {
                 it[salt] = "c3f842f3630ebb3d96543709bc316402"
             }
             RoleTable.insert {
-                it[name] = "admin"
+                it[name] = "ADMIN"
             }
             RoleTable.insert {
-                it[name] = "seller"
+                it[name] = "SELLER"
             }
-            UserRoles.insert {
-                it[userId] = 1
-                it[roleId] = 2
-            }
+
             for (i in 1..50) {
                 LocationTable.insert {
                     it[district] = "District $i"
@@ -103,6 +101,15 @@ fun Application.configureDatabases() {
                     it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
                     it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
                     it[location] = i
+                }
+                UserTable.insert {
+                    it[username] = i.toString() // pass = "SecurePass123!"
+                    it[UserTable.password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+                    it[salt] = "c3f842f3630ebb3d96543709bc316402"
+                }
+                UserRolesTable.insert {
+                    it[userId] = i
+                    it[roleId] = 1
                 }
             }
         }

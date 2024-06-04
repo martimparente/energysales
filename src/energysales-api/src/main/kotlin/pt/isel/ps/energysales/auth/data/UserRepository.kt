@@ -1,5 +1,6 @@
 package pt.isel.ps.energysales.auth.data
 
+import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.User
 
 interface UserRepository {
@@ -7,13 +8,14 @@ interface UserRepository {
         username: String,
         password: String,
         salt: String,
+        roles: Set<String>,
     ): Int
 
     suspend fun getUserById(uid: Int): User?
 
     suspend fun getUserByUsername(username: String): User?
 
-    suspend fun getUserRoles(uid: Int): List<String>
+    suspend fun getUserRoles(uid: Int): Set<Role>
 
     suspend fun userExists(username: String): Boolean
 
@@ -21,11 +23,11 @@ interface UserRepository {
 
     suspend fun assignRoleToUser(
         uid: Int,
-        role: String,
+        roleName: String,
     ): Boolean
 
     suspend fun deleteRoleFromUser(
         uid: Int,
-        role: String,
+        roleName: String,
     ): Boolean
 }

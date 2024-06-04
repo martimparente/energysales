@@ -19,18 +19,18 @@ import pt.isel.ps.energysales.auth.domain.service.RoleReadingError
 import pt.isel.ps.energysales.auth.domain.service.UserCreationError
 import pt.isel.ps.energysales.auth.domain.service.UserService
 import pt.isel.ps.energysales.auth.http.model.ChangePasswordRequest
+import pt.isel.ps.energysales.auth.http.model.CreateUserRequest
 import pt.isel.ps.energysales.auth.http.model.LoginRequest
 import pt.isel.ps.energysales.auth.http.model.LoginResponse
 import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.auth.http.model.ResetPasswordRequest
 import pt.isel.ps.energysales.auth.http.model.RoleRequest
-import pt.isel.ps.energysales.auth.http.model.SignUpRequest
 import pt.isel.ps.energysales.auth.http.model.respondProblem
 
 fun Route.authRoutes(userService: UserService) {
     post(Uris.AUTH_SIGNUP) {
-        val body = call.receive<SignUpRequest>()
-        val res = userService.createUser(body.username, body.password, body.repeatPassword)
+        val body = call.receive<CreateUserRequest>()
+        val res = userService.createUser(body.username, body.password, body.repeatPassword, body.roles)
 
         when (res) {
             is Right -> {
@@ -146,11 +146,11 @@ fun Route.authRoutes(userService: UserService) {
                 val uid =
                     call.parameters["id"]?.toIntOrNull()
                         ?: return@delete call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.NotFound)
-                val roleId =
-                    call.parameters["role-id"]
+                val roleName =
+                    call.parameters["role-name"]
                         ?: return@delete call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.NotFound)
 
-                val res = userService.deleteRole(uid, roleId)
+                val res = userService.deleteRole(uid, roleName)
 
                 when (res) {
                     is Right -> call.respond(HttpStatusCode.NoContent)
