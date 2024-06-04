@@ -12,6 +12,7 @@ import {ForgotPassword} from './pages/Auth/ForgotPasswordPage.tsx';
 import {useIsAuthenticated} from "@refinedev/core";
 import {ClientPage} from "./pages/Clients/Client/ClientPage.tsx";
 import {ClientsPage} from "./pages/Clients/ClientsPage.tsx";
+import {SettingsPage} from "./pages/Settings/SettingsPage.tsx";
 
 const PrivateRoutes = () => {
     const {isLoading, data} = useIsAuthenticated();
@@ -39,7 +40,8 @@ const routes = [
             {path: "/products", element: <ProductsPage/>},
             {path: "/products/:id", element: <ProductPage/>},
             {path: "/clients", element: <ClientsPage/>},
-            {path: "/clients/:id", element: <ClientPage/>}
+            {path: "/clients/:id", element: <ClientPage/>},
+            {path: "/settings", element: <SettingsPage/>}
         ]
     }
 ]

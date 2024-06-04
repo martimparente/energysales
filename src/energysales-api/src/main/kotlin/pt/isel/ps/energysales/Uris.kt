@@ -32,12 +32,10 @@ object Uris {
 
     // Team routes
     const val TEAMS = "/teams"
-    const val TEAMS_BY_ID = "$TEAMS/{id}"
+    const val TEAMS_BY_ID = "$TEAMS/{teamId}"
     const val TEAMS_HOME = "$TEAMS/me"
-    const val TEAMS_SELLERS = "$TEAMS/{id}/sellers"
-    const val TEAMS_SELLER = "$TEAMS/{id}/sellers/{id}"
-    const val TEAMS_MEMBER = "$TEAMS/members/{memberId}"
-    const val TEAMS_PROJECTS = "$TEAMS/projects"
+    const val TEAMS_SELLERS = "$TEAMS/{teamId}/sellers"
+    const val TEAMS_SELLER = "$TEAMS/{teamId}/sellers/{sellerId}"
 
     // Seller routes
     const val SELLERS = "/sellers"

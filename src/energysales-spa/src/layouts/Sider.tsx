@@ -1,31 +1,35 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {Code, Group} from '@mantine/core';
 import {
-    Icon2fa,
-    IconBellRinging,
-    IconDatabaseImport,
-    IconFingerprint,
+    IconBrandAsana,
+    IconBuilding,
+    IconBulb,
+    IconHome,
     IconKey,
+    IconLogin2,
     IconLogout,
-    IconReceipt2,
     IconSettings,
     IconSwitchHorizontal,
+    IconUsersGroup,
 } from '@tabler/icons-react';
 import classes from './NavbarSimpleColored.module.css';
 import {Link} from "react-router-dom";
 
 const data = [
-    {link: '/', label: 'Home', icon: IconBellRinging},
-    {link: '/login', label: 'Login', icon: IconReceipt2},
-    {link: '/forgotpassword', label: 'Forgot Password', icon: IconFingerprint},
-    {link: '/teams', label: 'Teams', icon: IconKey},
-    {link: '/sellers', label: 'Sellers', icon: IconDatabaseImport},
-    {link: '/products', label: 'Products', icon: Icon2fa},
-    {link: '/clients', label: 'Clients', icon: IconSettings},
+    {link: '/', label: 'Home', icon: IconHome},
+    {link: '/login', label: 'Login', icon: IconLogin2},
+    {link: '/forgotpassword', label: 'Forgot Password', icon: IconKey},
+    {link: '/teams', label: 'Teams', icon: IconBrandAsana},
+    {link: '/sellers', label: 'Sellers', icon: IconUsersGroup},
+    {link: '/products', label: 'Products', icon: IconBulb},
+    {link: '/clients', label: 'Clients', icon: IconBuilding},
+    {link: '/settings', label: 'Settings', icon: IconSettings},
 ];
 
+const energySalesIcon = <img src="/src/assets/logo+name.svg" width="150" height="50"/>
+
 export function Sider() {
-    const [active, setActive] = useState('Billing');
+    const [active, setActive] = useState('');
 
     const links = data.map((item) => (
         <Link
@@ -44,9 +48,9 @@ export function Sider() {
         <nav className={classes.navbar}>
             <div className={classes.navbarMain}>
                 <Group className={classes.header} justify="space-between">
-                    <IconKey size={28} style={{color: 'white'}}/>
+                    {energySalesIcon}
                     <Code fw={700} className={classes.version}>
-                        v3.1.2
+                        v0.0.1
                     </Code>
                 </Group>
                 {links}

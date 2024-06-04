@@ -16,7 +16,7 @@ export namespace ApiUris {
     export const deleteTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`
 
     export const addTeamSeller = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/sellers`
-
+    export const deleteTeamSeller = (teamId: string, sellerId: string) => `${API_BASE_URL}/teams/${teamId}/sellers/${sellerId}`
     // Sellers
     export const getSellers = (lastKeySeen: string) => `${API_BASE_URL}/sellers?lastKeySeen=${lastKeySeen}`
     export const getSellersWithNoTeam = (lastKeySeen: string) => `${API_BASE_URL}/sellers?lastKeySeen=${lastKeySeen}&noTeam=true`

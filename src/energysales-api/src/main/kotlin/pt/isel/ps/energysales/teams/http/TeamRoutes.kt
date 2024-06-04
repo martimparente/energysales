@@ -153,14 +153,16 @@ fun Route.teamRoutes(teamService: TeamService) {
     put<TeamResource.TeamId.Sellers> { pathParams ->
         val teamId = pathParams.parent.teamId
         val body = call.receive<AddTeamSellerRequest>()
+        val sellerId =
+            body.sellerId.toIntOrNull()
+                ?: return@put call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest) // todo error message
+        print("sellerId: $sellerId")
+        // Check if the teamId in the request body = teamId in the path
         if (teamId != body.teamId.toInt()) {
-            call.respondProblem(
-                Problem.badRequest,
-                HttpStatusCode.BadRequest,
-            ) // id from path and from payload are diff
+            call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest) // todo error message
         }
 
-        val res = teamService.addSellerToTeam(pathParams.parent.teamId, body.sellerId.toInt())
+        val res = teamService.addSellerToTeam(teamId, sellerId)
 
         when (res) {
             is Right -> {

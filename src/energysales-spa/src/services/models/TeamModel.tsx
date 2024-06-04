@@ -33,3 +33,8 @@ export interface AddTeamSellerInputModel {
     teamId: string,
     sellerId: string
 }
+
+export interface DeleteTeamSellerInput {
+    teamId: string;
+    sellerId: string;
+}

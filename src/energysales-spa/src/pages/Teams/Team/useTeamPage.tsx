@@ -1,6 +1,7 @@
 import {
     useAddTeamSeller,
     useDeleteTeam,
+    useDeleteTeamSeller,
     useGetAvailableSellers,
     useGetTeamDetails,
     useUpdateTeam
@@ -12,11 +13,12 @@ import {useState} from "react";
 export function useTeamPage() {
 
     const navigate = useNavigate();
-    const {id} = useParams<string>();
+    const {id} = useParams<string>()
     const {lastKeySeen} = useParams<{ lastKeySeen: string }>();
-    const {data: teamDetails, isFetching, error} = useGetTeamDetails(id || '');
-    const {data: availableSellers} = useGetAvailableSellers(lastKeySeen || "0");
+    const {data: teamDetails, isLoading: isLoadingTeamDetails} = useGetTeamDetails(id || '');
+    const {data: availableSellers,} = useGetAvailableSellers(lastKeySeen || "0");
     const {mutateAsync: addSeller} = useAddTeamSeller();
+    const {mutateAsync: deleteSeller} = useDeleteTeamSeller();
     const {mutateAsync: updateTeam} = useUpdateTeam();
     const {mutateAsync: deleteTeam} = useDeleteTeam();
     const [sellerId, setSellerId] = useState<string>("")
@@ -25,27 +27,19 @@ export function useTeamPage() {
     const handleUpdateTeamForm = async (input: UpdateTeamInputModel) => await updateTeam(input)
     const handleDeleteTeam = async (team: Team) => await deleteTeam(team.id)
     const handleSelectSellerChange = (value: string) => setSellerId(value)
-    const handleAddSelectSellerToTeam = () => addSeller({teamId: id, sellerId: sellerId})
-
-    /*
-        const handleSubmit = () => {
-            if (sellerId == null || sellerId === "") {
-                console.log("Please fill out all fields")
-                return
-            }
-        }
-    */
+    const handleAddSelectSellerToTeam = () => addSeller({teamId: id!, sellerId: sellerId})
+    const handleDeleteSellerFromTeam = (sellerId: string) => deleteSeller({teamId: id!, sellerId: sellerId})
 
     return {
         teamDetails,
+        isLoadingTeamDetails,
         addSeller: addSeller,
         updateTeam: handleUpdateTeamForm,
         deleteTeam: handleDeleteTeam,
         onShowClickHandler: (team: Team) => navigate(`/teams/${team.id}`),
-        isFetching,
-        error,
         availableSellers,
         handleSelectSellerChange,
-        handleAddSelectSellerToTeam
+        handleAddSelectSellerToTeam,
+        handleDeleteSellerFromTeam,
     }
 }

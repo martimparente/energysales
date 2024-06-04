@@ -59,9 +59,10 @@ export function LoginPage() {
                         label="Keep me logged in"
                         mt="xl" size="md"
                         checked={form.values.terms}
+                        color="orange"
                         onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
                     />
-                    <Button type="submit" fullWidth mt="xl" size="md">Login</Button>
+                    <Button type="submit" fullWidth mt="xl" size="md" color="orange">Login</Button>
 
                     <Text ta="center" mt="md">
                         <Link to="/forgotpassword" replace={true}>Forgot password?</Link>

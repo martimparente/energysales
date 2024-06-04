@@ -41,7 +41,7 @@ export function ForgotPassword() {
                             <Box ml={5}>Back to the login page</Box>
                         </Center>
                     </Link>
-                    <Button className={classes.control}>Reset password</Button>
+                    <Button color="orange" className={classes.control}>Reset password</Button>
                 </Group>
             </Paper>
         </Container>

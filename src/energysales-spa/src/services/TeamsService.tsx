@@ -3,6 +3,7 @@ import {ApiUris} from "./ApiUris";
 import {
     AddTeamSellerInputModel,
     CreateTeamInputModel,
+    DeleteTeamSellerInput,
     Team,
     TeamDetails,
     UpdateTeamInputModel
@@ -91,6 +92,17 @@ export function useDeleteTeam() {
     });
 }
 
+// get available sellers
+export function useGetAvailableSellers(lastKeySeen: string = "0") {
+    return useQuery<Seller[]>({
+        queryKey: ["availableSellers", lastKeySeen],
+        queryFn: () =>
+            fetch(ApiUris.getSellersWithNoTeam(lastKeySeen), {
+                headers: AUTHORIZATION_HEADER,
+            }).then((res) => res.json()),
+    });
+}
+
 // add member to team
 export function useAddTeamSeller() {
     const queryClient = useQueryClient();
@@ -103,19 +115,28 @@ export function useAddTeamSeller() {
             }),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
-            queryClient.invalidateQueries({queryKey: [`teamDetails`]});
+            queryClient.invalidateQueries({queryKey: ["teamDetails"]});
+            queryClient.invalidateQueries({queryKey: ["availableSellers"]});
         },
     });
 }
 
-// get available sellers
-export function useGetAvailableSellers(lastKeySeen: string = "0") {
-    return useQuery<Seller[]>({
-        queryKey: ["availableSellers", lastKeySeen],
-        queryFn: () =>
-            fetch(ApiUris.getSellersWithNoTeam(lastKeySeen), {
+// delete member to team
+export function useDeleteTeamSeller() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (input: DeleteTeamSellerInput) =>
+            fetch(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), {
+                method: "DELETE",
                 headers: AUTHORIZATION_HEADER,
-            }).then((res) => res.json()),
+            }),
+        onSuccess: () => {
+            // Invalidate and refetch the teams query to get the updated list
+            queryClient.invalidateQueries({queryKey: ["teamDetails"]});
+            queryClient.invalidateQueries({queryKey: ["availableSellers"]});
+        },
     });
 }
+
+
 

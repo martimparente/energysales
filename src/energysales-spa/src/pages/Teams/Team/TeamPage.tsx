@@ -1,24 +1,25 @@
 import {useTeamPage} from './useTeamPage'
 import {Seller} from '../../../services/models/SellersModel.tsx'
-import {Button, Select, Table} from '@mantine/core'
+import {Box, Button, LoadingOverlay, Select, Table} from '@mantine/core'
 
 export function TeamPage() {
     const {
         teamDetails,
+        isLoadingTeamDetails,
         availableSellers,
-        isFetching,
         handleSelectSellerChange,
-        handleAddSelectSellerToTeam
+        handleAddSelectSellerToTeam,
+        handleDeleteSellerFromTeam,
     } = useTeamPage()
 
-    if (isFetching) return <p>loading</p>
 
     return (
-        <div>
-            <h1>Team</h1>
-
+        <Box pos="relative">
+            <LoadingOverlay visible={isLoadingTeamDetails} />
+            <h1>{teamDetails?.team.name}</h1>
             <p>Name = {teamDetails?.team.name}</p>
             <p>Location = {teamDetails?.team.location?.district}</p>
+            <p>Manager = {teamDetails?.team.manager?.toString()}</p>
 
             <Select
                 label="Select seller to add to Team"
@@ -28,9 +29,10 @@ export function TeamPage() {
                     value: member.person.id,
                     label: member.person.name
                 })) || []}
-                onChange={(value) => handleSelectSellerChange(value)}
+                onChange={(value) => handleSelectSellerChange(value!)}
             />
             <Button onClick={handleAddSelectSellerToTeam} mb="md">Add Seller to Team</Button>
+
 
             <Table>
                 <Table.Thead>
@@ -48,11 +50,15 @@ export function TeamPage() {
                             <Table.Td>{member.person.surname}</Table.Td>
                             <Table.Td>{member.person.email}</Table.Td>
                             <Table.Td>{member.totalSales}</Table.Td>
-                            <Table.Td><Button color={"red"}>Remove from Team</Button></Table.Td>
+                            <Table.Td>
+                                <Button onClick={() => handleDeleteSellerFromTeam(member.person.id)} color={"red"}>
+                                    Remove from Team
+                                </Button>
+                            </Table.Td>
                         </Table.Tr>
                     ))}
                 </Table.Tbody>
             </Table>
-        </div>
+        </Box>
     )
 }
