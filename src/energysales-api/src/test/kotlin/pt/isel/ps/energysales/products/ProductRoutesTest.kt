@@ -28,7 +28,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.PRODUCT) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateProductRequest("newProduct", 0.0, ""))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.PRODUCT}/51")
@@ -84,7 +84,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.PRODUCT) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateProductRequest("Product 1", 0.0, ""))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.productAlreadyExists.type)
@@ -98,7 +98,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                 }.also { response ->
                     val product = response.call.response.body<ProductJSON>()
@@ -113,7 +113,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.productNotFound.type)
@@ -127,7 +127,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
@@ -141,7 +141,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.PRODUCT) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                 }.also { response ->
                     response.body<List<ProductJSON>>()
                 }
@@ -152,7 +152,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
                     setBody(UpdateProductRequest("updatedProduct", 0.0, ""))
                 }.also { response ->
@@ -193,7 +193,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                     setBody(UpdateProductRequest("nonExistingProduct", 0.0, ""))
                 }.also { response ->
@@ -208,7 +208,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
                     setBody(UpdateProductRequest("", 0.0, ""))
                 }.also { response ->
@@ -223,7 +223,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NoContent)
@@ -247,7 +247,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -259,7 +259,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -271,7 +271,7 @@ class ProductRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.PRODUCT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

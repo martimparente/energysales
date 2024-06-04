@@ -28,7 +28,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.CLIENT) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateClientRequest("newClient", "123456789", "123456789", "District 1"))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.CLIENT}/51")
@@ -99,7 +99,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                 }.also { response ->
                     val client = response.call.response.body<ClientJSON>()
@@ -114,7 +114,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.clientNotFound.type)
@@ -128,7 +128,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
@@ -142,7 +142,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENT) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                 }.also { response ->
                     response.body<List<ClientJSON>>()
                 }
@@ -153,7 +153,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
                     setBody(UpdateClientRequest("newClient", "123456789", "123456789", "newLocation"))
                 }.also { response ->
@@ -194,7 +194,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                     setBody(UpdateClientRequest("nonClient", "123456789", "123456789", "newLocation"))
                 }.also { response ->
@@ -209,7 +209,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
                     setBody(UpdateClientRequest("", "123456789", "123456789", "newLocation"))
                 }.also { response ->
@@ -224,7 +224,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NoContent)
@@ -248,7 +248,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -260,7 +260,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -272,7 +272,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENT_BY_ID) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

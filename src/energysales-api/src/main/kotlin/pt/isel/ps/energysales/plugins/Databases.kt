@@ -56,14 +56,17 @@ fun Application.configureDatabases() {
                 LocationTable,
                 ClientTable,
             )
+
             UserTable.insert {
-                it[username] = "testUser" // pass = "SecurePass123!"
+                it[username] = "adminUser" // pass = "SecurePass123!"
                 it[UserTable.password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
                 it[salt] = "c3f842f3630ebb3d96543709bc316402"
             }
+
             RoleTable.insert {
                 it[name] = "ADMIN"
             }
+
             RoleTable.insert {
                 it[name] = "SELLER"
             }
@@ -103,14 +106,18 @@ fun Application.configureDatabases() {
                     it[location] = i
                 }
                 UserTable.insert {
-                    it[username] = i.toString() // pass = "SecurePass123!"
+                    it[username] = "Username $i" // pass = "SecurePass123!"
                     it[UserTable.password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
                     it[salt] = "c3f842f3630ebb3d96543709bc316402"
                 }
                 UserRolesTable.insert {
                     it[userId] = i
-                    it[roleId] = 1
+                    it[roleId] = 2
                 }
+            }
+            UserRolesTable.insert {
+                it[userId] = 1
+                it[roleId] = 1
             }
         }
     } catch (e: Exception) {

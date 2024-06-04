@@ -23,6 +23,7 @@ import pt.isel.ps.energysales.auth.http.authRoutes
 import pt.isel.ps.energysales.clients.data.PsqlClientRepository
 import pt.isel.ps.energysales.clients.domain.service.ClientService
 import pt.isel.ps.energysales.clients.http.clientRoutes
+import pt.isel.ps.energysales.plugins.authorized
 import pt.isel.ps.energysales.plugins.configureDatabases
 import pt.isel.ps.energysales.plugins.configureHTTP
 import pt.isel.ps.energysales.plugins.configureSerialization
@@ -41,9 +42,18 @@ fun main(args: Array<String>) = EngineMain.main(args)
 // Todo check behaviour nested transactions w\ suspendTransactions
 
 fun Application.module() {
+    /**
+     * Configuration
+     */
+
     fun configProperty(propertyName: String) = environment.config.property(propertyName).getString()
     val jwtConfig =
         JwtConfig(configProperty("jwt.issuer"), configProperty("jwt.audience"), configProperty("jwt.realm"), configProperty("jwt.secret"))
+
+    /**
+     * Services
+     */
+
     val userService by lazy {
         UserService(
             userRepository = PsqlUserRepository(),
@@ -51,27 +61,14 @@ fun Application.module() {
             hashingService = SHA256HashingService(),
         )
     }
+    val teamService by lazy { TeamService(teamRepository = PsqlTeamRepository()) }
+    val sellerService by lazy { SellerService(sellerRepository = PsqlSellerRepository()) }
+    val productService by lazy { ProductService(productRepository = PsqlProductRepository()) }
+    val clientService by lazy { ClientService(clientRepository = PsqlClientRepository()) }
 
-    val teamService by lazy {
-        TeamService(
-            teamRepository = PsqlTeamRepository(),
-        )
-    }
-    val sellerService by lazy {
-        SellerService(
-            sellerRepository = PsqlSellerRepository(),
-        )
-    }
-    val productService by lazy {
-        ProductService(
-            productRepository = PsqlProductRepository(),
-        )
-    }
-    val clientService by lazy {
-        ClientService(
-            clientRepository = PsqlClientRepository(),
-        )
-    }
+    /**
+     * Plugins
+     */
 
     install(Resources)
     install(CallLogging) {
@@ -84,18 +81,25 @@ fun Application.module() {
     configureAuth(jwtConfig)
     configureHTTP()
 
+    /**
+     * Routes
+     */
     routing {
         route(Uris.API) {
             authRoutes(userService)
-
             authenticate {
-                teamRoutes(teamService)
-                sellerRoutes(sellerService)
-                productRoutes(productService)
-                clientRoutes(clientService)
-                get(Uris.HOME) {
-                    call.respondText("Hello, world!")
+                authorized("ADMIN") {
+                    teamRoutes(teamService)
+                    sellerRoutes(sellerService)
+                    productRoutes(productService)
                 }
+                authorized("SELLER") {
+                    clientRoutes(clientService)
+                }
+            }
+
+            get(Uris.HOME) {
+                call.respondText("Hello, world!")
             }
         }
     }

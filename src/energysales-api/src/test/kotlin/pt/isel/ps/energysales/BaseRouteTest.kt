@@ -35,7 +35,8 @@ import pt.isel.ps.energysales.teams.data.TeamTable
 
 open class BaseRouteTest {
     companion object {
-        lateinit var token: String
+        lateinit var adminToken: String
+        lateinit var sellerToken: String
 
         // Function to create a test http client
         fun ApplicationTestBuilder.testClient(): HttpClient {
@@ -98,16 +99,17 @@ open class BaseRouteTest {
                             )
 
                         UserTable.insert {
-                            it[username] = "testUser" // pass = "SecurePass123!"
+                            it[username] = "adminUser" // pass = "SecurePass123!"
                             it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
                             it[salt] = "c3f842f3630ebb3d96543709bc316402"
-                        }
-                        RoleTable.insert {
-                            it[name] = "SELLER"
                         }
 
                         RoleTable.insert {
                             it[name] = "ADMIN"
+                        }
+
+                        RoleTable.insert {
+                            it[name] = "SELLER"
                         }
 
                         for (i in 1..3) {
@@ -142,22 +144,34 @@ open class BaseRouteTest {
                                 it[location] = i
                             }
                             UserTable.insert {
-                                it[username] = i.toString() // pass = "SecurePass123!"
+                                it[username] = "Username $i" // pass = "SecurePass123!"
                                 it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
                                 it[salt] = "c3f842f3630ebb3d96543709bc316402"
                             }
                             UserRolesTable.insert {
                                 it[userId] = i
-                                it[roleId] = 1
+                                it[roleId] = 2
                             }
+                        }
+
+                        UserRolesTable.insert {
+                            it[userId] = 1
+                            it[roleId] = 1
                         }
                     }
                     // Login to get the JWT token for testing authenticated routes
-                    testClient()
+                    val testClient = testClient()
+                    testClient
                         .post(Uris.API + Uris.AUTH_LOGIN) {
-                            setBody(LoginRequest("testUser", "SecurePass123!"))
+                            setBody(LoginRequest("adminUser", "SecurePass123!"))
                         }.also { response ->
-                            token = response.body<LoginResponse>().token
+                            adminToken = response.body<LoginResponse>().token
+                        }
+                    testClient
+                        .post(Uris.API + Uris.AUTH_LOGIN) {
+                            setBody(LoginRequest("Username 1", "SecurePass123!"))
+                        }.also { response ->
+                            sellerToken = response.body<LoginResponse>().token
                         }
                 } catch (e: Exception) {
                     Assert.fail("Error connecting to the database: ${e.message}")

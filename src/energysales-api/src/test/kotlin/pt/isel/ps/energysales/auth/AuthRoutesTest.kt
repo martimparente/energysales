@@ -29,6 +29,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateUserRequest("newTestUser", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.Created)
@@ -41,6 +42,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateUserRequest("123", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.userIsInvalid.type)
@@ -54,7 +56,8 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
-                    setBody(CreateUserRequest("testUser", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
+                    headers.append("Authorization", "Bearer $adminToken")
+                    setBody(CreateUserRequest("Username 1", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.userAlreadyExists.type)
                     response.shouldHaveStatus(HttpStatusCode.Conflict)
@@ -67,6 +70,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateUserRequest("testUser", "SecurePass123!", "PassSecure123!", setOf("SELLER")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.passwordMismatch.type)
@@ -80,6 +84,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
+                    headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateUserRequest("testUser", "insecure", "insecure", setOf("SELLER")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.insecurePassword.type)
@@ -89,11 +94,25 @@ class AuthRoutesTest : BaseRouteTest() {
         }
 
     @Test
+    fun `Create User - Forbidden - No permission Role`() =
+        testApplication {
+            testClient()
+                .post(Uris.API + Uris.AUTH_SIGNUP) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                    setBody(CreateUserRequest("doesNotMatter", "doesNotMatter", "doesNotMatter", setOf("SELLER")))
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
+
+    @Test
     fun `Login - Success`() =
         testApplication {
             testClient()
                 .post(Uris.API + Uris.AUTH_LOGIN) {
-                    setBody(LoginRequest("testUser", "SecurePass123!"))
+                    setBody(LoginRequest("adminUser", "SecurePass123!"))
                 }.also { response ->
                     response.body<LoginResponse>().token.shouldStartWith("ey")
                     response.shouldHaveStatus(HttpStatusCode.OK)
@@ -132,7 +151,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.USERS_ROLES) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.OK)
@@ -145,12 +164,25 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.USERS_ROLES) {
-                    headers.append("Authorization", "Bearer $token")
-                    parameter("id", 1)
-                    setBody(RoleRequest("SELLER"))
+                    headers.append("Authorization", "Bearer $adminToken")
+                    parameter("id", 3)
+                    setBody(RoleRequest("ADMIN"))
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.Created)
                     it.shouldHaveContentType(ContentType.Application.Json)
+                }
+        }
+
+    @Test
+    fun `Assign Role to User - Forbidden - No permission Role`() =
+        testApplication {
+            testClient()
+                .post(Uris.API + Uris.USERS_ROLES) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
 
@@ -159,7 +191,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.USERS_ROLE) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                     parameter("role-name", "ADMIN")
                 }.also {
@@ -169,11 +201,26 @@ class AuthRoutesTest : BaseRouteTest() {
         }
 
     @Test
+    fun `Delete Role from User - Forbidden - No permission Role`() =
+        testApplication {
+            testClient()
+                .delete(Uris.API + Uris.USERS_ROLE) {
+                    headers.append("Authorization", "Bearer $sellerToken")
+                    parameter("id", 1)
+                    parameter("role-name", "ADMIN")
+                }.also { response ->
+                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
+                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
+
+    @Test
     fun `Change Password - Success`() =
         testApplication {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                     setBody(
                         ChangePasswordRequest(
@@ -193,7 +240,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
                     setBody(
                         ChangePasswordRequest(
@@ -214,7 +261,7 @@ class AuthRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
-                    headers.append("Authorization", "Bearer $token")
+                    headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
                     setBody(
                         ChangePasswordRequest(
