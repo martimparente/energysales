@@ -3,6 +3,7 @@ package pt.isel.ps.energysales.auth
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.equals.shouldBeEqual
+import io.kotest.matchers.string.shouldStartWith
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -94,10 +95,7 @@ class AuthRoutesTest : BaseRouteTest() {
                 .post(Uris.API + Uris.AUTH_LOGIN) {
                     setBody(LoginRequest("testUser", "SecurePass123!"))
                 }.also { response ->
-                    response.body<LoginResponse>().tokenType.shouldBeEqual("Bearer")
-                    val a = response.body<LoginResponse>().token
-                    println(a)
-                    response.body<LoginResponse>().expiresIn.shouldBeEqual(36000000000)
+                    response.body<LoginResponse>().token.shouldStartWith("ey")
                     response.shouldHaveStatus(HttpStatusCode.OK)
                     response.shouldHaveContentType(ContentType.Application.Json)
                 }

@@ -52,7 +52,7 @@ fun Route.authRoutes(userService: UserService) {
         val res = userService.createToken(body.username, body.password)
 
         when (res) {
-            is Right -> call.respond(LoginResponse.fromToken(res.value))
+            is Right -> call.respond(LoginResponse(res.value))
             is Left -> call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
         }
     }

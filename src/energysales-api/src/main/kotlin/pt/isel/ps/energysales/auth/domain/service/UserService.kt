@@ -7,7 +7,6 @@ import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.auth.data.UserRepository
 import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.SaltedHash
-import pt.isel.ps.energysales.auth.domain.model.Token
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -62,8 +61,9 @@ class UserService(
             ensureNotNull(user) { TokenCreationError.UserOrPasswordAreInvalid }
             val passwordIsValid = hashingService.matches(password, SaltedHash(user.password, user.salt))
             ensure(passwordIsValid) { TokenCreationError.UserOrPasswordAreInvalid }
-            // Generate token
-            tokenService.generateToken(user.id)
+            val roles = userRepository.getUserRoles(user.id).map { it.name }.toSet()
+            // Generate token TODO HARDCODED EXPIRATION TIME
+            tokenService.generateJwtToken(user.id, roles.toList(), 3600000)
         }
 
     suspend fun changeUserPassword(
@@ -125,7 +125,7 @@ class UserService(
 }
 
 typealias UserCreationResult = Either<UserCreationError, Int>
-typealias TokenCreationResult = Either<TokenCreationError, Token>
+typealias TokenCreationResult = Either<TokenCreationError, String>
 typealias ChangeUserPasswordResult = Either<ChangeUserPasswordError, Boolean>
 typealias ResetPasswordResult = Either<ResetPasswordError, Boolean>
 
