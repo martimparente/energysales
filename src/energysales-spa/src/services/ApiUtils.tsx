@@ -1,13 +1,10 @@
-
 export const AUTHORIZATION_HEADER = {
     "Content-Type": "application/json",
-    Authorization: "Bearer " + localStorage.getItem("token"),
+    "Authorization": "Bearer " + localStorage.getItem("token"),
 };
 
 export async function fetchData<T>(url: string): Promise<T> {
-    const response = await fetch(url, {
-        headers: AUTHORIZATION_HEADER,
-    });
+    const response = await fetch(url, {headers: AUTHORIZATION_HEADER})
     if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Something went wrong');
@@ -23,6 +20,7 @@ export async function mutateData<T>(url: string, method: string, body?: any): Pr
     });
     if (!response.ok) {
         const errorData = await response.json();
+        console.log("ssssssssssssssssssssssss")
         throw new Error(errorData.message || 'Something went wrong');
     }
     return response.json();

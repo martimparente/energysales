@@ -4,6 +4,8 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.authenticate
+import io.ktor.server.http.content.react
+import io.ktor.server.http.content.singlePageApplication
 import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.request.path
@@ -85,6 +87,10 @@ fun Application.module() {
      * Routes
      */
     routing {
+        singlePageApplication {
+            react("../energysales-spa/dist")
+        }
+
         route(Uris.API) {
             authRoutes(userService)
             authenticate {

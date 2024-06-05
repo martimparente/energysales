@@ -115,7 +115,7 @@ fun Route.clientRoutes(clientService: ClientService) {
         val res = clientService.deleteClient(pathParams.id)
 
         when (res) {
-            is Right -> call.respond(HttpStatusCode.NoContent)
+            is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
                     ClientDeletingError.ClientNotFound -> call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)

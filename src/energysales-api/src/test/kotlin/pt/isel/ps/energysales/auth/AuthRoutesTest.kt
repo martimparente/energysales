@@ -33,7 +33,6 @@ class AuthRoutesTest : BaseRouteTest() {
                     setBody(CreateUserRequest("newTestUser", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.Created)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -116,7 +115,7 @@ class AuthRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     response.body<LoginResponse>().token.shouldStartWith("ey")
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
+                    response.shouldHaveContentType(ContentType.parse("application/json; charset=UTF-8"))
                 }
         }
 
@@ -155,7 +154,7 @@ class AuthRoutesTest : BaseRouteTest() {
                     parameter("id", 1)
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.OK)
-                    it.shouldHaveContentType(ContentType.Application.Json)
+                    it.shouldHaveContentType(ContentType.parse("application/json; charset=UTF-8"))
                 }
         }
 
@@ -169,7 +168,6 @@ class AuthRoutesTest : BaseRouteTest() {
                     setBody(RoleRequest("ADMIN"))
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.Created)
-                    it.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -195,8 +193,7 @@ class AuthRoutesTest : BaseRouteTest() {
                     parameter("id", 1)
                     parameter("role-name", "ADMIN")
                 }.also {
-                    it.shouldHaveStatus(HttpStatusCode.NoContent)
-                    it.shouldHaveContentType(ContentType.Application.Json)
+                    it.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
 
@@ -231,7 +228,6 @@ class AuthRoutesTest : BaseRouteTest() {
                     )
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.OK)
-                    it.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 

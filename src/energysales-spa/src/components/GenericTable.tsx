@@ -1,3 +1,10 @@
+export interface Column {
+    header: string;
+    accessor: string;
+    sortable: boolean;
+}
+
+/*
 import React, {useState} from 'react';
 import {Alert, Button, Loader, Table} from '@mantine/core';
 import {GenericModal} from './GenericModal';
@@ -131,4 +138,4 @@ export function GenericTable<T, C, U>(
             </Table>
         </div>
     );
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 import {Button, Modal, TextInput} from '@mantine/core';
 import {useForm} from '@mantine/form';
 
@@ -45,4 +46,4 @@ export function GenericModal<T>(
             </form>
         </Modal>
     );
-}
+}*/

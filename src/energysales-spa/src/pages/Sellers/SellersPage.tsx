@@ -7,12 +7,9 @@ export function SellersPage() {
     const {
         columns,
         sellers,
-        createSeller,
-        updateSeller,
         deleteSeller,
         onShowClickHandler,
-        isFetching,
-        error
+
     } = useSellersPage();
 
     return (

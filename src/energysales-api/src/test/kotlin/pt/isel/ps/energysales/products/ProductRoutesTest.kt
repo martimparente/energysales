@@ -33,7 +33,6 @@ class ProductRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.PRODUCT}/51")
                     response.shouldHaveStatus(HttpStatusCode.Created)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -104,7 +103,6 @@ class ProductRoutesTest : BaseRouteTest() {
                     val product = response.call.response.body<ProductJSON>()
                     product.name.shouldBe("Product 1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -157,7 +155,6 @@ class ProductRoutesTest : BaseRouteTest() {
                     setBody(UpdateProductRequest("updatedProduct", 0.0, ""))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -226,7 +223,7 @@ class ProductRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NoContent)
+                    response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
 

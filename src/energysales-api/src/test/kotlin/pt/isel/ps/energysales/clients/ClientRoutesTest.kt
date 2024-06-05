@@ -33,7 +33,6 @@ class ClientRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.CLIENT}/51")
                     response.shouldHaveStatus(HttpStatusCode.Created)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -105,7 +104,6 @@ class ClientRoutesTest : BaseRouteTest() {
                     val client = response.call.response.body<ClientJSON>()
                     client.name.shouldBe("Client 1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -158,7 +156,6 @@ class ClientRoutesTest : BaseRouteTest() {
                     setBody(UpdateClientRequest("newClient", "123456789", "123456789", "newLocation"))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -227,7 +224,7 @@ class ClientRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NoContent)
+                    response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
 

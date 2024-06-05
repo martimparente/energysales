@@ -7,12 +7,10 @@ export function TeamsPage() {
     const {
         columns,
         teams,
-        createTeam,
-        updateTeam,
+
         deleteTeam,
         onShowClickHandler,
-        isFetching,
-        error
+
     } = useTeamsPage();
 
     return (

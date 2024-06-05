@@ -10,12 +10,12 @@ export function useSellersPage() {
 
     const {data: sellers, error: fetchError, isFetching} = useGetSellers();
     const {mutateAsync: createSeller} = useCreateSeller();
-    const {mutateAsync: updateSeller} = useUpdateSeller();
+    const {mutateAsync: updateSeller} = useUpdateSeller("");
     const {mutateAsync: deleteSeller} = useDeleteSeller();
 
     const [error, setError] = useState<string | null>(null)
 
-    const columns: Column<Seller>[] = [
+    const columns: Column[] = [
         {
             accessor: 'person.name',
             header: 'Name',

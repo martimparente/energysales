@@ -1,13 +1,11 @@
 package pt.isel.ps.energysales.plugins
 
-import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.cors.routing.CORS
-import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.routing.routing
@@ -33,10 +31,6 @@ fun Application.configureHTTP() {
             call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
             // call.respond(status = HttpStatusCode.BadRequest, message = cause.message ?: "Bad request!")
         }
-    }
-    // will send this header with each response
-    install(DefaultHeaders) {
-        header("Content-Type", ContentType.Application.Json.toString())
     }
 
     install(CORS) {

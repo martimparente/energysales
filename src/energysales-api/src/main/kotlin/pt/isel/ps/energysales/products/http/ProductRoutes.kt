@@ -114,7 +114,7 @@ fun Route.productRoutes(productService: ProductService) {
         val res = productService.deleteProduct(pathParams.id)
 
         when (res) {
-            is Right -> call.respond(HttpStatusCode.NoContent)
+            is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
                     ProductDeletingError.ProductNotFound -> call.respondProblem(Problem.productNotFound, HttpStatusCode.NotFound)

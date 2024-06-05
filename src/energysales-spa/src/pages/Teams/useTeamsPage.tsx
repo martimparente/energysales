@@ -1,8 +1,8 @@
 import {useCreateTeam, useDeleteTeam, useGetTeams, useUpdateTeam} from '../../services/TeamsService';
 import {useNavigate} from "react-router-dom"
 import {CreateTeamInputModel, Team, UpdateTeamInputModel} from "../../services/models/TeamModel";
-import {Column} from '../../components/GenericTable';
 import {useState} from "react";
+import {Column} from "../../components/GenericTable.tsx";
 
 export function useTeamsPage() {
 
@@ -19,7 +19,7 @@ export function useTeamsPage() {
         setError(fetchError.message);
     }
 
-    const columns: Column<Team>[] = [
+    const columns: Column[] = [
         {
             accessor: 'name',
             header: 'Name',

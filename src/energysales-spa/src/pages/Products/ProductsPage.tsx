@@ -7,12 +7,8 @@ export function ProductsPage() {
     const {
         columns,
         data,
-        createProduct,
-        updateProduct,
         deleteProduct,
         onShowClickHandler,
-        isFetching,
-        error
     } = useProductsPage();
 
     return (

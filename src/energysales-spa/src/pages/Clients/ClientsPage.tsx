@@ -7,12 +7,8 @@ export function ClientsPage() {
     const {
         columns,
         data: clients,
-        createClient,
-        updateClient,
         deleteClient,
         onShowClickHandler,
-        isFetching,
-        error
     } = useClientsPage();
 
     return (

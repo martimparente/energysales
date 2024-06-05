@@ -47,6 +47,7 @@ export function useUpdateTeam() {
     });
 }
 
+//TODO FIX BUG NOT INVALIDATING QUERY
 export function useDeleteTeam() {
     const queryClient = useQueryClient();
     return useMutation({
@@ -71,6 +72,7 @@ export function useAddTeamSeller() {
         mutationFn: (input: AddTeamSellerInputModel) =>
             mutateData(ApiUris.addTeamSeller(input.teamId), "PUT", input),
         onSuccess: () => {
+            console.log("onSuccess")
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
             queryClient.invalidateQueries({queryKey: ["availableSellers"]});
         },

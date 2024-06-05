@@ -163,7 +163,7 @@ fun Route.authRoutes(userService: UserService) {
                     val res = userService.deleteRole(uid, roleName)
 
                     when (res) {
-                        is Right -> call.respond(HttpStatusCode.NoContent)
+                        is Right -> call.respond(HttpStatusCode.OK)
                         is Left -> call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
                     }
                 }

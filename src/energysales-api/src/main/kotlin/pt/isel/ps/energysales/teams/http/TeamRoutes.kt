@@ -82,8 +82,9 @@ fun Route.teamRoutes(teamService: TeamService) {
     get<TeamResource.TeamId> { pathParams ->
         val res =
             if (pathParams.include == "members") {
-                val res = teamService.getByIdWithMembers(pathParams.teamId)
-                    ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                val res =
+                    teamService.getByIdWithMembers(pathParams.teamId)
+                        ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 val teamDetailsJson = TeamDetailsJSON.fromTeamDetails(res)
                 call.response.status(HttpStatusCode.OK)
                 call.respond(teamDetailsJson)
@@ -125,7 +126,7 @@ fun Route.teamRoutes(teamService: TeamService) {
         val res = teamService.deleteTeam(pathParams.teamId)
 
         when (res) {
-            is Right -> call.respond(HttpStatusCode.NoContent)
+            is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
                     TeamDeletingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)

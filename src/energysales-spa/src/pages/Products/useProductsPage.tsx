@@ -10,12 +10,12 @@ export function useProductsPage() {
 
     const {data, error: fetchError,  isFetching} = useGetProducts();
     const {mutateAsync: createProduct} = useCreateProduct();
-    const {mutateAsync: updateProduct} = useUpdateProduct();
+    const {mutateAsync: updateProduct} = useUpdateProduct("");
     const {mutateAsync: deleteProduct} = useDeleteProduct();
 
     const [error, setError] = useState<string | null>(null)
 
-    const columns: Column<Product>[] = [
+    const columns: Column[] = [
         {
             accessor: 'name',
             header: 'Name',

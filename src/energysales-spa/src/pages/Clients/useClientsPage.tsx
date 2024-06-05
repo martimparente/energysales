@@ -10,12 +10,12 @@ export function useClientsPage() {
 
     const {data, error: fetchError, isFetching} = useGetClients();
     const {mutateAsync: createClient} = useCreateClient();
-    const {mutateAsync: updateClient} = useUpdateClient();
+    const {mutateAsync: updateClient} = useUpdateClient("");
     const {mutateAsync: deleteClient} = useDeleteClient();
 
     const [error, setError] = useState<string | null>(null)
 
-    const columns: Column<Client>[] = [
+    const columns: Column[] = [
         {
             accessor: 'name',
             header: 'Name',

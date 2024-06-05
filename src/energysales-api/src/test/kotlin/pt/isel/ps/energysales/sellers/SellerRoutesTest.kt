@@ -33,7 +33,6 @@ class SellerRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/51")
                     response.shouldHaveStatus(HttpStatusCode.Created)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -98,7 +97,6 @@ class SellerRoutesTest : BaseRouteTest() {
                     val seller = response.call.response.body<SellerJSON>()
                     seller.person.id.shouldBe("1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -139,7 +137,6 @@ class SellerRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     response.body<List<SellerJSON>>()
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -153,7 +150,6 @@ class SellerRoutesTest : BaseRouteTest() {
                     setBody(UpdateSellerRequest("newSeller", "newLocation", "1@mail.com", 0.0f))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -224,7 +220,7 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NoContent)
+                    response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
 

@@ -120,7 +120,7 @@ fun Route.sellerRoutes(sellerService: SellerService) {
         val res = sellerService.deleteSeller(pathParams.id)
 
         when (res) {
-            is Right -> call.respond(HttpStatusCode.NoContent)
+            is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
                     SellerDeletingError.SellerNotFound -> call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)

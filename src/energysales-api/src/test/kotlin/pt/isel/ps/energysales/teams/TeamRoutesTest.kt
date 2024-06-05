@@ -36,7 +36,6 @@ class TeamRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.TEAMS}/51")
                     response.shouldHaveStatus(HttpStatusCode.Created)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -98,7 +97,6 @@ class TeamRoutesTest : BaseRouteTest() {
                     val team = response.call.response.body<TeamJSON>()
                     team.id.shouldBe("1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -165,7 +163,6 @@ class TeamRoutesTest : BaseRouteTest() {
                     setBody(UpdateTeamRequest("updatedTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -236,7 +233,7 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", 3)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NoContent)
+                    response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
 
@@ -300,7 +297,6 @@ class TeamRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     response.body<List<SellerJSON>>()
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -316,7 +312,6 @@ class TeamRoutesTest : BaseRouteTest() {
                     setBody(AddTeamSellerRequest("1", "1"))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 
@@ -330,7 +325,6 @@ class TeamRoutesTest : BaseRouteTest() {
                     parameter("sellerId", "1")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
-                    response.shouldHaveContentType(ContentType.Application.Json)
                 }
         }
 }
