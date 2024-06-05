@@ -22,13 +22,13 @@ export function TeamsPage() {
                 <Table.Thead>
                     <Table.Tr>
                         {columns.map(column => (
-                            <Table.Th>{column.header}</Table.Th>
+                            <Table.Th key={column.header}>{column.header}</Table.Th>
                         ))}
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {teams?.map((team: Team) => (
-                        <Table.Tr>
+                        <Table.Tr key={team.id}>
                             <Table.Td>{team.name}</Table.Td>
                             <Table.Td>{team.location.district}</Table.Td>
                             <Table.Td>{team.manager}</Table.Td>
@@ -42,19 +42,5 @@ export function TeamsPage() {
                 </Table.Tbody>
             </Table>
         </div>
-
-
-
-
-        /*<GenericTable<Team, CreateTeamInputModel, UpdateTeamInputModel>
-            columns={columns}
-            data={teams}
-            createResource={createTeam}
-            updateResource={updateTeam}
-            deleteHandler={deleteTeam}
-            onShowClickHandler={onShowClickHandler}
-            isFetching={isFetching}
-            error={error}
-        />*/
     );
 }

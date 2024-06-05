@@ -23,7 +23,7 @@ import pt.isel.ps.energysales.auth.http.authRoutes
 import pt.isel.ps.energysales.clients.data.PsqlClientRepository
 import pt.isel.ps.energysales.clients.domain.service.ClientService
 import pt.isel.ps.energysales.clients.http.clientRoutes
-import pt.isel.ps.energysales.plugins.authorized
+import pt.isel.ps.energysales.plugins.authorize
 import pt.isel.ps.energysales.plugins.configureDatabases
 import pt.isel.ps.energysales.plugins.configureHTTP
 import pt.isel.ps.energysales.plugins.configureSerialization
@@ -88,12 +88,12 @@ fun Application.module() {
         route(Uris.API) {
             authRoutes(userService)
             authenticate {
-                authorized("ADMIN") {
+                authorize("ADMIN") {
                     teamRoutes(teamService)
                     sellerRoutes(sellerService)
                     productRoutes(productService)
                 }
-                authorized("SELLER") {
+                authorize("SELLER") {
                     clientRoutes(clientService)
                 }
             }

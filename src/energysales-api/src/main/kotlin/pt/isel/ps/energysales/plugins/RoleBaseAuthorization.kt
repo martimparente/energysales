@@ -58,7 +58,7 @@ private fun getRolesFromToken(call: ApplicationCall): List<String>? =
         ?.getClaim("roles")
         ?.asList(String::class.java)
 
-fun Route.authorized(
+fun Route.authorize(
     vararg hasAnyRole: String,
     build: Route.() -> Unit,
 ) {

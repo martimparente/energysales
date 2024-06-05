@@ -2,15 +2,18 @@ import {useCreateClient, useDeleteClient, useGetClients, useUpdateClient} from '
 import {useNavigate} from "react-router-dom"
 import {Client, CreateClientInputModel, UpdateClientInputModel} from '../../services/models/ClientModel';
 import {Column} from '../../components/GenericTable';
+import {useState} from "react";
 
 export function useClientsPage() {
 
     const navigate = useNavigate();
 
-    const {data, error, isFetching} = useGetClients();
+    const {data, error: fetchError, isFetching} = useGetClients();
     const {mutateAsync: createClient} = useCreateClient();
     const {mutateAsync: updateClient} = useUpdateClient();
     const {mutateAsync: deleteClient} = useDeleteClient();
+
+    const [error, setError] = useState<string | null>(null)
 
     const columns: Column<Client>[] = [
         {
@@ -35,12 +38,17 @@ export function useClientsPage() {
         },
     ];
 
+    if (fetchError && !error) {
+        setError(fetchError.message);
+    }
+
+
     return {
         columns,
         data,
-        createClient: async (input: CreateClientInputModel) => await createClient(input),
-        updateClient: async (input: UpdateClientInputModel) => await updateClient(input),
-        deleteClient: async (client: Client) => await deleteClient(client.id),
+        createClient: async (input: CreateClientInputModel) => await createClient(input).catch(e => setError(e)),
+        updateClient: async (input: UpdateClientInputModel) => await updateClient(input).catch(e => setError(e)),
+        deleteClient: async (client: Client) => await deleteClient(client.id).catch(e => setError(e)),
         onShowClickHandler: (client: Client) => navigate(`/clients/${client.id}`),
         isFetching,
         error,

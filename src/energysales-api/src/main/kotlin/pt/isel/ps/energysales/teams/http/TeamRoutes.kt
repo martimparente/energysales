@@ -82,9 +82,8 @@ fun Route.teamRoutes(teamService: TeamService) {
     get<TeamResource.TeamId> { pathParams ->
         val res =
             if (pathParams.include == "members") {
-                val res =
-                    teamService.getByIdWithMembers(pathParams.teamId)
-                        ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                val res = teamService.getByIdWithMembers(pathParams.teamId)
+                    ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 val teamDetailsJson = TeamDetailsJSON.fromTeamDetails(res)
                 call.response.status(HttpStatusCode.OK)
                 call.respond(teamDetailsJson)

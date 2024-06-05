@@ -2,15 +2,18 @@ import {useCreateSeller, useDeleteSeller, useGetSellers, useUpdateSeller} from '
 import {useNavigate} from "react-router-dom"
 import {CreateSellerInputModel, Seller, UpdateSellerInputModel} from "../../services/models/SellersModel.tsx";
 import {Column} from '../../components/GenericTable';
+import {useState} from "react";
 
 export function useSellersPage() {
 
     const navigate = useNavigate();
 
-    const {data, error, isFetching} = useGetSellers();
+    const {data: sellers, error: fetchError, isFetching} = useGetSellers();
     const {mutateAsync: createSeller} = useCreateSeller();
     const {mutateAsync: updateSeller} = useUpdateSeller();
     const {mutateAsync: deleteSeller} = useDeleteSeller();
+
+    const [error, setError] = useState<string | null>(null)
 
     const columns: Column<Seller>[] = [
         {
@@ -40,12 +43,16 @@ export function useSellersPage() {
         },
     ];
 
+    if (fetchError && !error) {
+        setError(fetchError.message);
+    }
+
     return {
         columns,
-        data,
-        createSeller: async (input: CreateSellerInputModel) => await createSeller(input),
-        updateSeller: async (input: UpdateSellerInputModel) => await updateSeller(input),
-        deleteSeller: async (seller: Seller) => await deleteSeller(seller.person.id),
+        sellers,
+        createSeller: async (input: CreateSellerInputModel) => await createSeller(input).catch(e => setError(e.message)),
+        updateSeller: async (input: UpdateSellerInputModel) => await updateSeller(input).catch(e => setError(e)),
+        deleteSeller: async (seller: Seller) => await deleteSeller(seller.person.id).catch(e => setError(e)),
         onShowClickHandler: (seller: Seller) => navigate(`/sellers/${seller.person.id}`),
         isFetching,
         error,

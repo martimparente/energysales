@@ -6,7 +6,7 @@ import {IconTrash} from "@tabler/icons-react";
 export function SellersPage() {
     const {
         columns,
-        data: sellers,
+        sellers,
         createSeller,
         updateSeller,
         deleteSeller,
@@ -22,13 +22,13 @@ export function SellersPage() {
                 <Table.Thead>
                     <Table.Tr>
                         {columns.map(column => (
-                            <Table.Th>{column.header}</Table.Th>
+                            <Table.Th key={column.header}>{column.header}</Table.Th>
                         ))}
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {sellers?.map((seller: Seller) => (
-                        <Table.Tr>
+                        <Table.Tr key={seller.person.id}>
                             <Table.Td>{seller.person.name}</Table.Td>
                             <Table.Td>{seller.person.surname}</Table.Td>
                             <Table.Td>{seller.person.email}</Table.Td>

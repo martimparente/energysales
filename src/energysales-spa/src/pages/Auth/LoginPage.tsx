@@ -1,13 +1,11 @@
 import {Anchor, Button, Checkbox, Paper, PasswordInput, Text, TextInput, Title,} from '@mantine/core';
 import classes from './AuthenticationImage.module.css';
 import {useForm} from '@mantine/form';
-import {useLogin} from '@refinedev/core';
-import {Link} from "react-router-dom";
 
-type LoginVariables = {
-    username: string;
-    password: string;
-};
+import {Link} from "react-router-dom";
+import {useAuth} from "../../providers/AuthContext.tsx";
+
+
 
 export function LoginPage() {
     const form = useForm({
@@ -23,7 +21,7 @@ export function LoginPage() {
         },
     });
 
-    const {mutate: login} = useLogin<LoginVariables>();
+    const auth = useAuth()
 
     return (
         <div className={classes.wrapper}>
@@ -32,7 +30,7 @@ export function LoginPage() {
                     Welcome back to EnergySales!
                 </Title>
 
-                <form onSubmit={form.onSubmit((values) => login({
+                <form onSubmit={form.onSubmit((values) => auth.login({
                     username: values.username,
                     password: values.password,
                 }))}>
@@ -65,10 +63,8 @@ export function LoginPage() {
                     <Button type="submit" fullWidth mt="xl" size="md" color="orange">Login</Button>
 
                     <Text ta="center" mt="md">
-                        <Link to="/forgotpassword" replace={true}>Forgot password?</Link>
-                        <Anchor<'a'> href="#" fw={700} onClick={(event) => event.preventDefault()}>
-
-                        </Anchor>
+                        <Link to="/forgot-password" replace={true}>Forgot password?</Link>
+                        <Anchor<'a'> href="#" fw={700} onClick={(event) => event.preventDefault()}> </Anchor>
                     </Text>
                 </form>
             </Paper>

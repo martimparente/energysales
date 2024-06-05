@@ -1,70 +1,43 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {CreateSellerInputModel, Seller, UpdateSellerInputModel} from "./models/SellersModel.tsx";
-import {ApiUris} from "./ApiUris"; // Adjust the import path as necessary
+import {CreateSellerInputModel, Seller, UpdateSellerInputModel} from "./models/SellersModel";
+import {ApiUris} from "./ApiUris";
+import {fetchData, mutateData} from "./ApiUtils.tsx";
 
-const AUTHORIZATION_HEADER = {
-    "Content-Type": "application/json",
-    Authorization: "Bearer " + localStorage.getItem("token"),
-}
 
-//CREATE hook (post new seller to api)
 export function useCreateSeller() {
     return useMutation({
-        mutationFn: async (input: CreateSellerInputModel) => {
-            return fetch(ApiUris.createSeller, {
-                method: "POST",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(input),
-            });
-        },
+        mutationFn: (input: CreateSellerInputModel) =>
+            mutateData(ApiUris.createSeller, "POST", input),
     });
 }
 
-//READ hook (get sellers from api)
 export function useGetSellers(lastKeySeen: string = "0") {
     return useQuery<Seller[]>({
         queryKey: ["sellers", lastKeySeen],
-        queryFn: () =>
-            fetch(ApiUris.getSellers(lastKeySeen), {
-                headers: AUTHORIZATION_HEADER,
-            }).then((res) => res.json()),
+        queryFn: () => fetchData<Seller[]>(ApiUris.getSellers(lastKeySeen)),
     });
 }
 
 export function useGetSeller(id: string) {
     return useQuery<Seller>({
         queryKey: [`seller-${id}`],
-        queryFn: () =>
-            fetch(ApiUris.getSeller(id), {
-                headers: AUTHORIZATION_HEADER,
-            }).then((res) => res.json()),
-    })
-}
-
-
-//UPDATE hook (put seller in api)
-export function useUpdateSeller(id: string) {
-    return useMutation({
-        mutationFn: (newSellerInfo: UpdateSellerInputModel) =>
-            fetch(ApiUris.updateSeller(id), {
-                method: "PUT",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(newSellerInfo),
-            }),
+        queryFn: () => fetchData<Seller>(ApiUris.getSeller(id)),
     });
 }
 
-//DELETE hook (delete seller in api)
+export function useUpdateSeller(id: string) {
+    return useMutation({
+        mutationFn: (newSellerInfo: UpdateSellerInputModel) =>
+            mutateData(ApiUris.updateSeller(id), "PUT", newSellerInfo),
+    });
+}
+
 export function useDeleteSeller() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (sellerId: string) =>
-            fetch(ApiUris.deleteSeller(sellerId), {
-                method: "DELETE",
-                headers: AUTHORIZATION_HEADER,
-            }),
+            mutateData(ApiUris.deleteSeller(sellerId), "DELETE"),
         onSuccess: () => {
-            // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['sellers']});
         },
     });

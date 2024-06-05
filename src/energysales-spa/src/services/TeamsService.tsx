@@ -9,134 +9,82 @@ import {
     UpdateTeamInputModel
 } from "./models/TeamModel";
 import {Seller} from "./models/SellersModel.tsx";
+import {fetchData, mutateData} from "./ApiUtils.tsx";
 
-const AUTHORIZATION_HEADER = {
-    "Content-Type": "application/json",
-    Authorization: "Bearer " + localStorage.getItem("token"),
-}
 
 export function useCreateTeam() {
     return useMutation({
-        mutationFn: async (input: CreateTeamInputModel) =>
-            fetch(ApiUris.createTeam, {
-                method: "POST",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(input),
-            })
+        mutationFn: (input: CreateTeamInputModel) =>
+            mutateData(ApiUris.createTeam, "POST", input)
     });
 }
 
 export function useGetTeams(lastKeySeen: string = "0") {
     return useQuery<Team[]>({
         queryKey: ["teams", lastKeySeen],
-        queryFn: () =>
-            fetch(ApiUris.getTeams(lastKeySeen), {
-                headers: AUTHORIZATION_HEADER,
-            }).then((res) => res.json()),
+        queryFn: () => fetchData<Team[]>(ApiUris.getTeams(lastKeySeen)),
     });
 }
-
 
 export function useGetTeam(id: string) {
     return useQuery<Team>({
         queryKey: [`team-${id}`],
-        queryFn: () =>
-            fetch(ApiUris.getTeam(id), {
-                headers: AUTHORIZATION_HEADER,
-            }).then((res) => res.json()),
-    })
+        queryFn: () => fetchData<Team>(ApiUris.getTeam(id)),
+    });
 }
-
 
 export function useGetTeamDetails(id: string) {
     return useQuery<TeamDetails>({
         queryKey: [`teamDetails`],
-        queryFn: () =>
-            fetch(ApiUris.getTeamDetails(id), {
-                headers: AUTHORIZATION_HEADER,
-            }).then((res) => res.json()),
-    })
+        queryFn: () => fetchData<TeamDetails>(ApiUris.getTeamDetails(id)),
+    });
 }
 
 export function useUpdateTeam() {
     return useMutation({
-        mutationFn: (input: UpdateTeamInputModel) => //todo id here?
-            fetch(ApiUris.updateTeam(input.id), {
-                method: "PUT",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(input),
-            }),
-        /* onMutate: (newTeamInfo: UpdateTeamInputModel) => {
-       /*    queryClient.setQueryData(["teams"], (prevTeams: any) =>
-            prevTeams?.map((prevTeam: Team) =>
-              prevTeam.id === newTeamInfo.id ? newTeamInfo : prevTeam
-            )
-          );
-        }, */
+        mutationFn: (input: UpdateTeamInputModel) =>
+            mutateData(ApiUris.updateTeam(input.id), "PUT", input),
     });
 }
 
-//DELETE hook (delete team in api)
 export function useDeleteTeam() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (teamId: string) =>
-            fetch(ApiUris.deleteTeam(teamId), {
-                method: "DELETE",
-                headers: AUTHORIZATION_HEADER,
-            }),
+            mutateData(ApiUris.deleteTeam(teamId), "DELETE"),
         onSuccess: () => {
-            // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teams']});
         },
     });
 }
 
-// get available sellers
 export function useGetAvailableSellers(lastKeySeen: string = "0") {
     return useQuery<Seller[]>({
         queryKey: ["availableSellers", lastKeySeen],
-        queryFn: () =>
-            fetch(ApiUris.getSellersWithNoTeam(lastKeySeen), {
-                headers: AUTHORIZATION_HEADER,
-            }).then((res) => res.json()),
+        queryFn: () => fetchData<Seller[]>(ApiUris.getSellersWithNoTeam(lastKeySeen)),
     });
 }
 
-// add member to team
 export function useAddTeamSeller() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (input: AddTeamSellerInputModel) =>
-            fetch(ApiUris.addTeamSeller(input.teamId), {
-                method: "PUT",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(input),
-            }),
+        mutationFn: (input: AddTeamSellerInputModel) =>
+            mutateData(ApiUris.addTeamSeller(input.teamId), "PUT", input),
         onSuccess: () => {
-            // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
             queryClient.invalidateQueries({queryKey: ["availableSellers"]});
         },
     });
 }
 
-// delete member to team
 export function useDeleteTeamSeller() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (input: DeleteTeamSellerInput) =>
-            fetch(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), {
-                method: "DELETE",
-                headers: AUTHORIZATION_HEADER,
-            }),
+        mutationFn: (input: DeleteTeamSellerInput) =>
+            mutateData(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), "DELETE"),
         onSuccess: () => {
-            // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
             queryClient.invalidateQueries({queryKey: ["availableSellers"]});
         },
     });
 }
-
-
-

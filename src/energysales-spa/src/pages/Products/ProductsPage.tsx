@@ -22,13 +22,13 @@ export function ProductsPage() {
                 <Table.Thead>
                     <Table.Tr>
                         {columns.map(column => (
-                            <Table.Th>{column.header}</Table.Th>
+                            <Table.Th key={column.header}>{column.header}</Table.Th>
                         ))}
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {data?.map((product: Product) => (
-                        <Table.Tr>
+                        <Table.Tr key={product.id}>
                             <Table.Td>{product.name}</Table.Td>
                             <Table.Td>{product.price}</Table.Td>
                             <Table.Td>{product.description}</Table.Td>

@@ -22,13 +22,13 @@ export function ClientsPage() {
                 <Table.Thead>
                     <Table.Tr>
                         {columns.map(column => (
-                            <Table.Th>{column.header}</Table.Th>
+                            <Table.Th key={column.header}>{column.header}</Table.Th>
                         ))}
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {clients?.map((client: Client) => (
-                        <Table.Tr>
+                        <Table.Tr key={client.id}>
                             <Table.Td>{client.name}</Table.Td>
                             <Table.Td>{client.nif}</Table.Td>
                             <Table.Td>{client.phone}</Table.Td>

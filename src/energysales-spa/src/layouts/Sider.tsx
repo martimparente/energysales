@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Code, Group} from '@mantine/core';
 import {
     IconBrandAsana,
@@ -9,16 +9,17 @@ import {
     IconLogin2,
     IconLogout,
     IconSettings,
-    IconSwitchHorizontal,
     IconUsersGroup,
 } from '@tabler/icons-react';
 import classes from './NavbarSimpleColored.module.css';
 import {Link} from "react-router-dom";
 
+import {useAuth} from "../providers/AuthContext.tsx";
+
 const data = [
     {link: '/', label: 'Home', icon: IconHome},
     {link: '/login', label: 'Login', icon: IconLogin2},
-    {link: '/forgotpassword', label: 'Forgot Password', icon: IconKey},
+    {link: '/forgot-password', label: 'Forgot Password', icon: IconKey},
     {link: '/teams', label: 'Teams', icon: IconBrandAsana},
     {link: '/sellers', label: 'Sellers', icon: IconUsersGroup},
     {link: '/products', label: 'Products', icon: IconBulb},
@@ -30,6 +31,7 @@ const energySalesIcon = <img src="/src/assets/logo+name.svg" width="150" height=
 
 export function Sider() {
     const [active, setActive] = useState('');
+    const {logout} = useAuth();
 
     const links = data.map((item) => (
         <Link
@@ -57,12 +59,11 @@ export function Sider() {
             </div>
 
             <div className={classes.footer}>
-                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-                    <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5}/>
-                    <span>Change account</span>
-                </a>
-
-                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+                <a href="#" className={classes.link} onClick={(e) => {
+                    e.preventDefault()
+                    logout()
+                }
+                }>
                     <IconLogout className={classes.linkIcon} stroke={1.5}/>
                     <span>Logout</span>
                 </a>

@@ -2,15 +2,18 @@ import {useCreateProduct, useDeleteProduct, useGetProducts, useUpdateProduct} fr
 import {useNavigate} from "react-router-dom"
 import {CreateProductInputModel, Product, UpdateProductInputModel} from '../../services/models/ProductModel';
 import {Column} from '../../components/GenericTable';
+import {useState} from "react";
 
 export function useProductsPage() {
 
     const navigate = useNavigate();
 
-    const {data, error, isFetching} = useGetProducts();
+    const {data, error: fetchError,  isFetching} = useGetProducts();
     const {mutateAsync: createProduct} = useCreateProduct();
     const {mutateAsync: updateProduct} = useUpdateProduct();
     const {mutateAsync: deleteProduct} = useDeleteProduct();
+
+    const [error, setError] = useState<string | null>(null)
 
     const columns: Column<Product>[] = [
         {
@@ -30,12 +33,17 @@ export function useProductsPage() {
         },
     ];
 
+    if (fetchError && !error) {
+        setError(fetchError.message);
+    }
+
+
     return {
         columns,
         data,
-        createProduct: async (input: CreateProductInputModel) => await createProduct(input),
-        updateProduct: async (input: UpdateProductInputModel) => await updateProduct(input),
-        deleteProduct: async (product: Product) => await deleteProduct(product.id),
+        createProduct: async (input: CreateProductInputModel) => await createProduct(input).catch(e => setError(e)),
+        updateProduct: async (input: UpdateProductInputModel) => await updateProduct(input).catch(e => setError(e)),
+        deleteProduct: async (product: Product) => await deleteProduct(product.id).catch(e => setError(e)),
         onShowClickHandler: (product: Product) => navigate(`/products/${product.id}`),
         isFetching,
         error,

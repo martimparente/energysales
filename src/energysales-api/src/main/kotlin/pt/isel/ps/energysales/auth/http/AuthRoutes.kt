@@ -26,7 +26,7 @@ import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.auth.http.model.ResetPasswordRequest
 import pt.isel.ps.energysales.auth.http.model.RoleRequest
 import pt.isel.ps.energysales.auth.http.model.respondProblem
-import pt.isel.ps.energysales.plugins.authorized
+import pt.isel.ps.energysales.plugins.authorize
 
 fun Route.authRoutes(userService: UserService) {
     /**
@@ -64,7 +64,7 @@ fun Route.authRoutes(userService: UserService) {
      * Routes that require authentication and admin role
      */
     authenticate {
-        authorized("ADMIN") {
+        authorize("ADMIN") {
             post(Uris.AUTH_SIGNUP) {
                 val body = call.receive<CreateUserRequest>()
                 val res = userService.createUser(body.username, body.password, body.repeatPassword, body.roles)
