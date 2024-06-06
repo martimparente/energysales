@@ -4,7 +4,7 @@ import {Center, Text} from "@mantine/core";
 import {RefineLayoutThemedTitleProps} from "@refinedev/ui-types"
 
 
-const defaultIcon = <img src="/src/assets/logo+name.svg" width="150" height="50"/>
+const defaultIcon = <img src="/dist/assets/logo+name.svg" width="150" height="50"/>
 const defaultText = ""
 
 export const Title: React.FC<RefineLayoutThemedTitleProps> = (

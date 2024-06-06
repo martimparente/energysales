@@ -5,8 +5,9 @@ val postgresqlDriverVersion: String by project
 val exposedVersion: String by project
 
 plugins {
+    application
     kotlin("jvm") version "1.9.23"
-    id("io.ktor.plugin") version "2.3.9"
+    id("io.ktor.plugin") version "2.3.11"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
 
     // Lint
@@ -17,7 +18,7 @@ group = "pt.isel.ps"
 version = "0.0.1"
 
 application {
-    mainClass.set("pt.isel.ps.ApplicationKt")
+    mainClass.set("pt.isel.ps.energysales.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -77,3 +78,25 @@ dependencies {
     testImplementation("io.kotest.extensions:kotest-assertions-ktor:2.0.0")
     testImplementation("io.mockk:mockk:1.13.10")
 }
+
+/*Testing - Start and Stop Docker DB for Integration Tests %todo
+
+
+task<Exec>("dbTestsUp") {
+    print("Starting docker-compose")
+    commandLine("docker-compose", "up", "-d", "--build", "--force-recreate", "postgres_testing")
+    Thread.sleep(5000)
+}
+
+task<Exec>("dbTestsDown") {
+    commandLine("docker-compose", "down")
+}
+
+tasks {
+    // Ensure database container is up and ready before running tests
+    named<Test>("test") {
+        dependsOn("dbTestsUp")
+        finalizedBy("dbTestsDown")
+    }
+}
+*/

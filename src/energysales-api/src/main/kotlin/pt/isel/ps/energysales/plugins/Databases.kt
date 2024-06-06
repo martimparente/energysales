@@ -29,9 +29,14 @@ object DatabaseSingleton {
 fun Application.configureDatabases() {
     fun configProperty(propertyName: String) = environment.config.property(propertyName).getString()
     val driverClassName = configProperty("storage.driverClassName")
-    val jdbcURL = configProperty("storage.jdbcURL")
+    val host = configProperty("storage.host")
+    val port = configProperty("storage.port")
+    val db = configProperty("storage.db")
     val user = configProperty("storage.user")
     val password = configProperty("storage.password")
+
+    val jdbcURL = "jdbc:postgresql://$host:$port/$db"
+    println("JDBC URL: $jdbcURL")
 
     try {
         Database.connect(
