@@ -15,7 +15,7 @@ export function TeamPage() {
 
     return (
         <Box pos="relative">
-            <LoadingOverlay visible={isLoadingTeamDetails} />
+            <LoadingOverlay visible={isLoadingTeamDetails}/>
             <h1>{teamDetails?.team.name}</h1>
             <p>Name = {teamDetails?.team.name}</p>
             <p>Location = {teamDetails?.team.location?.district}</p>

@@ -6,7 +6,6 @@ import {Link} from "react-router-dom";
 import {useAuth} from "../../providers/AuthContext.tsx";
 
 
-
 export function LoginPage() {
     const form = useForm({
         initialValues: {

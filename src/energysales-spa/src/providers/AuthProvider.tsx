@@ -26,7 +26,7 @@ export const authProvider: AuthProvider = {
         const response = await fetch("http://localhost:8080/api/auth/login", {
             method: "POST",
             body: JSON.stringify(input),
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
         });
         const data = await response.json();
 
@@ -41,7 +41,7 @@ export const authProvider: AuthProvider = {
         } else {
             return {
                 success: false,
-                error: { name: "Login Error", message: "Invalid credentials" },
+                error: {name: "Login Error", message: "Invalid credentials"},
                 redirectOnFail: "/login",
                 redirectTo: "",
             };
@@ -63,6 +63,6 @@ export const authProvider: AuthProvider = {
         }
         return Promise.resolve();
     },
-    getIdentity: () => Promise.resolve({ id: 'user', fullName: 'John Doe' }),
+    getIdentity: () => Promise.resolve({id: 'user', fullName: 'John Doe'}),
     getRoles: () => Promise.resolve([]),
 };

@@ -8,7 +8,7 @@ export function useProductsPage() {
 
     const navigate = useNavigate();
 
-    const {data, error: fetchError,  isFetching} = useGetProducts();
+    const {data, error: fetchError, isFetching} = useGetProducts();
     const {mutateAsync: createProduct} = useCreateProduct();
     const {mutateAsync: updateProduct} = useUpdateProduct("");
     const {mutateAsync: deleteProduct} = useDeleteProduct();

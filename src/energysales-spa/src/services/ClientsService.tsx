@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiUris } from "./ApiUris";
-import { Client, CreateClientInputModel, UpdateClientInputModel } from "./models/ClientModel";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {ApiUris} from "./ApiUris";
+import {Client, CreateClientInputModel, UpdateClientInputModel} from "./models/ClientModel";
 import {fetchData, mutateData} from "./ApiUtils.tsx";
 
 export function useCreateClient() {
@@ -37,7 +37,7 @@ export function useDeleteClient() {
         mutationFn: (clientId: string) =>
             mutateData(ApiUris.deleteClient(clientId), "DELETE"),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['clients'] });
+            queryClient.invalidateQueries({queryKey: ['clients']});
         },
     });
 }
