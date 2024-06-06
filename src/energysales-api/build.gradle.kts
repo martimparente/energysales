@@ -1,3 +1,5 @@
+import java.util.Properties
+
 val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
@@ -79,13 +81,75 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.10")
 }
 
-/*Testing - Start and Stop Docker DB for Integration Tests %todo
+tasks {
+    "run"(JavaExec::class) {
+        // Add logging to see when the task starts
+        doFirst {
+            println("Starting the 'run' task")
 
+            val envFile = file("../../.env")
+            if (envFile.exists()) {
+                println("'.env' file found at: ${envFile.absolutePath}")
+                val properties = Properties()
+                envFile.inputStream().use { properties.load(it) }
+                properties.forEach { key, value ->
+                    val keyStr = key.toString()
+                    val valueStr = value.toString()
+                    project.extra[keyStr] = valueStr
+                    environment(keyStr, valueStr)
+                    // Log each environment variable being set
+                    println("Setting environment variable: $keyStr=$valueStr")
+                }
+            } else {
+                println("No .env file found at: ${envFile.absolutePath}")
+            }
+        }
+
+        doLast {
+            println("'run' task finished")
+        }
+    }
+    "test"(Test::class) {
+        // Add logging to see when the task starts
+        doFirst {
+            println("Starting the 'run' task")
+
+            val envFile = file("../../.env")
+            if (envFile.exists()) {
+                println("'.env' file found at: ${envFile.absolutePath}")
+                val properties = Properties()
+                envFile.inputStream().use { properties.load(it) }
+                properties.forEach { key, value ->
+                    val keyStr = key.toString()
+                    val valueStr = value.toString()
+                    project.extra[keyStr] = valueStr
+                    environment(keyStr, valueStr)
+                    // Log each environment variable being set
+                    println("Setting environment variable: $keyStr=$valueStr")
+                }
+            } else {
+                println("No .env file found at: ${envFile.absolutePath}")
+            }
+        }
+
+        doLast {
+            println("'run' task finished")
+        }
+    }
+}
 
 task<Exec>("dbTestsUp") {
     print("Starting docker-compose")
-    commandLine("docker-compose", "up", "-d", "--build", "--force-recreate", "postgres_testing")
-    Thread.sleep(5000)
+
+    commandLine(
+        "docker-compose",
+        "-f",
+        "../../docker-compose-test.yml",
+        "up",
+        "-d",
+        "--build",
+        "--force-recreate",
+    )
 }
 
 task<Exec>("dbTestsDown") {
@@ -93,10 +157,9 @@ task<Exec>("dbTestsDown") {
 }
 
 tasks {
-    // Ensure database container is up and ready before running tests
+// Ensure database container is up and ready before running tests
     named<Test>("test") {
         dependsOn("dbTestsUp")
         finalizedBy("dbTestsDown")
     }
 }
-*/

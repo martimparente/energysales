@@ -4,13 +4,15 @@ services:
   postgres_testing:
     image: postgres:16.2-alpine3.19
     container_name: postgres_testing
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_TESTING_NAME}
       POSTGRES_USER: ${DB_TESTING_USER}
       POSTGRES_PASSWORD: ${DB_TESTING_PASSWORD}
       PGPORT: ${DB_TESTING_PORT}
     ports:
-      - "5434:5432"
+      - "5434:5434"
     healthcheck:
       test:
         [

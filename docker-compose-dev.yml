@@ -1,25 +1,6 @@
 name: energysales-dev
 
 services:
-  ktor_service:
-    build:
-      context: ./
-      dockerfile: ./src/energysales-api/Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      postgres_dev:
-        condition: service_healthy
-    environment:
-      SERVER_PORT: ${SERVER_PORT}
-      KTOR_DEV_MODE: true
-      DB_HOST: ${DB_DEV_HOST}
-      DB_PORT: ${DB_DEV_PORT}
-      DB_NAME: ${DB_DEV_NAME}
-      DB_USER: ${DB_DEV_USER}
-      DB_PASSWORD: ${DB_DEV_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-  
   postgres_dev:
     image: postgres:16.2-alpine3.19
     container_name: postgres_dev
@@ -28,8 +9,8 @@ services:
       POSTGRES_USER: ${DB_DEV_USER}
       POSTGRES_PASSWORD: ${DB_DEV_PASSWORD}
       PGPORT: ${DB_DEV_PORT}
-    expose:
-      - ${DB_DEV_PORT}
+    ports:
+      - "5433:5433"
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
     healthcheck:
