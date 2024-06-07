@@ -2,14 +2,14 @@ import {useTeamsPage} from './useTeamsPage.tsx';
 import {CreateTeamInputModel, Team} from '../../services/models/TeamModel';
 import {Button, Group, Modal, Table, TextInput} from "@mantine/core";
 import {IconTrash} from '@tabler/icons-react';
-import {useState} from "react";
+import React, {useState} from "react";
 
 export function TeamsPage() {
     const {
         columns,
         teams,
         createTeam,
-        updateTeam,
+        // updateTeam,
         deleteTeam,
         openCreateModal,
         onEditButtonHandler,
@@ -26,7 +26,7 @@ export function TeamsPage() {
     const [district, setDistrict] = useState('');
     const [manager, setManager] = useState('');
 
-    const handleCreateTeam = async (e) => {
+    const handleCreateTeam = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const input: CreateTeamInputModel = {
             name: teamName,
@@ -47,7 +47,7 @@ export function TeamsPage() {
 
             <Modal opened={isCreating} onClose={closeCreateModal} title="Create Team">
                 {
-                    <form onSubmit={handleCreateTeam}>
+                    <form onSubmit={(e) => handleCreateTeam(e)}>
                         <TextInput
                             label="Team Name"
                             placeholder="Enter team name"

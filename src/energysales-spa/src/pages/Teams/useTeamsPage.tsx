@@ -48,7 +48,7 @@ export function useTeamsPage() {
         updateTeam: async (input: UpdateTeamInputModel) => await updateTeam(input).catch(e => setError(e.message)),
         deleteTeam: async (team: Team) => await deleteTeam(team.id).catch(e => setError(e.message)),
         openCreateModal,
-        onEditButtonHandler: (team: Team) => {
+        onEditButtonHandler: () => {
             // Optionally set the editing team here
             openEditModal();
         },

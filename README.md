@@ -28,6 +28,7 @@ docker compose up
 
 ### Development Mode - Docker for DB and local for API and SPA
 
+#### ⚠️ Before running the API, recomment .env file depending on using Production or Development
 #### API
 ```
 docker compose -f docker-compose-dev.yml up

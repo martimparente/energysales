@@ -53,7 +53,7 @@ export function Sider() {
                 <Group className={classes.header} justify="space-between">
                     {energySalesIcon}
                     <Code fw={700} className={classes.version}>
-                        v0.0.1
+                        v0.1.0
                     </Code>
                 </Group>
                 {links}
