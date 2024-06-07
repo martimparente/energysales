@@ -31,7 +31,7 @@ docker compose up
 #### API
 ```
 docker compose -f docker-compose-dev.yml up
-```
+```at
 ```
 cd ./src/energysales-api/
 ./gradlew run

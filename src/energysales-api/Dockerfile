@@ -15,10 +15,10 @@ EXPOSE 8080
 RUN mkdir -p /app/energysales-spa
 
 # Copy the JAR file into the Docker image
-COPY ./src/energysales-api/build/libs/*-all.jar /app/energysales-api.jar
+COPY ./src/energysales-api/build/libs/*-all.jar /app/energysales-api/energysales-api.jar
 
 # Copy the React frontend build files to the appropriate directory
-COPY ./src/energysales-spa/dist/ /app/energysales-spa/
+COPY ./src/energysales-spa/dist/ /app/energysales-spa/dist
 
 # Set the entry point to run the JAR file
-ENTRYPOINT ["java", "-jar", "/app/energysales-api.jar"]
+ENTRYPOINT ["java", "-jar", "/app/energysales-api/energysales-api.jar"]

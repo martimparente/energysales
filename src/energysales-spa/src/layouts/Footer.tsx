@@ -1,13 +1,9 @@
-import {Anchor, Group, ActionIcon, rem} from '@mantine/core';
-import {IconBrandTwitter, IconBrandYoutube, IconBrandInstagram} from '@tabler/icons-react';
+import {Anchor, Group} from '@mantine/core';
 import classes from './FooterCentered.module.css';
 
 const links = [
     {link: '#', label: 'Contact'},
-    {link: '#', label: 'Privacy'},
-    {link: '#', label: 'Blog'},
-    {link: '#', label: 'Store'},
-    {link: '#', label: 'Careers'},
+    {link: '#', label: 'About'},
 ];
 
 export function Footer() {
@@ -27,11 +23,10 @@ export function Footer() {
     return (
         <div className={classes.footer}>
             <div className={classes.inner}>
-                <IconBrandInstagram size={28}/>
 
                 <Group className={classes.links}>{items}</Group>
 
-                <Group gap="xs" justify="flex-end" wrap="nowrap">
+                {/*        <Group gap="xs" justify="flex-end" wrap="nowrap">
                     <ActionIcon size="lg" variant="default" radius="xl">
                         <IconBrandTwitter style={{width: rem(18), height: rem(18)}} stroke={1.5}/>
                     </ActionIcon>
@@ -41,7 +36,7 @@ export function Footer() {
                     <ActionIcon size="lg" variant="default" radius="xl">
                         <IconBrandInstagram style={{width: rem(18), height: rem(18)}} stroke={1.5}/>
                     </ActionIcon>
-                </Group>
+                </Group>*/}
             </div>
         </div>
     );

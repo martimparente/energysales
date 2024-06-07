@@ -1,3 +1,5 @@
+import logoName from '../assets/logo+name.svg';
+
 export function HomePage() {
     console.log("HomePage   started");
 
@@ -5,6 +7,7 @@ export function HomePage() {
     return (
         <div>
             <h1>Home</h1>
+            <img src={logoName}/>
         </div>
     )
 }

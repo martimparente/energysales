@@ -13,6 +13,7 @@ import {
 } from '@tabler/icons-react';
 import classes from './NavbarSimpleColored.module.css';
 import {Link} from "react-router-dom";
+import logoName from '../assets/logo+name.svg';
 
 import {useAuth} from "../providers/AuthContext.tsx";
 
@@ -27,7 +28,7 @@ const data = [
     {link: '/settings', label: 'Settings', icon: IconSettings},
 ];
 
-const energySalesIcon = <img src="/dist/assets/logo+name.svg" width="150" height="50"/>
+const energySalesIcon = <img src={logoName} width="150" height="50"/>
 
 export function Sider() {
     const [active, setActive] = useState('');

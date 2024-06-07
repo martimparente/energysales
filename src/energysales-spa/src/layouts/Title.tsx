@@ -2,15 +2,14 @@ import React from "react";
 import {useLink, useRouterContext, useRouterType} from "@refinedev/core";
 import {Center, Text} from "@mantine/core";
 import {RefineLayoutThemedTitleProps} from "@refinedev/ui-types"
+import logo from '../assets/logo.svg';
 
-
-const defaultIcon = <img src="/dist/assets/logo+name.svg" width="150" height="50"/>
 const defaultText = ""
 
 export const Title: React.FC<RefineLayoutThemedTitleProps> = (
     {
         collapsed,
-        icon = defaultIcon,
+        icon = logo,
         text = defaultText,
         wrapperStyles = {},
     }) => {
