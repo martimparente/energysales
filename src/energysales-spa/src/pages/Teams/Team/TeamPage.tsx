@@ -31,8 +31,8 @@ export function TeamPage() {
                 })) || []}
                 onChange={(value) => handleSelectSellerChange(value!)}
             />
-            <Button onClick={handleAddSelectSellerToTeam} mb="md">Add Seller to Team</Button>
 
+            <Button onClick={handleAddSelectSellerToTeam} color="orange" mb="md">Add Seller to Team</Button>
 
             <Table>
                 <Table.Thead>

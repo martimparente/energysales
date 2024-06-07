@@ -35,7 +35,6 @@ import pt.isel.ps.energysales.sellers.http.sellerRoutes
 import pt.isel.ps.energysales.teams.data.PsqlTeamRepository
 import pt.isel.ps.energysales.teams.domain.service.TeamService
 import pt.isel.ps.energysales.teams.http.teamRoutes
-import java.io.File
 
 fun main(args: Array<String>) = EngineMain.main(args)
 
@@ -84,15 +83,6 @@ fun Application.module() {
     configureDatabases()
     configureAuth(jwtConfig)
     configureHTTP()
-
-    var aaa = File(".").path
-    var bbb = File(".").absolutePath
-
-    for (i in 0..10) {
-        println(aaa)
-        println(bbb)
-    }
-
 
     /**
      * Routes

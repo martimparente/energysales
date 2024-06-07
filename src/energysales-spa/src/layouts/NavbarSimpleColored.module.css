@@ -22,9 +22,8 @@
 }
 
 .footer {
-    padding-top: var(--mantine-spacing-md);
-    margin-top: var(--mantine-spacing-md);
-    border-top: rem(1px) solid var(--mantine-color-lime-7);
+    padding: 10px;
+    border-top: 1px solid #e9ecef; /* Example border color */
 }
 
 .version {
@@ -70,4 +69,16 @@
     margin-right: var(--mantine-spacing-sm);
     width: rem(25px);
     height: rem(25px);
+}
+
+.navbarMain {
+    flex: 1; /* Take up all available space except the footer */
+    overflow-y: auto; /* Allow vertical scrolling if content overflows */
+}
+
+.navbar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    width: 250px; /* Set a fixed width for the sidebar */
 }

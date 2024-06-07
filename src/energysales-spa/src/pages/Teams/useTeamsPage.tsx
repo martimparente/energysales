@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom"
 import {CreateTeamInputModel, Team, UpdateTeamInputModel} from "../../services/models/TeamModel";
 import {useState} from "react";
 import {Column} from "../../components/GenericTable.tsx";
+import {useDisclosure} from "@mantine/hooks";
 
 export function useTeamsPage() {
 
@@ -12,6 +13,9 @@ export function useTeamsPage() {
     const {mutateAsync: createTeam} = useCreateTeam();
     const {mutateAsync: updateTeam} = useUpdateTeam();
     const {mutateAsync: deleteTeam} = useDeleteTeam();
+
+    const [isCreating, {open: openCreateModal, close: closeCreateModal}] = useDisclosure(false);
+    const [isEditing, {open: openEditModal, close: closeEditModal}] = useDisclosure(false);
 
     const [error, setError] = useState<string | null>()
 
@@ -26,13 +30,13 @@ export function useTeamsPage() {
             sortable: true,
         },
         {
-            accessor: 'manager',
-            header: 'Manager',
+            accessor: 'location',
+            header: 'District',
             sortable: true,
         },
         {
-            accessor: 'location',
-            header: 'District',
+            accessor: 'manager',
+            header: 'Manager',
             sortable: true,
         },
     ];
@@ -40,10 +44,19 @@ export function useTeamsPage() {
     return {
         columns,
         teams,
-        createTeam: async (input: CreateTeamInputModel) => await createTeam(input).catch(e => setError(e)),
-        updateTeam: async (input: UpdateTeamInputModel) => await updateTeam(input).catch(e => setError(e)),
-        deleteTeam: async (team: Team) => await deleteTeam(team.id).catch(e => setError(e)),
+        createTeam: async (input: CreateTeamInputModel) => await createTeam(input).catch(e => setError(e.message)),
+        updateTeam: async (input: UpdateTeamInputModel) => await updateTeam(input).catch(e => setError(e.message)),
+        deleteTeam: async (team: Team) => await deleteTeam(team.id).catch(e => setError(e.message)),
+        openCreateModal,
+        onEditButtonHandler: (team: Team) => {
+            // Optionally set the editing team here
+            openEditModal();
+        },
         onShowClickHandler: (team: Team) => navigate(`/teams/${team.id}`),
+        closeCreateModal,
+        closeEditModal,
+        isCreating,
+        isEditing,
         isFetching,
         error,
     }

@@ -19,7 +19,7 @@ export interface TeamDetails {
 export interface CreateTeamInputModel {
     name: string,
     manager: string,
-    location: string
+    location: Location
 }
 
 export interface UpdateTeamInputModel {

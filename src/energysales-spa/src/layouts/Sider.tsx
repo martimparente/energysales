@@ -28,7 +28,7 @@ const data = [
     {link: '/settings', label: 'Settings', icon: IconSettings},
 ];
 
-const energySalesIcon = <img src={logoName} width="150" height="50"/>
+const energySalesIcon = <img src={logoName} width="150" height="50" alt="Logo"/>
 
 export function Sider() {
     const [active, setActive] = useState('');

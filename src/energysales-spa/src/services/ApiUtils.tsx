@@ -5,8 +5,9 @@ export const AUTHORIZATION_HEADER = {
 
 export async function fetchData<T>(url: string): Promise<T> {
     const response = await fetch(url, {headers: AUTHORIZATION_HEADER})
-    if (!response.ok) {
+    if (!(response.status >= 200 && response.status < 300)) {
         const errorData = await response.json();
+        console.log("ERROR")
         throw new Error(errorData.message || 'Something went wrong');
     }
     return response.json();
@@ -18,8 +19,10 @@ export async function mutateData<T>(url: string, method: string, body?: any): Pr
         headers: AUTHORIZATION_HEADER,
         body: JSON.stringify(body),
     });
-    if (!response.ok) {
+    if (!(response.status >= 200 && response.status < 300)) {
         const errorData = await response.json();
+        console.log("ERROR")
+
         throw new Error(errorData.message || 'Something went wrong');
     }
     return response.json();

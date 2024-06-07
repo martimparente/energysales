@@ -30,7 +30,7 @@ export function ClientsPage() {
                             <Table.Td>{client.phone}</Table.Td>
                             <Table.Td>{client.location.district}</Table.Td>
                             <Table.Td>
-                                <Button onClick={() => onShowClickHandler(client)}>Show</Button>
+                                <Button onClick={() => onShowClickHandler(client)} color={"orange"}>Show</Button>
                                 <Button color={"green"}>Edit</Button>
                                 <Button onClick={() => deleteClient(client)} color={"red"}><IconTrash
                                     stroke={2}/></Button>

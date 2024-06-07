@@ -1,7 +1,7 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {CreateSellerInputModel, Seller, UpdateSellerInputModel} from "./models/SellersModel";
 import {ApiUris} from "./ApiUris";
-import {fetchData, mutateData} from "./ApiUtils.tsx";
+import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
 
 
 export function useCreateSeller() {
@@ -36,8 +36,12 @@ export function useDeleteSeller() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (sellerId: string) =>
-            mutateData(ApiUris.deleteSeller(sellerId), "DELETE"),
+            fetch(ApiUris.deleteSeller(sellerId), {
+                method: "DELETE",
+                headers: AUTHORIZATION_HEADER,
+            }),
         onSuccess: () => {
+            // Invalidate and refetch the sellers query to get the updated list
             queryClient.invalidateQueries({queryKey: ['sellers']});
         },
     });

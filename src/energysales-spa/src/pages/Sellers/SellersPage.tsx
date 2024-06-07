@@ -32,7 +32,7 @@ export function SellersPage() {
                             <Table.Td>{seller.totalSales}</Table.Td>
                             <Table.Td>{seller.person.team}</Table.Td>
                             <Table.Td>
-                                <Button onClick={() => onShowClickHandler(seller)}>Show</Button>
+                                <Button onClick={() => onShowClickHandler(seller)} color={"orange"}>Show</Button>
                                 <Button color={"green"}>Edit</Button>
                                 <Button onClick={() => deleteSeller(seller)} color={"red"}><IconTrash
                                     stroke={2}/></Button>

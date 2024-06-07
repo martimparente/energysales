@@ -29,7 +29,7 @@ export function ProductsPage() {
                             <Table.Td>{product.price}</Table.Td>
                             <Table.Td>{product.description}</Table.Td>
                             <Table.Td>
-                                <Button onClick={() => onShowClickHandler(product)}>Show</Button>
+                                <Button onClick={() => onShowClickHandler(product)} color={"orange"}>Show</Button>
                                 <Button color={"green"}>Edit</Button>
                                 <Button onClick={() => deleteProduct(product)} color={"red"}><IconTrash
                                     stroke={2}/></Button>

@@ -9,13 +9,23 @@ import {
     UpdateTeamInputModel
 } from "./models/TeamModel";
 import {Seller} from "./models/SellersModel.tsx";
-import {fetchData, mutateData} from "./ApiUtils.tsx";
+import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
 
 
 export function useCreateTeam() {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: (input: CreateTeamInputModel) =>
-            mutateData(ApiUris.createTeam, "POST", input)
+        mutationFn: async (input: CreateTeamInputModel) =>
+            fetch(ApiUris.createTeam, {
+                method: "POST",
+                headers: AUTHORIZATION_HEADER,
+                body: JSON.stringify(input),
+            }),
+        onSuccess: () => {
+            // Invalidate and refetch the teams query to get the updated list
+            queryClient.invalidateQueries({queryKey: ['teams']});
+        },
     });
 }
 
@@ -47,13 +57,16 @@ export function useUpdateTeam() {
     });
 }
 
-//TODO FIX BUG NOT INVALIDATING QUERY
 export function useDeleteTeam() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (teamId: string) =>
-            mutateData(ApiUris.deleteTeam(teamId), "DELETE"),
+            fetch(ApiUris.deleteTeam(teamId), {
+                method: "DELETE",
+                headers: AUTHORIZATION_HEADER,
+            }),
         onSuccess: () => {
+            // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teams']});
         },
     });
@@ -66,25 +79,35 @@ export function useGetAvailableSellers(lastKeySeen: string = "0") {
     });
 }
 
+// add member to team
 export function useAddTeamSeller() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (input: AddTeamSellerInputModel) =>
-            mutateData(ApiUris.addTeamSeller(input.teamId), "PUT", input),
+        mutationFn: async (input: AddTeamSellerInputModel) =>
+            fetch(ApiUris.addTeamSeller(input.teamId), {
+                method: "PUT",
+                headers: AUTHORIZATION_HEADER,
+                body: JSON.stringify(input),
+            }),
         onSuccess: () => {
-            console.log("onSuccess")
+            // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
             queryClient.invalidateQueries({queryKey: ["availableSellers"]});
         },
     });
 }
 
+// delete member to team
 export function useDeleteTeamSeller() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (input: DeleteTeamSellerInput) =>
-            mutateData(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), "DELETE"),
+        mutationFn: async (input: DeleteTeamSellerInput) =>
+            fetch(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), {
+                method: "DELETE",
+                headers: AUTHORIZATION_HEADER,
+            }),
         onSuccess: () => {
+            // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
             queryClient.invalidateQueries({queryKey: ["availableSellers"]});
         },
