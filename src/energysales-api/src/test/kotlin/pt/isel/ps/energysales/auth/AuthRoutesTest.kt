@@ -30,7 +30,17 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateUserRequest("newTestUser", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
+                    setBody(
+                        CreateUserRequest(
+                            "newTestUser",
+                            "SecurePass123!",
+                            "SecurePass123!",
+                            "Test",
+                            "User",
+                            "test@test.com",
+                            setOf("SELLER"),
+                        ),
+                    )
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
@@ -42,7 +52,17 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateUserRequest("123", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
+                    setBody(
+                        CreateUserRequest(
+                            "ab",
+                            "SecurePass123!",
+                            "SecurePass123!",
+                            "Test",
+                            "User",
+                            "test@test.com",
+                            setOf("SELLER"),
+                        ),
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.userIsInvalid.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
@@ -56,7 +76,17 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateUserRequest("Username 1", "SecurePass123!", "SecurePass123!", setOf("SELLER")))
+                    setBody(
+                        CreateUserRequest(
+                            "adminUser",
+                            "SecurePass123!",
+                            "SecurePass123!",
+                            "Test",
+                            "User",
+                            "test@test.com",
+                            setOf("SELLER"),
+                        ),
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.userAlreadyExists.type)
                     response.shouldHaveStatus(HttpStatusCode.Conflict)
@@ -70,7 +100,17 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateUserRequest("testUser", "SecurePass123!", "PassSecure123!", setOf("SELLER")))
+                    setBody(
+                        CreateUserRequest(
+                            "newTestUser",
+                            "SecurePass123!",
+                            "SecurePass321!",
+                            "Test",
+                            "User",
+                            "test@test.com",
+                            setOf("SELLER"),
+                        ),
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.passwordMismatch.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
@@ -84,7 +124,17 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateUserRequest("testUser", "insecure", "insecure", setOf("SELLER")))
+                    setBody(
+                        CreateUserRequest(
+                            "newTestUser",
+                            "insecurepassword",
+                            "insecurepassword",
+                            "Test",
+                            "User",
+                            "test@test.com",
+                            setOf("SELLER"),
+                        ),
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.insecurePassword.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
@@ -98,7 +148,17 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.AUTH_SIGNUP) {
                     headers.append("Authorization", "Bearer $sellerToken")
-                    setBody(CreateUserRequest("doesNotMatter", "doesNotMatter", "doesNotMatter", setOf("SELLER")))
+                    setBody(
+                        CreateUserRequest(
+                            "newTestUser",
+                            "SecurePass123!",
+                            "SecurePass123!",
+                            "Test",
+                            "User",
+                            "test@test.com",
+                            setOf("SELLER"),
+                        ),
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
                     response.shouldHaveStatus(HttpStatusCode.Forbidden)
@@ -164,8 +224,8 @@ class AuthRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.USERS_ROLES) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 3)
-                    setBody(RoleRequest("ADMIN"))
+                    parameter("id", 1)
+                    setBody(RoleRequest("SELLER"))
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.Created)
                 }

@@ -66,6 +66,17 @@ fun Application.configureDatabases() {
                 it[username] = "adminUser" // pass = "SecurePass123!"
                 it[UserTable.password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
                 it[salt] = "c3f842f3630ebb3d96543709bc316402"
+                it[name] = "Name 1"
+                it[surname] = "Surname 1"
+                it[email] = "1@mail.com"
+            }
+            UserTable.insert {
+                it[username] = "sellerUser" // pass = "SecurePass123!"
+                it[UserTable.password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+                it[salt] = "c3f842f3630ebb3d96543709bc316402"
+                it[name] = "Name 2"
+                it[surname] = "Surname 2"
+                it[email] = "2@mail.com"
             }
 
             RoleTable.insert {
@@ -76,7 +87,7 @@ fun Application.configureDatabases() {
                 it[name] = "SELLER"
             }
 
-            for (i in 1..50) {
+            for (i in 1..4) {
                 LocationTable.insert {
                     it[district] = "District $i"
                 }
@@ -110,19 +121,15 @@ fun Application.configureDatabases() {
                     it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
                     it[location] = i
                 }
-                UserTable.insert {
-                    it[username] = "Username $i" // pass = "SecurePass123!"
-                    it[UserTable.password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
-                    it[salt] = "c3f842f3630ebb3d96543709bc316402"
-                }
-                UserRolesTable.insert {
-                    it[userId] = i
-                    it[roleId] = 2
-                }
             }
             UserRolesTable.insert {
                 it[userId] = 1
                 it[roleId] = 1
+            }
+
+            UserRolesTable.insert {
+                it[userId] = 2
+                it[roleId] = 2
             }
         }
     } catch (e: Exception) {

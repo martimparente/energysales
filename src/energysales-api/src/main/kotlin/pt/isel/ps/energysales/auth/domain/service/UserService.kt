@@ -7,6 +7,8 @@ import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.auth.data.UserRepository
 import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.SaltedHash
+import pt.isel.ps.energysales.auth.domain.model.User
+import pt.isel.ps.energysales.auth.domain.model.toRole
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -31,6 +33,9 @@ class UserService(
         username: String,
         password: String,
         repeatPassword: String,
+        name: String,
+        surname: String,
+        email: String,
         roles: Set<String>,
     ): UserCreationResult =
         either {
@@ -41,7 +46,8 @@ class UserService(
 
             // todo what happens if the user suddenly exists? Transaction?
             val saltedHash = hashingService.generateSaltedHash(password, SALT_NUM_OF_BYTES)
-            userRepository.createUser(username, saltedHash.hash, saltedHash.salt, roles)
+            val user = User(-1, username, saltedHash.hash, saltedHash.salt, name, surname, email, roles.map { toRole(it) }.toSet())
+            userRepository.createUser(user)
         }
 
     /**

@@ -5,5 +5,8 @@ data class User(
     val username: String,
     val password: String,
     val salt: String,
-    val role: Set<Role>,
+    val name: String,
+    val surname: String,
+    val email: String,
+    val roles: Set<Role>,
 )

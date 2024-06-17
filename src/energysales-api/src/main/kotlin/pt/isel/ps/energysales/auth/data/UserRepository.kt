@@ -4,12 +4,7 @@ import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.User
 
 interface UserRepository {
-    suspend fun createUser(
-        username: String,
-        password: String,
-        salt: String,
-        roles: Set<String>,
-    ): Int
+    suspend fun createUser(user: User): Int
 
     suspend fun getUserById(uid: Int): User?
 

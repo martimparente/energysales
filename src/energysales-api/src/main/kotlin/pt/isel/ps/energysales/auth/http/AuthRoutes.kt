@@ -42,6 +42,7 @@ fun Route.authRoutes(userService: UserService) {
             is Left -> call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
         }
     }
+
     post(Uris.AUTH_RESET_PASSWORD) {
         val body = call.receive<ResetPasswordRequest>()
         val res = userService.resetPassword(body.email)
@@ -67,7 +68,16 @@ fun Route.authRoutes(userService: UserService) {
         authorize("ADMIN") {
             post(Uris.AUTH_SIGNUP) {
                 val body = call.receive<CreateUserRequest>()
-                val res = userService.createUser(body.username, body.password, body.repeatPassword, body.roles)
+                val res =
+                    userService.createUser(
+                        body.username,
+                        body.password,
+                        body.repeatPassword,
+                        body.name,
+                        body.surname,
+                        body.email,
+                        body.roles,
+                    )
 
                 when (res) {
                     is Right -> {
