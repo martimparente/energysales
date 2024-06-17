@@ -8,11 +8,12 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.auth.domain.model.toRole
 import pt.isel.ps.energysales.auth.domain.service.ChangeUserPasswordError
 import pt.isel.ps.energysales.auth.domain.service.ResetPasswordError
 import pt.isel.ps.energysales.auth.domain.service.RoleReadingError
@@ -76,7 +77,7 @@ fun Route.authRoutes(userService: UserService) {
                         body.name,
                         body.surname,
                         body.email,
-                        body.roles,
+                        body.role.toRole(),
                     )
 
                 when (res) {
@@ -91,6 +92,19 @@ fun Route.authRoutes(userService: UserService) {
                             UserCreationError.PasswordMismatch -> call.respondProblem(Problem.passwordMismatch, HttpStatusCode.BadRequest)
                             UserCreationError.UserAlreadyExists -> call.respondProblem(Problem.userAlreadyExists, HttpStatusCode.Conflict)
                             UserCreationError.UserIsInvalid -> call.respondProblem(Problem.userIsInvalid, HttpStatusCode.BadRequest)
+                            UserCreationError.UserEmailIsInvalid ->
+                                call.respondProblem(
+                                    Problem.UserEmailIsInvalid,
+                                    HttpStatusCode.BadRequest,
+                                )
+
+                            UserCreationError.UserInfoIsInvalid -> call.respondProblem(Problem.UserInfoIsInvalid, HttpStatusCode.BadRequest)
+                            UserCreationError.UserNameIsInvalid -> call.respondProblem(Problem.UserNameIsInvalid, HttpStatusCode.BadRequest)
+                            UserCreationError.UserSurnameIsInvalid ->
+                                call.respondProblem(
+                                    Problem.UserSurnameIsInvalid,
+                                    HttpStatusCode.BadRequest,
+                                )
                         }
                 }
             }
@@ -129,13 +143,13 @@ fun Route.authRoutes(userService: UserService) {
                 }
             }
 
-            route(Uris.USERS_ROLES) {
+            route(Uris.USERS_ROLE) {
                 get {
                     val uid =
                         call.parameters["id"]?.toIntOrNull()
                             ?: return@get call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
 
-                    val res = userService.getUserRoles(uid)
+                    val res = userService.getUserRole(uid)
 
                     when (res) {
                         is Right -> call.respond(res.value)
@@ -146,35 +160,17 @@ fun Route.authRoutes(userService: UserService) {
                     }
                 }
 
-                post {
+                put {
                     val uid =
                         call.parameters["id"]?.toIntOrNull()
-                            ?: return@post call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
+                            ?: return@put call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
                     val body = call.receive<RoleRequest>()
 
-                    val res = userService.assignRole(uid, body.role)
+                    val res = userService.changeUserRole(uid, body.role)
 
                     when (res) {
                         is Right -> call.response.status(HttpStatusCode.Created)
                         is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.Forbidden)
-                    }
-                }
-            }
-
-            route(Uris.USERS_ROLE) {
-                delete {
-                    val uid =
-                        call.parameters["id"]?.toIntOrNull()
-                            ?: return@delete call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.NotFound)
-                    val roleName =
-                        call.parameters["role-name"]
-                            ?: return@delete call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.NotFound)
-
-                    val res = userService.deleteRole(uid, roleName)
-
-                    when (res) {
-                        is Right -> call.respond(HttpStatusCode.OK)
-                        is Left -> call.respondProblem(Problem.userOrPasswordAreInvalid, HttpStatusCode.Forbidden)
                     }
                 }
             }

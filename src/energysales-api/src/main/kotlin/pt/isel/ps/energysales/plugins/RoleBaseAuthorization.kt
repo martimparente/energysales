@@ -28,9 +28,9 @@ val RoleBasedAuthorizationPlugin =
 
         pluginConfig.apply {
             on(AuthenticationChecked) { call ->
-                val tokenRoles = getRolesFromToken(call) ?: emptyList()
+                val tokenRole = getRoleFromToken(call) ?: ""
 
-                val authorized = (roles intersect tokenRoles.toSet()).isNotEmpty()
+                val authorized = tokenRole in roles
 
                 if (!authorized) {
                     println("User does not have permission to access this resource.")
@@ -51,12 +51,12 @@ class AuthorizedRouteSelector(
     override fun toString(): String = "(authorize $description)"
 }
 
-private fun getRolesFromToken(call: ApplicationCall): List<String>? =
+private fun getRoleFromToken(call: ApplicationCall): String? =
     call
         .principal<JWTPrincipal>()
         ?.payload
-        ?.getClaim("roles")
-        ?.asList(String::class.java)
+        ?.getClaim("role")
+        ?.asString()
 
 fun Route.authorize(
     vararg hasAnyRole: String,

@@ -5,14 +5,14 @@ import pt.isel.ps.energysales.sellers.domain.model.Seller
 
 @Serializable
 data class SellerJSON(
-    val person: PersonJSON,
+    val uid: String,
     val totalSales: Float,
     val team: Int?,
 ) {
     companion object {
         fun fromSeller(seller: Seller) =
             SellerJSON(
-                PersonJSON.fromPerson(seller.person),
+                seller.uid.toString(),
                 seller.totalSales,
                 seller.team,
             )
@@ -21,17 +21,12 @@ data class SellerJSON(
 
 @Serializable
 data class CreateSellerRequest(
-    val name: String,
-    val surname: String,
-    val email: String,
-    val team: Int? = null,
+    val uid: String,
 )
 
 @Serializable
 data class UpdateSellerRequest(
-    val name: String,
-    val surname: String,
-    val email: String,
+    val uid: String,
     val totalSales: Float,
     val team: Int? = null,
 )

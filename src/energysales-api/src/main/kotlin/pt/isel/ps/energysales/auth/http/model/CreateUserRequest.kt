@@ -10,7 +10,7 @@ data class CreateUserRequest(
     val name: String,
     val surname: String,
     val email: String,
-    val roles: Set<String>,
+    val role: String,
 )
 
 @Serializable

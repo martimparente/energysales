@@ -23,7 +23,7 @@ data class TeamJSON(
     val id: String,
     val name: String,
     val location: LocationJSON,
-    val manager: Int?,
+    val managerId: Int?,
 ) {
     companion object {
         fun fromTeam(team: Team) =
@@ -31,7 +31,7 @@ data class TeamJSON(
                 id = team.id.toString(),
                 name = team.name,
                 location = LocationJSON.fromLocation(team.location),
-                manager = team.manager?.uid,
+                managerId = team.managerId,
             )
     }
 }
@@ -54,14 +54,14 @@ data class TeamDetailsJSON(
 data class CreateTeamRequest(
     val name: String,
     val location: LocationJSON,
-    val manager: Int?,
+    val managerId: Int?,
 )
 
 @Serializable
 data class UpdateTeamRequest(
     val name: String,
     val location: LocationJSON,
-    val manager: Int?,
+    val managerId: Int?,
 )
 
 @Serializable

@@ -1,7 +1,7 @@
 package pt.isel.ps.energysales.sellers.domain.model
 
 data class Seller(
-    val person: Person,
+    val uid: Int,
     val totalSales: Float,
-    val team: Int?,
+    val team: Int? = null,
 )
