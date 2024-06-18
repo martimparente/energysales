@@ -18,7 +18,6 @@ import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.auth.http.model.respondProblem
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.teams.domain.model.Location
-import pt.isel.ps.energysales.teams.domain.model.Person
 import pt.isel.ps.energysales.teams.domain.model.Team
 import pt.isel.ps.energysales.teams.domain.service.TeamCreationError
 import pt.isel.ps.energysales.teams.domain.service.TeamDeletingError
@@ -64,7 +63,7 @@ fun Route.teamRoutes(teamService: TeamService) {
     post<TeamResource> {
         val body = call.receive<CreateTeamRequest>()
 
-        val res = teamService.createTeam(body.name, body.location.district, body.manager)
+        val res = teamService.createTeam(body.name, body.location.district, body.managerId)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -105,7 +104,7 @@ fun Route.teamRoutes(teamService: TeamService) {
                 id = pathParams.teamId,
                 name = body.name,
                 location = Location(body.location.district),
-                manager = body.manager?.let { Person.create(it) },
+                managerId = body.managerId,
             )
         val res = teamService.updateTeam(updatedTeam)
         when (res) {

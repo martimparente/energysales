@@ -15,20 +15,18 @@ import io.ktor.server.testing.testApplication
 import io.mockk.impl.instantiation.AbstractInstantiator.Companion.log
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.BeforeClass
 import pt.isel.ps.energysales.auth.data.RoleTable
+import pt.isel.ps.energysales.auth.data.UserCredentialsTable
 import pt.isel.ps.energysales.auth.data.UserRolesTable
 import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.auth.http.model.LoginRequest
 import pt.isel.ps.energysales.auth.http.model.LoginResponse
 import pt.isel.ps.energysales.clients.data.ClientTable
 import pt.isel.ps.energysales.products.data.ProductTable
-import pt.isel.ps.energysales.sellers.data.PersonTable
-import pt.isel.ps.energysales.sellers.data.Role
 import pt.isel.ps.energysales.sellers.data.SellerTable
 import pt.isel.ps.energysales.teams.data.LocationTable
 import pt.isel.ps.energysales.teams.data.TeamTable
@@ -74,90 +72,7 @@ open class BaseRouteTest {
                     )
                     // Create the tables and insert the data needed for the tests
                     transaction {
-                        SchemaUtils.drop(
-                            SellerTable,
-                            TeamTable,
-                            PersonTable,
-                            UserRolesTable,
-                            RoleTable,
-                            UserTable,
-                            ProductTable,
-                            LocationTable,
-                            ClientTable,
-                        )
-                        SchemaUtils
-                            .create(
-                                UserTable,
-                                RoleTable,
-                                UserRolesTable,
-                                TeamTable,
-                                PersonTable,
-                                SellerTable,
-                                ProductTable,
-                                LocationTable,
-                                ClientTable,
-                            )
-
-                        UserTable.insert {
-                            it[username] = "adminUser" // pass = "SecurePass123!"
-                            it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
-                            it[salt] = "c3f842f3630ebb3d96543709bc316402"
-                        }
-
-                        RoleTable.insert {
-                            it[name] = "ADMIN"
-                        }
-
-                        RoleTable.insert {
-                            it[name] = "SELLER"
-                        }
-
-                        for (i in 1..3) {
-                            LocationTable.insert {
-                                it[district] = "Location $i"
-                            }
-                            TeamTable.insert {
-                                it[name] = "Team $i"
-                                it[location] = i
-                            }
-                            PersonTable.insert {
-                                it[name] = "Name $i"
-                                it[surname] = "Surname $i"
-                                it[email] = "$i@mail.com"
-                                it[role] = Role.SELLER
-                            }
-                            ProductTable.insert {
-                                it[name] = "Product $i"
-                                it[price] = 0.0
-                                it[description] = "Description $i"
-                            }
-                            SellerTable.insert {
-                                it[id] = i
-                                it[totalSales] = 0.0f
-                                it[person] = i
-                            }
-                            ClientTable.insert {
-                                it[name] = "Client $i"
-                                // random number of exactly 9 digits
-                                it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
-                                it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
-                                it[location] = i
-                            }
-                            UserTable.insert {
-                                it[username] = "Username $i" // pass = "SecurePass123!"
-                                it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
-                                it[salt] = "c3f842f3630ebb3d96543709bc316402"
-                            }
-                            UserRolesTable.insert {
-                                it[userId] = i
-                                it[roleId] = 2
-                            }
-                        }
-
-                        UserRolesTable.insert {
-                            it[userId] = 1
-                            it[roleId] = 1
-                        }
+                        fillDb()
                     }
                     // Login to get the JWT token for testing authenticated routes
                     val testClient = testClient()
@@ -169,7 +84,7 @@ open class BaseRouteTest {
                         }
                     testClient
                         .post(Uris.API + Uris.AUTH_LOGIN) {
-                            setBody(LoginRequest("Username 1", "SecurePass123!"))
+                            setBody(LoginRequest("sellerUser", "SecurePass123!"))
                         }.also { response ->
                             sellerToken = response.body<LoginResponse>().token
                         }
@@ -188,7 +103,7 @@ open class BaseRouteTest {
                 SchemaUtils.drop(
                     SellerTable,
                     TeamTable,
-                    PersonTable,
+                    UserCredentialsTable,
                     UserRolesTable,
                     RoleTable,
                     UserTable,

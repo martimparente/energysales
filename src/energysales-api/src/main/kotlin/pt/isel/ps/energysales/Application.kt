@@ -99,9 +99,9 @@ fun Application.module() {
                     teamRoutes(teamService)
                     sellerRoutes(sellerService)
                     productRoutes(productService)
+                    clientRoutes(clientService)
                 }
                 authorize("SELLER") {
-                    clientRoutes(clientService)
                 }
             }
         }

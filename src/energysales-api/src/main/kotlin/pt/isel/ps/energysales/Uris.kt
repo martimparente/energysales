@@ -17,18 +17,13 @@ object Uris {
 
     // User routes
     const val USERS = "/users"
-    const val USERS_ROLES = "$USERS/{id}/roles"
-    const val USERS_ROLE = "$USERS/{id}/roles/{role-id}"
+    const val USERS_ROLE = "$USERS/{id}/role"
     const val USER_CHANGE_PASSWORD = "$USERS/{id}/change-password"
 
     // Admin routes
     const val ADMIN = "/admin"
     const val ADMIN_HOME = "$ADMIN/me"
     const val ADMIN_SETTINGS = "$ADMIN/settings"
-
-    // Person routes
-    const val PERSONS = "/persons"
-    const val PERSONS_HOME = "$PERSONS/me"
 
     // Team routes
     const val TEAMS = "/teams"
@@ -43,10 +38,10 @@ object Uris {
     const val SELLERS_HOME = "$SELLERS/me"
 
     // Product routes
-    const val PRODUCT = "/products"
-    const val PRODUCT_BY_ID = "$PRODUCT/{id}"
+    const val PRODUCTS = "/products"
+    const val PRODUCTS_BY_ID = "$PRODUCTS/{id}"
 
     // Client routes
-    const val CLIENT = "/clients"
-    const val CLIENT_BY_ID = "$CLIENT/{id}"
+    const val CLIENTS = "/clients"
+    const val CLIENTS_BY_ID = "$CLIENTS/{id}"
 }

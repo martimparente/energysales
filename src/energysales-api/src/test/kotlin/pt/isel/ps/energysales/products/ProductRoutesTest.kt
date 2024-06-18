@@ -27,11 +27,11 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Create Product - Success`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.PRODUCT) {
+                .post(Uris.API + Uris.PRODUCTS) {
                     headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateProductRequest("newProduct", 0.0, ""))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.PRODUCT}/51")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.PRODUCTS}/11")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }
@@ -40,7 +40,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Create Product - Unauthorized`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.PRODUCT) {
+                .post(Uris.API + Uris.PRODUCTS) {
                     headers.append(
                         "Authorization",
                         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
@@ -82,7 +82,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Create Product - Product already exists`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.PRODUCT) {
+                .post(Uris.API + Uris.PRODUCTS) {
                     headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateProductRequest("Product 1", 0.0, ""))
                 }.also { response ->
@@ -96,7 +96,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Get Product by ID - Success`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCT_BY_ID) {
+                .get(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                 }.also { response ->
@@ -110,7 +110,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Get Product by ID - Not Found`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCT_BY_ID) {
+                .get(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -124,7 +124,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Get Product by ID - Bad request`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCT_BY_ID) {
+                .get(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
@@ -138,7 +138,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Get All Products - Success`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCT) {
+                .get(Uris.API + Uris.PRODUCTS) {
                     headers.append("Authorization", "Bearer $adminToken")
                 }.also { response ->
                     response.body<List<ProductJSON>>()
@@ -149,7 +149,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Update Product - Success`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCT_BY_ID) {
+                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
                     setBody(UpdateProductRequest("updatedProduct", 0.0, ""))
@@ -162,7 +162,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Update Product - Unauthorized`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCT_BY_ID) {
+                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
                     parameter("id", 2)
                     setBody(UpdateProductRequest("newProduct", 0.0, ""))
                 }.also { response ->
@@ -189,7 +189,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Update Product - Not Found`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCT_BY_ID) {
+                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                     setBody(UpdateProductRequest("nonExistingProduct", 0.0, ""))
@@ -204,7 +204,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Update Product - Bad Request`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCT_BY_ID) {
+                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
                     setBody(UpdateProductRequest("", 0.0, ""))
@@ -219,7 +219,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Delete Product - Success`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCT_BY_ID) {
+                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
@@ -231,7 +231,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Delete Product - Unauthorized`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCT_BY_ID) {
+                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Invalid Token")
                     parameter("id", 1)
                 }.also { response ->
@@ -243,7 +243,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Delete Product - Not Found`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCT_BY_ID) {
+                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -255,7 +255,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Delete Product - Product Not Found`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCT_BY_ID) {
+                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -267,7 +267,7 @@ class ProductRoutesTest : BaseRouteTest() {
     fun `Delete Product - Bad Request`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCT_BY_ID) {
+                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->

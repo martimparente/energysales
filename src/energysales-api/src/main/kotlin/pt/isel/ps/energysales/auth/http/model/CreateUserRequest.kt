@@ -7,7 +7,10 @@ data class CreateUserRequest(
     val username: String,
     val password: String,
     val repeatPassword: String,
-    val roles: Set<String>,
+    val name: String,
+    val surname: String,
+    val email: String,
+    val role: String,
 )
 
 @Serializable

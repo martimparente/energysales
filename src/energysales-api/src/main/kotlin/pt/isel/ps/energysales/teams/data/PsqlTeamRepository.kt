@@ -5,21 +5,20 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SortOrder
+import pt.isel.ps.energysales.auth.data.UserEntity
+import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
-import pt.isel.ps.energysales.sellers.data.PersonEntity
-import pt.isel.ps.energysales.sellers.data.PersonTable
 import pt.isel.ps.energysales.sellers.data.SellerEntity
 import pt.isel.ps.energysales.sellers.data.SellerTable
 import pt.isel.ps.energysales.sellers.domain.model.Seller
 import pt.isel.ps.energysales.teams.domain.model.Location
-import pt.isel.ps.energysales.teams.domain.model.Person
 import pt.isel.ps.energysales.teams.domain.model.Team
 import pt.isel.ps.energysales.teams.domain.model.TeamDetails
 
 object TeamTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()
     val location = reference("location", LocationTable)
-    val manager = reference("manager", PersonTable).nullable()
+    val manager = reference("manager", UserTable).nullable()
 }
 
 object LocationTable : IntIdTable() {
@@ -31,13 +30,10 @@ class LocationEntity(
 ) : Entity<Int>(id) {
     companion object : EntityClass<Int, LocationEntity>(LocationTable)
 
-    fun toLocation() =
-        Location(
-            district,
-        )
-
     var district by LocationTable.district
     val teams by TeamEntity referrersOn TeamTable.location
+
+    fun toLocation() = Location(district)
 }
 
 class TeamEntity(
@@ -50,12 +46,12 @@ class TeamEntity(
             id.value,
             name,
             location.toLocation(),
-            manager?.let { Person(it.id.value, it.name, it.surname, it.email, it.role.toString()) },
+            manager?.id?.value,
         )
 
     var name by TeamTable.name
     var location by LocationEntity referencedOn TeamTable.location
-    var manager by PersonEntity optionalReferencedOn TeamTable.manager
+    var manager by UserEntity optionalReferencedOn TeamTable.manager
     val sellers by SellerEntity optionalReferrersOn SellerTable.team
 }
 
@@ -107,8 +103,8 @@ class PsqlTeamRepository : TeamRepository {
                             district = team.location.district
                         }
                     manager =
-                        team.manager?.let {
-                            PersonEntity.findById(it.uid)
+                        team.managerId?.let {
+                            UserEntity.findById(it)
                         }
                 }.id
                 .value
@@ -143,7 +139,7 @@ class PsqlTeamRepository : TeamRepository {
                     it.location = LocationEntity.findById(it.location.id.value) ?: LocationEntity.new {
                         district = team.location.district
                     }
-                    it.manager = team.manager?.let { PersonEntity.findById(it.uid) }
+                    it.manager = team.managerId?.let { UserEntity.findById(it) }
                 }?.toTeam()
         }
 

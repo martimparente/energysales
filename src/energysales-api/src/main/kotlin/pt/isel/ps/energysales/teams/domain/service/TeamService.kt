@@ -7,7 +7,6 @@ import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.sellers.domain.model.Seller
 import pt.isel.ps.energysales.teams.data.TeamRepository
 import pt.isel.ps.energysales.teams.domain.model.Location
-import pt.isel.ps.energysales.teams.domain.model.Person
 import pt.isel.ps.energysales.teams.domain.model.Team
 import pt.isel.ps.energysales.teams.domain.model.TeamDetails
 
@@ -18,14 +17,14 @@ class TeamService(
     suspend fun createTeam(
         name: String,
         district: String,
-        manager: Int?,
+        managerId: Int?,
     ): TeamCreationResult =
         either {
             ensure(name.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
             ensure(district.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
             ensure(!teamRepository.teamExistsByName(name)) { TeamCreationError.TeamAlreadyExists }
 
-            teamRepository.create(Team(-1, name, Location(district), if (manager != null) Person.create(manager) else null))
+            teamRepository.create(Team(-1, name, Location(district), managerId))
         }
 
     // Read

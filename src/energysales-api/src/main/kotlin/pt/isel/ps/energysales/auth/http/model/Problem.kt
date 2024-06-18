@@ -24,6 +24,8 @@ suspend fun ApplicationCall.respondProblem(
     respond(mutatedProblem)
 }
 
+private const val PROBLEM_URL = "https://github.com/martimparente/ecoenergy/docs/client-documentation/problems/"
+
 @Serializable
 data class Problem(
     val title: String,
@@ -31,7 +33,38 @@ data class Problem(
     val instance: String,
 ) {
     companion object {
-        private const val PROBLEM_URL = "https://github.com/martimparente/ecoenergy/docs/client-documentation/problems/"
+        val sellerInfoIsInvalid: Problem =
+            Problem(
+                "UserSurnameIsInvalid",
+                PROBLEM_URL + "UserSurnameIsInvalid.md",
+                "",
+            )
+
+        val UserSurnameIsInvalid: Problem =
+            Problem(
+                "UserSurnameIsInvalid",
+                PROBLEM_URL + "UserSurnameIsInvalid.md",
+                "",
+            )
+        val UserNameIsInvalid: Problem =
+            Problem(
+                "UserNameIsInvalid",
+                PROBLEM_URL + "UserNameIsInvalid.md",
+                "",
+            )
+        val UserInfoIsInvalid: Problem =
+            Problem(
+                "UserInfoIsInvalid",
+                PROBLEM_URL + "UserInfoIsInvalid.md",
+                "",
+            )
+        val UserEmailIsInvalid: Problem =
+            Problem(
+                "UserEmailIsInvalid",
+                PROBLEM_URL + "UserEmailIsInvalid.md",
+                "",
+            )
+
         val forbidden: Problem =
             Problem(
                 "forbidden",
@@ -100,13 +133,8 @@ data class Problem(
                 PROBLEM_URL + "sellerNotFound.md",
                 "",
             )
-        val sellerInfoIsInvalid: Problem =
-            Problem(
-                "sellerInfoIsInvalid",
-                PROBLEM_URL + "sellerInfoIsInvalid.md",
-                "",
-            )
-        val sellerEmailAlreadyInUse: Problem =
+
+        val userEmailAlreadyInUse: Problem =
             Problem(
                 "sellerEmailAlreadyInUse",
                 PROBLEM_URL + "sellerEmailAlreadyInUse.md",

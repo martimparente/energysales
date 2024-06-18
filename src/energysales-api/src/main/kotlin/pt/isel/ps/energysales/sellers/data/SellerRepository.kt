@@ -15,8 +15,6 @@ interface SellerRepository {
 
     suspend fun getById(id: Int): Seller?
 
-    suspend fun isEmailAvailable(email: String): Boolean
-
     suspend fun sellerExists(id: Int): Boolean
 
     suspend fun update(seller: Seller): Seller?

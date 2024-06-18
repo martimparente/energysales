@@ -27,11 +27,11 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Create Client - Success`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.CLIENT) {
+                .post(Uris.API + Uris.CLIENTS) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "District 1"))
+                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "Location 1"))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.CLIENT}/51")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.CLIENTS}/11")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }
@@ -40,7 +40,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Create Client - Unauthorized`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.CLIENT) {
+                .post(Uris.API + Uris.CLIENTS) {
                     headers.append(
                         "Authorization",
                         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
@@ -97,7 +97,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Get Client by ID - Success`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.CLIENT_BY_ID) {
+                .get(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                 }.also { response ->
@@ -111,7 +111,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Get Client by ID - Not Found`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.CLIENT_BY_ID) {
+                .get(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -125,7 +125,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Get Client by ID - Bad request`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.CLIENT_BY_ID) {
+                .get(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
@@ -139,7 +139,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Get All Clients - Success`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.CLIENT) {
+                .get(Uris.API + Uris.CLIENTS) {
                     headers.append("Authorization", "Bearer $adminToken")
                 }.also { response ->
                     response.body<List<ClientJSON>>()
@@ -150,7 +150,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Success`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENT_BY_ID) {
+                .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
                     setBody(UpdateClientRequest("newClient", "123456789", "123456789", "newLocation"))
@@ -163,7 +163,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Unauthorized`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENT_BY_ID) {
+                .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     parameter("id", 2)
                     setBody(UpdateClientRequest("newClient", "123456789", "123456789", "newLocation"))
                 }.also { response ->
@@ -190,7 +190,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Not Found`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENT_BY_ID) {
+                .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                     setBody(UpdateClientRequest("nonClient", "123456789", "123456789", "newLocation"))
@@ -205,7 +205,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Bad Request`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENT_BY_ID) {
+                .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
                     setBody(UpdateClientRequest("", "123456789", "123456789", "newLocation"))
@@ -220,7 +220,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Delete Client - Success`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.CLIENT_BY_ID) {
+                .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
@@ -232,7 +232,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Delete Client - Unauthorized`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.CLIENT_BY_ID) {
+                .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Invalid Token")
                     parameter("id", 1)
                 }.also { response ->
@@ -244,7 +244,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Delete Client - Not Found`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.CLIENT_BY_ID) {
+                .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -256,7 +256,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Delete Client - Client Not Found`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.CLIENT_BY_ID) {
+                .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -268,7 +268,7 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Delete Client - Bad Request`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.CLIENT_BY_ID) {
+                .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->

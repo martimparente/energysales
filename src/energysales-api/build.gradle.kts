@@ -5,15 +5,17 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 val postgresqlDriverVersion: String by project
 val exposedVersion: String by project
+val arrowVersion: String by project
+val kotestVersion: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.0.0"
     id("io.ktor.plugin") version "2.3.11"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
 
     // Lint
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
 group = "pt.isel.ps"
@@ -48,7 +50,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
     // Security
-    implementation("org.springframework.security:spring-security-core:6.2.3")
+    implementation("org.springframework.security:spring-security-core:6.3.1")
 
     // Logging
     implementation("io.ktor:ktor-server-call-logging-jvm")
@@ -65,8 +67,8 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
 
     // Arrow - Functional Programming Library
-    implementation("io.arrow-kt:arrow-core:1.2.1")
-    implementation("io.arrow-kt:arrow-fx-coroutines:1.2.1")
+    implementation("io.arrow-kt:arrow-core:$arrowVersion")
+    implementation("io.arrow-kt:arrow-fx-coroutines:$arrowVersion")
 
     // Testing
     testImplementation("io.ktor:ktor-server-tests-jvm:$kotlinVersion")
@@ -75,8 +77,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-    testImplementation("io.kotest:kotest-property:5.8.1")
-    testImplementation("io.kotest:kotest-assertions-core:5.8.1")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest.extensions:kotest-assertions-ktor:2.0.0")
     testImplementation("io.mockk:mockk:1.13.10")
 }

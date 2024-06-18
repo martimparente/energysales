@@ -16,7 +16,6 @@ import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
 import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.auth.http.model.respondProblem
-import pt.isel.ps.energysales.sellers.domain.model.Person
 import pt.isel.ps.energysales.sellers.domain.model.Seller
 import pt.isel.ps.energysales.sellers.domain.service.SellerCreationError
 import pt.isel.ps.energysales.sellers.domain.service.SellerDeletingError
@@ -48,7 +47,7 @@ fun Route.sellerRoutes(sellerService: SellerService) {
     post<SellerResource> {
         val body = call.receive<CreateSellerRequest>()
 
-        val res = sellerService.createSeller(body.name, body.surname, body.email)
+        val res = sellerService.createSeller(body.uid, body.team)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -57,21 +56,8 @@ fun Route.sellerRoutes(sellerService: SellerService) {
 
             is Left ->
                 when (res.value) {
-                    SellerCreationError.SellerAlreadyExists ->
-                        call.respondProblem(
-                            Problem.sellerEmailAlreadyInUse,
-                            HttpStatusCode.Conflict,
-                        )
-
-                    SellerCreationError.SellerInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.sellerInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
-
-                    SellerCreationError.SellerEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
-                    SellerCreationError.SellerNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
-                    SellerCreationError.SellerSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
+                    SellerCreationError.SellerAlreadyExists -> TODO()
+                    SellerCreationError.SellerInfoIsInvalid -> TODO()
                 }
         }
     }
@@ -87,12 +73,12 @@ fun Route.sellerRoutes(sellerService: SellerService) {
 
     put<SellerResource.Id> { pathParams ->
         val body = call.receive<UpdateSellerRequest>()
-        val updatedSeller =
-            Seller(
-                Person(pathParams.id, body.name, body.surname, body.email),
-                totalSales = body.totalSales,
-                team = body.team,
-            )
+        if (body.uid.toInt() != pathParams.id) {
+            call.respondProblem(Problem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
+            return@put
+        }
+        val updatedSeller = Seller(body.uid.toInt(), body.totalSales, body.team)
+
         val res = sellerService.updateSeller(updatedSeller)
         when (res) {
             is Right -> {
@@ -107,10 +93,6 @@ fun Route.sellerRoutes(sellerService: SellerService) {
                             Problem.sellerInfoIsInvalid,
                             HttpStatusCode.BadRequest,
                         )
-
-                    SellerUpdatingError.SellerEmailIsInvalid -> TODO()
-                    SellerUpdatingError.SellerNameIsInvalid -> TODO()
-                    SellerUpdatingError.SellerSurnameIsInvalid -> TODO()
                 }
             }
         }

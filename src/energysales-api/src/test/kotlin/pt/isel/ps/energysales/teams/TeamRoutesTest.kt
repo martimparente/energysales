@@ -34,7 +34,7 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateTeamRequest("newTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.TEAMS}/51")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.TEAMS}/11")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }
@@ -129,7 +129,7 @@ class TeamRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Get Team by ID - xxx`() =
+    fun `Get Team by ID - Forbidden - No permission Role`() =
         testApplication {
             testClient()
                 .get(Uris.API + Uris.TEAMS_BY_ID) {
@@ -181,7 +181,7 @@ class TeamRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Update Team - xxx`() =
+    fun `Update Team - Forbidden - No permission Role`() =
         testApplication {
             testClient()
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
@@ -274,7 +274,7 @@ class TeamRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Delete Team - xxx`() =
+    fun `Delete Team - Forbidden - No permission Role`() =
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {

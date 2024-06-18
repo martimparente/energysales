@@ -2,11 +2,8 @@ package pt.isel.ps.energysales.sellers.domain.service
 
 import arrow.core.Either
 import arrow.core.raise.either
-import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
-import pt.isel.ps.energysales.sellers.data.Role
 import pt.isel.ps.energysales.sellers.data.SellerRepository
-import pt.isel.ps.energysales.sellers.domain.model.Person
 import pt.isel.ps.energysales.sellers.domain.model.Seller
 
 class SellerService(
@@ -14,23 +11,11 @@ class SellerService(
 ) {
     // Create
     suspend fun createSeller(
-        name: String,
-        surname: String,
-        email: String,
+        uid: String,
+        team: Int?,
     ): SellerCreationResult =
         either {
-            ensure(name.length in 2..16) { SellerCreationError.SellerNameIsInvalid }
-            ensure(surname.length in 2..16) { SellerCreationError.SellerSurnameIsInvalid }
-            ensure(isValidEmail(email)) { SellerCreationError.SellerEmailIsInvalid }
-            ensure(sellerRepository.isEmailAvailable(email)) { SellerCreationError.SellerAlreadyExists }
-
-            sellerRepository.create(
-                Seller(
-                    person = Person(-1, name, surname, email, Role.SELLER),
-                    totalSales = 0.0f,
-                    team = null,
-                ),
-            )
+            sellerRepository.create(Seller(uid.toInt(), 0.0f, team))
         }
 
     // Read
@@ -49,10 +34,6 @@ class SellerService(
     // Update
     suspend fun updateSeller(seller: Seller): SellerUpdatingResult =
         either {
-            ensure(seller.person.name.length in 2..16) { SellerUpdatingError.SellerNameIsInvalid }
-            ensure(seller.person.surname.length in 2..16) { SellerUpdatingError.SellerSurnameIsInvalid }
-            ensure(isValidEmail(seller.person.email)) { SellerUpdatingError.SellerEmailIsInvalid }
-            ensure(!sellerRepository.isEmailAvailable(seller.person.email)) { SellerUpdatingError.SellerNotFound }
             val updatedSeller = sellerRepository.update(seller)
             ensureNotNull(updatedSeller) { SellerUpdatingError.SellerNotFound }
         }
@@ -74,14 +55,6 @@ sealed interface SellerCreationError {
     data object SellerAlreadyExists : SellerCreationError
 
     data object SellerInfoIsInvalid : SellerCreationError
-
-    data object SellerNameIsInvalid : SellerCreationError
-
-    data object SellerSurnameIsInvalid : SellerCreationError
-
-    data object SellerEmailIsInvalid : SellerCreationError
-
-//    data object SellerSurnameIsInvalid : SellerCreationError
 }
 
 sealed interface SellerReadingError {
@@ -94,21 +67,10 @@ sealed interface SellerUpdatingError {
     data object SellerNotFound : SellerUpdatingError
 
     data object SellerInfoIsInvalid : SellerUpdatingError
-
-    data object SellerNameIsInvalid : SellerUpdatingError
-
-    data object SellerSurnameIsInvalid : SellerUpdatingError
-
-    data object SellerEmailIsInvalid : SellerUpdatingError
 }
 
 sealed interface SellerDeletingError {
     data object SellerNotFound : SellerDeletingError
 
     data object SellerInfoIsInvalid : SellerDeletingError
-}
-
-private fun isValidEmail(email: String): Boolean {
-    val emailRegex = "^[A-Za-z0-9+_.-]+@(.+)\$".toRegex()
-    return emailRegex.matches(email)
 }

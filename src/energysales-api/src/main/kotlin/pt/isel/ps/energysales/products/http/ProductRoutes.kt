@@ -25,7 +25,7 @@ import pt.isel.ps.energysales.products.http.model.CreateProductRequest
 import pt.isel.ps.energysales.products.http.model.ProductJSON
 import pt.isel.ps.energysales.products.http.model.UpdateProductRequest
 
-@Resource(Uris.PRODUCT)
+@Resource(Uris.PRODUCTS)
 class ProductResource(
     val lastKeySeen: Int? = null,
 ) {
@@ -50,7 +50,7 @@ fun Route.productRoutes(productService: ProductService) {
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
-                call.response.header("Location", "${Uris.PRODUCT}/${res.value}")
+                call.response.header("Location", "${Uris.PRODUCTS}/${res.value}")
             }
 
             is Left ->
