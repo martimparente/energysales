@@ -84,6 +84,11 @@ fun fillDb() {
             it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[location] = i
         }
+        ProductTable.insert {
+            it[name] = "Product $i"
+            it[price] = 0.0
+            it[description] = "Description $i"
+        }
     }
 
     UserTable.insert {
@@ -109,7 +114,6 @@ fun fillDb() {
         it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
         it[salt] = "c3f842f3630ebb3d96543709bc316402"
     }
-
 
     /* for (i in 1..3) {
          LocationTable.insert {

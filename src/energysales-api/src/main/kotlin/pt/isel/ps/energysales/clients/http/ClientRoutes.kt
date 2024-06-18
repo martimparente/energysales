@@ -26,7 +26,7 @@ import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
 import pt.isel.ps.energysales.teams.domain.model.Location
 
-@Resource(Uris.CLIENT)
+@Resource(Uris.CLIENTS)
 class ClientResource(
     val lastKeySeen: Int? = null,
 ) {
@@ -51,7 +51,7 @@ fun Route.clientRoutes(clientService: ClientService) {
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
-                call.response.header("Location", "${Uris.CLIENT}/${res.value}")
+                call.response.header("Location", "${Uris.CLIENTS}/${res.value}")
             }
 
             is Left ->
