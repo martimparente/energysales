@@ -29,9 +29,9 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateSellerRequest("9"))
+                    setBody(CreateSellerRequest("12"))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/9")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/12")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }

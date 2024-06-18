@@ -49,31 +49,7 @@ fun fillDb() {
         it[name] = "NONE"
     }
 
-    UserTable.insert {
-        it[name] = "Name 1"
-        it[surname] = "Surname 1"
-        it[email] = "1@mail.com"
-        it[role] = "ADMIN"
-    }
-    UserTable.insert {
-        it[name] = "Name 2"
-        it[surname] = "Surname 2"
-        it[email] = "2@mail.com"
-        it[role] = "SELLER"
-    }
-
-    UserCredentialsTable.insert {
-        it[username] = "adminUser" // pass = "SecurePass123!"
-        it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
-        it[salt] = "c3f842f3630ebb3d96543709bc316402"
-    }
-    UserCredentialsTable.insert {
-        it[username] = "sellerUser" // pass = "SecurePass123!"
-        it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
-        it[salt] = "c3f842f3630ebb3d96543709bc316402"
-    }
-
-    for (i in 3..10) {
+    for (i in 1..10) {
         UserTable.insert {
             it[name] = "Name $i"
             it[surname] = "Surname $i"
@@ -88,10 +64,53 @@ fun fillDb() {
         }
 
         SellerTable.insert {
-            it[id] = i - 2
+            it[id] = i
             it[totalSales] = 0.0f
         }
+
+        LocationTable.insert {
+            it[district] = "Location $i"
+        }
+
+        TeamTable.insert {
+            it[name] = "Team $i"
+            it[location] = i
+        }
+
+        ClientTable.insert {
+            it[name] = "Client $i"
+            // random number of exactly 9 digits
+            it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
+            it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
+            it[location] = i
+        }
     }
+
+    UserTable.insert {
+        it[name] = "Name 11"
+        it[surname] = "Surname 11"
+        it[email] = "11@mail.com"
+        it[role] = "ADMIN"
+    }
+    UserTable.insert {
+        it[name] = "Name 12"
+        it[surname] = "Surname 12"
+        it[email] = "12@mail.com"
+        it[role] = "SELLER"
+    }
+
+    UserCredentialsTable.insert {
+        it[username] = "adminUser" // pass = "SecurePass123!"
+        it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+        it[salt] = "c3f842f3630ebb3d96543709bc316402"
+    }
+    UserCredentialsTable.insert {
+        it[username] = "sellerUser" // pass = "SecurePass123!"
+        it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+        it[salt] = "c3f842f3630ebb3d96543709bc316402"
+    }
+
+
     /* for (i in 1..3) {
          LocationTable.insert {
              it[district] = "Location $i"
@@ -100,12 +119,7 @@ fun fillDb() {
              it[name] = "Team $i"
              it[location] = i
          }
-         PersonTable.insert {
-             it[name] = "Name $i"
-             it[surname] = "Surname $i"
-             it[email] = "$i@mail.com"
-             it[role] = Role.SELLER
-         }
+
          ProductTable.insert {
              it[name] = "Product $i"
              it[price] = 0.0
