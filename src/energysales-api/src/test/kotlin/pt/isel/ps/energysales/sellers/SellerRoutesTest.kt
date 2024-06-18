@@ -29,9 +29,9 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateSellerRequest("1"))
+                    setBody(CreateSellerRequest("9"))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/51")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/9")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }
@@ -133,7 +133,7 @@ class SellerRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
-                    setBody(UpdateSellerRequest("1", 0.0f))
+                    setBody(UpdateSellerRequest("1", 1.0f))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
@@ -175,7 +175,7 @@ class SellerRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
-                    setBody(UpdateSellerRequest("1", 0.0f))
+                    setBody(UpdateSellerRequest("-1", 0.0f))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.sellerNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)

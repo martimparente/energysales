@@ -10,9 +10,12 @@ class SellerService(
     private val sellerRepository: SellerRepository,
 ) {
     // Create
-    suspend fun createSeller(uid: Int): SellerCreationResult =
+    suspend fun createSeller(
+        uid: String,
+        team: Int?,
+    ): SellerCreationResult =
         either {
-            sellerRepository.create(Seller(uid, 0.0f))
+            sellerRepository.create(Seller(uid.toInt(), 0.0f, team))
         }
 
     // Read

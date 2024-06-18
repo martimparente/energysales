@@ -22,6 +22,7 @@ data class SellerJSON(
 @Serializable
 data class CreateSellerRequest(
     val uid: String,
+    val team: Int? = null,
 )
 
 @Serializable

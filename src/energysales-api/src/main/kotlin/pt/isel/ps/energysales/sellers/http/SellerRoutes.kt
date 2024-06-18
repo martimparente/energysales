@@ -47,7 +47,7 @@ fun Route.sellerRoutes(sellerService: SellerService) {
     post<SellerResource> {
         val body = call.receive<CreateSellerRequest>()
 
-        val res = sellerService.createSeller(body.uid.toInt())
+        val res = sellerService.createSeller(body.uid, body.team)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -73,6 +73,10 @@ fun Route.sellerRoutes(sellerService: SellerService) {
 
     put<SellerResource.Id> { pathParams ->
         val body = call.receive<UpdateSellerRequest>()
+        if (body.uid.toInt() != pathParams.id) {
+            call.respondProblem(Problem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
+            return@put
+        }
         val updatedSeller = Seller(body.uid.toInt(), body.totalSales, body.team)
 
         val res = sellerService.updateSeller(updatedSeller)

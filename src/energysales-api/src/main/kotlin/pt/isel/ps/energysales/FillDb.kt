@@ -73,6 +73,25 @@ fun fillDb() {
         it[salt] = "c3f842f3630ebb3d96543709bc316402"
     }
 
+    for (i in 3..10) {
+        UserTable.insert {
+            it[name] = "Name $i"
+            it[surname] = "Surname $i"
+            it[email] = "$i@mail.com"
+            it[role] = "SELLER"
+        }
+
+        UserCredentialsTable.insert {
+            it[username] = "User$i" // pass = "SecurePass123!"
+            it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+            it[salt] = "c3f842f3630ebb3d96543709bc316402"
+        }
+
+        SellerTable.insert {
+            it[id] = i - 2
+            it[totalSales] = 0.0f
+        }
+    }
     /* for (i in 1..3) {
          LocationTable.insert {
              it[district] = "Location $i"

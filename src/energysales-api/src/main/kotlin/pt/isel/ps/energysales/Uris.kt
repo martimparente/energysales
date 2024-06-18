@@ -25,10 +25,6 @@ object Uris {
     const val ADMIN_HOME = "$ADMIN/me"
     const val ADMIN_SETTINGS = "$ADMIN/settings"
 
-    // Person routes
-    const val PERSONS = "/persons"
-    const val PERSONS_HOME = "$PERSONS/me"
-
     // Team routes
     const val TEAMS = "/teams"
     const val TEAMS_BY_ID = "$TEAMS/{teamId}"

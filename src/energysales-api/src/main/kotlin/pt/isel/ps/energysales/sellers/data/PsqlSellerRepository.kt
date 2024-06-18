@@ -19,7 +19,8 @@ import pt.isel.ps.energysales.teams.data.TeamTable
 object SellerTable : IdTable<Int>() {
     val totalSales = float("total_sales").default(0.0f)
     val team = reference("team_id", TeamTable.id, ReferenceOption.SET_NULL).nullable()
-    override val id: Column<EntityID<Int>> = reference("id", UserTable.id)
+    override val id: Column<EntityID<Int>> = reference("uid", UserTable)
+    override val primaryKey = PrimaryKey(id)
 }
 
 class SellerEntity(
@@ -27,13 +28,12 @@ class SellerEntity(
 ) : IntEntity(id) {
     companion object : IntEntityClass<SellerEntity>(SellerTable)
 
-    var uid by UserEntity referencedOn UserTable.id
     var totalSales by SellerTable.totalSales
     var team by TeamEntity optionalReferencedOn SellerTable.team
 
     fun toSeller() =
         Seller(
-            uid.id.value,
+            id.value,
             totalSales,
             team?.id?.value,
         )
@@ -52,10 +52,9 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun create(seller: Seller): Int =
         dbQuery {
-            val user = UserEntity.findById(seller.uid) ?: throw IllegalArgumentException("User not found")
+            val userId = UserEntity.findById(seller.uid)?.id?.value ?: throw IllegalArgumentException("User not found")
             SellerEntity
-                .new {
-                    uid = user
+                .new(userId) {
                     totalSales = seller.totalSales
                     team = seller.team?.let { TeamEntity.findById(it) }
                 }.id
@@ -67,7 +66,7 @@ class PsqlSellerRepository : SellerRepository {
             SellerEntity
                 .all()
                 .with(SellerEntity::team)
-                .map { Seller(it.uid.id.value, it.totalSales, it.team?.id?.value) } // todo teams empty?
+                .map { Seller(it.id.value, it.totalSales, it.team?.id?.value) } // todo teams empty?
                 .toList()
         }
 
@@ -89,10 +88,11 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun update(seller: Seller): Seller? =
         dbQuery {
-            SellerEntity.findById(seller.uid)?.let { team ->
-                team.totalSales = seller.totalSales
-                team.team = seller.team?.let { TeamEntity.findById(it) }
-                team.toSeller()
+            SellerEntity.findById(seller.uid)?.let {
+//                it.totalSales = seller.totalSales
+                it.team = null
+                it.totalSales = 2.0f
+                it.toSeller()
             }
         }
 
