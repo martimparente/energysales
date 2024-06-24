@@ -5,10 +5,12 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.auth.data.UserRepository
+import pt.isel.ps.energysales.auth.domain.model.Manager
 import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.SaltedHash
 import pt.isel.ps.energysales.auth.domain.model.User
 import pt.isel.ps.energysales.auth.domain.model.UserCredentials
+import pt.isel.ps.energysales.auth.http.UserQueryParams
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -97,6 +99,16 @@ class UserService(
             userRepository.updateUserCredentials(updatedCredentials)
         }
 
+    fun resetPassword(email: String): Either<ResetPasswordError, Unit> =
+        either {
+            ensure(isValidEmail(email)) { ResetPasswordError.EmailIsInvalid }
+            // val user = userRepository.getUserByEmail(email)
+            // ensureNotNull(user) { ResetPasswordError.EmailNotFound }
+
+            // send email with reset password link
+            // todo
+        }
+
     suspend fun getUserRole(uid: Int): RoleReadingResult =
         either {
             ensureNotNull(userRepository.getUserById(uid)) { RoleReadingError.UserNotFound }
@@ -114,14 +126,13 @@ class UserService(
             userRepository.changeUserRole(uid, role)
         }
 
-    fun resetPassword(email: String): Either<ResetPasswordError, Unit> =
+    suspend fun getUsers(params: UserQueryParams): UsersReadingResult =
         either {
-            ensure(isValidEmail(email)) { ResetPasswordError.EmailIsInvalid }
-            // val user = userRepository.getUserByEmail(email)
-            // ensureNotNull(user) { ResetPasswordError.EmailNotFound }
-
-            // send email with reset password link
-            // todo
+            if (params.role == "MANAGER" && params.available == true) {
+                userRepository.getManagerCandidates()
+            } else {
+                raise(UserReadingError.WrongQueryParams)
+            }
         }
 }
 
@@ -133,6 +144,8 @@ typealias ResetPasswordResult = Either<ResetPasswordError, Boolean>
 typealias RoleAssignResult = Either<RoleAssignError, Unit>
 typealias RoleReadingResult = Either<RoleReadingError, Role>
 typealias RoleDeleteResult = Either<RoleDeletingError, Unit>
+
+typealias UsersReadingResult = Either<UserReadingError, List<Manager>>
 
 sealed interface UserCreationError {
     data object UserAlreadyExists : UserCreationError
@@ -150,6 +163,10 @@ sealed interface UserCreationError {
     data object UserSurnameIsInvalid : UserCreationError
 
     data object UserEmailIsInvalid : UserCreationError
+}
+
+sealed interface UserReadingError {
+    data object WrongQueryParams : UserReadingError
 }
 
 sealed interface TokenCreationError {

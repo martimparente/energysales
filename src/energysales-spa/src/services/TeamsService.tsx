@@ -8,7 +8,7 @@ import {
     TeamDetails,
     UpdateTeamInputModel
 } from "./models/TeamModel";
-import {Seller} from "./models/SellersModel.tsx";
+import {ManagerInfo, Seller} from "./models/SellersModel.tsx";
 import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
 
 
@@ -79,6 +79,13 @@ export function useGetAvailableSellers(lastKeySeen: string = "0") {
     });
 }
 
+export function useGetManagerCandidates() {
+    return useQuery<ManagerInfo[]>({
+        queryKey: ["managerCandidates"],
+        queryFn: () => fetchData<ManagerInfo[]>(ApiUris.getManagerCandidates()),
+    });
+}
+
 // add member to team
 export function useAddTeamSeller() {
     const queryClient = useQueryClient();
@@ -90,7 +97,7 @@ export function useAddTeamSeller() {
                 body: JSON.stringify(input),
             }),
         onSuccess: () => {
-            // Invalidate and refetch the teams query to get the updated list
+            // Invalidate and re-fetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
             queryClient.invalidateQueries({queryKey: ["availableSellers"]});
         },

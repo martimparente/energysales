@@ -1,5 +1,6 @@
 package pt.isel.ps.energysales.auth.data
 
+import pt.isel.ps.energysales.auth.domain.model.Manager
 import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.User
 import pt.isel.ps.energysales.auth.domain.model.UserCredentials
@@ -30,4 +31,6 @@ interface UserRepository {
         uid: Int,
         roleName: String,
     ): Boolean
+
+    suspend fun getManagerCandidates(): List<Manager>
 }

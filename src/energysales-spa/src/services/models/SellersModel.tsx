@@ -4,6 +4,14 @@ export interface Seller {
     totalSales: string;
 }
 
+export interface ManagerInfo {
+    id: string;
+    name: string;
+    surname: string;
+    email: string;
+    // todo avatar
+}
+
 export interface Person {
     id: string;
     name: string;

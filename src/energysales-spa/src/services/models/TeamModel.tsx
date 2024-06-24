@@ -18,14 +18,14 @@ export interface TeamDetails {
 
 export interface CreateTeamInputModel {
     name: string,
-    manager: string,
+    managerId: string,
     location: Location
 }
 
 export interface UpdateTeamInputModel {
     id: string,
     name: string,
-    manager: string,
+    managerId: string,
     location: string
 }
 

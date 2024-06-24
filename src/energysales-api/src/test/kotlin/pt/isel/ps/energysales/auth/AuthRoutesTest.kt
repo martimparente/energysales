@@ -19,6 +19,7 @@ import pt.isel.ps.energysales.auth.http.model.ChangePasswordRequest
 import pt.isel.ps.energysales.auth.http.model.CreateUserRequest
 import pt.isel.ps.energysales.auth.http.model.LoginRequest
 import pt.isel.ps.energysales.auth.http.model.LoginResponse
+import pt.isel.ps.energysales.auth.http.model.ManagerJSON
 import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.auth.http.model.RoleRequest
 import kotlin.test.Test
@@ -302,6 +303,21 @@ class AuthRoutesTest : BaseRouteTest() {
                     response.body<Problem>().type.shouldBeEqual(Problem.passwordMismatch.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
+                }
+        }
+
+    @Test
+    fun `Get Users - Filter Candidates Manager - Success`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.USERS) {
+                    headers.append("Authorization", "Bearer $adminToken")
+                    parameter("role", "MANAGER")
+                    parameter("available", "true")
+                }.also { response ->
+                    val managers = response.call.response.body<List<ManagerJSON>>()
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                    response.shouldHaveContentType(ContentType.parse("application/json; charset=UTF-8"))
                 }
         }
 }

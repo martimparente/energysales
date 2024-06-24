@@ -1,6 +1,6 @@
 import {useTeamsPage} from './useTeamsPage.tsx';
 import {CreateTeamInputModel, Team} from '../../services/models/TeamModel';
-import {Button, Group, Modal, Table, TextInput} from "@mantine/core";
+import {Autocomplete, AutocompleteProps, Button, Group, Modal, Table, Text, TextInput} from "@mantine/core";
 import {IconTrash} from '@tabler/icons-react';
 import React, {useState} from "react";
 
@@ -16,6 +16,8 @@ export function TeamsPage() {
         onShowClickHandler,
         closeCreateModal,
         closeEditModal,
+        managersCandidates,
+        mappedManagersCandidates,
         isCreating,
         isEditing,
         isFetching,
@@ -26,12 +28,30 @@ export function TeamsPage() {
     const [district, setDistrict] = useState('');
     const [manager, setManager] = useState('');
 
+    const renderAutocompleteOption: AutocompleteProps['renderOption'] = ({option}) => (
+        <Group gap="sm">
+            {/*<Avatar src={managersCandidates[option.value].image} size={36} radius="xl" />*/}
+            <div>
+                <Text size="sm">{option.value}</Text>
+                {<Text size="xs" opacity={0.5}>
+                    {getEmailByManagerName(option.value)}
+                </Text>}
+            </div>
+        </Group>
+    );
+
+    // Function to get the email of the manager based on the full name
+    const getEmailByManagerName = (name: string) => {
+        const manager = managersCandidates?.find((manager) => `${manager.name} ${manager.surname}` === name);
+        return manager ? manager.email : '';
+    };
+
     const handleCreateTeam = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const input: CreateTeamInputModel = {
             name: teamName,
             location: {district: district},
-            manager: manager,
+            managerId: manager,
         };
         await createTeam(input);
         closeCreateModal();
@@ -62,12 +82,17 @@ export function TeamsPage() {
                             onChange={(e) => setDistrict(e.currentTarget.value)}
                             required
                         />
-                        <TextInput
-                            label="Manager ID"
-                            placeholder="Enter manager ID"
-                            value={manager}
-                            onChange={(e) => setManager(e.currentTarget.value)}
-                            required
+                        <Autocomplete
+                            data={mappedManagersCandidates}
+                            renderOption={renderAutocompleteOption}
+                            maxDropdownHeight={300}
+                            label="Manager"
+                            placeholder="Search for employee"
+                            onChange={(managerLabel) => {
+                                const id = managersCandidates?.find((manager) => managerLabel === `${manager.name} ${manager.surname}`)?.id
+                                setManager(id)
+                            }
+                            }
                         />
                         <Group mt="md">
                             <Button type="submit">Create</Button>

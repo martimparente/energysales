@@ -46,6 +46,10 @@ fun fillDb() {
     }
 
     RoleTable.insert {
+        it[name] = "MANAGER"
+    }
+
+    RoleTable.insert {
         it[name] = "NONE"
     }
 
@@ -54,7 +58,7 @@ fun fillDb() {
             it[name] = "Name $i"
             it[surname] = "Surname $i"
             it[email] = "$i@mail.com"
-            it[role] = "SELLER"
+            it[role] = if (i / 2 == 0) "SELLER" else "MANAGER"
         }
 
         UserCredentialsTable.insert {

@@ -14,3 +14,10 @@ data class UserCredentials(
     val password: String,
     val salt: String,
 )
+
+data class Manager(
+    val id: Int,
+    val name: String,
+    val surname: String,
+    val email: String,
+)

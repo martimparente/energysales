@@ -23,11 +23,17 @@ import pt.isel.ps.energysales.auth.http.model.ChangePasswordRequest
 import pt.isel.ps.energysales.auth.http.model.CreateUserRequest
 import pt.isel.ps.energysales.auth.http.model.LoginRequest
 import pt.isel.ps.energysales.auth.http.model.LoginResponse
+import pt.isel.ps.energysales.auth.http.model.ManagerJSON
 import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.auth.http.model.ResetPasswordRequest
 import pt.isel.ps.energysales.auth.http.model.RoleRequest
 import pt.isel.ps.energysales.auth.http.model.respondProblem
 import pt.isel.ps.energysales.plugins.authorize
+
+data class UserQueryParams(
+    val role: String?,
+    val available: Boolean?,
+)
 
 fun Route.authRoutes(userService: UserService) {
     /**
@@ -172,6 +178,26 @@ fun Route.authRoutes(userService: UserService) {
                         is Right -> call.response.status(HttpStatusCode.Created)
                         is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.Forbidden)
                     }
+                }
+            }
+
+            // ROUTE TO get manager candidates for a team, query parameters are "role" and "available"
+            get(Uris.USERS) {
+                val params =
+                    UserQueryParams(
+                        call.request.queryParameters["role"],
+                        call.request.queryParameters["available"]?.toBoolean(),
+                    )
+
+                val res = userService.getUsers(params)
+
+                when (res) {
+                    is Right -> {
+                        val managers = res.value.map { ManagerJSON.fromManager(it) }
+                        call.respond(managers)
+                    }
+
+                    is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
                 }
             }
         }

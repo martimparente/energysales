@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
+import pt.isel.ps.energysales.auth.domain.model.Manager
 import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.User
 import pt.isel.ps.energysales.auth.domain.model.UserCredentials
@@ -172,5 +173,12 @@ class PsqlUserRepository : UserRepository {
                 ?.role
                 ?.name
                 ?.toRole()
+        }
+
+    override suspend fun getManagerCandidates(): List<Manager> =
+        dbQuery {
+            UserEntity
+                .find { UserTable.role eq RoleEntity.find { RoleTable.name eq "MANAGER" }.first().name }
+                .map { Manager(it.id.value, it.name, it.surname, it.email) }
         }
 }
