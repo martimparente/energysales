@@ -1,7 +1,9 @@
 package pt.isel.ps.energysales.sellers.domain.model
 
+import pt.isel.ps.energysales.auth.domain.model.User
+
 data class Seller(
-    val uid: Int,
+    val user: User,
     val totalSales: Float,
     val team: Int? = null,
 )

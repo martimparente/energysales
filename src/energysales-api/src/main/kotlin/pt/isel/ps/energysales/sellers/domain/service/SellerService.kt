@@ -3,19 +3,22 @@ package pt.isel.ps.energysales.sellers.domain.service
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensureNotNull
+import pt.isel.ps.energysales.auth.domain.model.Role
+import pt.isel.ps.energysales.auth.domain.model.User
 import pt.isel.ps.energysales.sellers.data.SellerRepository
 import pt.isel.ps.energysales.sellers.domain.model.Seller
+import pt.isel.ps.energysales.sellers.domain.service.dto.CreateSellerInput
 
 class SellerService(
     private val sellerRepository: SellerRepository,
 ) {
     // Create
-    suspend fun createSeller(
-        uid: String,
-        team: Int?,
-    ): SellerCreationResult =
+    suspend fun createSeller(info: CreateSellerInput): SellerCreationResult =
         either {
-            sellerRepository.create(Seller(uid.toInt(), 0.0f, team))
+            val user = User(-1, info.name, info.surname, info.email, Role.SELLER)
+            val seller = Seller(user, 0.0f, info.team)
+
+            sellerRepository.create(seller)
         }
 
     // Read

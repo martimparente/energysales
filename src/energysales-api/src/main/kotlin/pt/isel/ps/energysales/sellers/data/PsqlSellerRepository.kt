@@ -9,8 +9,11 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
+import pt.isel.ps.energysales.auth.data.RoleEntity
+import pt.isel.ps.energysales.auth.data.RoleTable
 import pt.isel.ps.energysales.auth.data.UserEntity
 import pt.isel.ps.energysales.auth.data.UserTable
+import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.domain.model.Seller
 import pt.isel.ps.energysales.teams.data.TeamEntity
@@ -28,12 +31,13 @@ class SellerEntity(
 ) : IntEntity(id) {
     companion object : IntEntityClass<SellerEntity>(SellerTable)
 
+    var user by UserEntity referencedOn SellerTable.id
     var totalSales by SellerTable.totalSales
     var team by TeamEntity optionalReferencedOn SellerTable.team
 
     fun toSeller() =
         Seller(
-            id.value,
+            user.toUser(),
             totalSales,
             team?.id?.value,
         )
@@ -52,9 +56,16 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun create(seller: Seller): Int =
         dbQuery {
-            val userId = UserEntity.findById(seller.uid)?.id?.value ?: throw IllegalArgumentException("User not found")
+            val userEntity =
+                UserEntity.new {
+                    name = seller.user.name
+                    surname = seller.user.surname
+                    email = seller.user.email
+                    role = RoleEntity.find { RoleTable.name eq Role.SELLER.name }.first()
+                }
+
             SellerEntity
-                .new(userId) {
+                .new(userEntity.id.value) {
                     totalSales = seller.totalSales
                     team = seller.team?.let { TeamEntity.findById(it) }
                 }.id
@@ -66,8 +77,7 @@ class PsqlSellerRepository : SellerRepository {
             SellerEntity
                 .all()
                 .with(SellerEntity::team)
-                .map { Seller(it.id.value, it.totalSales, it.team?.id?.value) } // todo teams empty?
-                .toList()
+                .map { it.toSeller() }
         }
 
     override suspend fun getAllKeyPaging(
@@ -88,17 +98,20 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun update(seller: Seller): Seller? =
         dbQuery {
-            SellerEntity.findById(seller.uid)?.let {
-//                it.totalSales = seller.totalSales
-                it.team = null
-                it.totalSales = 2.0f
-                it.toSeller()
-            }
+            SellerEntity
+                .findById(seller.user.id)
+                ?.apply {
+                    user.name = seller.user.name
+                    user.surname = seller.user.surname
+                    user.email = seller.user.email
+                    totalSales = seller.totalSales
+                    team = seller.team?.let { TeamEntity.findById(it) }
+                }?.toSeller()
         }
 
     override suspend fun delete(seller: Seller): Boolean =
         dbQuery {
-            SellerEntity.findById(seller.uid)?.delete() ?: false
+            SellerEntity.findById(seller.user.id)?.delete() ?: false
             true
         }
 }
