@@ -7,8 +7,8 @@ import pt.isel.ps.energysales.auth.data.UserCredentialsTable
 import pt.isel.ps.energysales.auth.data.UserRolesTable
 import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.clients.data.ClientTable
-import pt.isel.ps.energysales.products.data.ProductTable
 import pt.isel.ps.energysales.sellers.data.SellerTable
+import pt.isel.ps.energysales.services.data.ServiceTable
 import pt.isel.ps.energysales.teams.data.LocationTable
 import pt.isel.ps.energysales.teams.data.TeamTable
 
@@ -20,7 +20,7 @@ fun fillDb() {
         UserRolesTable,
         RoleTable,
         UserTable,
-        ProductTable,
+        ServiceTable,
         LocationTable,
         ClientTable,
     )
@@ -32,7 +32,7 @@ fun fillDb() {
             TeamTable,
             UserCredentialsTable,
             SellerTable,
-            ProductTable,
+            ServiceTable,
             LocationTable,
             ClientTable,
         )
@@ -88,10 +88,13 @@ fun fillDb() {
             it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[location] = i
         }
-        ProductTable.insert {
-            it[name] = "Product $i"
-            it[price] = 0.0
+        ServiceTable.insert {
+            it[name] = "Service $i"
             it[description] = "Description $i"
+            it[cycleName] = "Cycle $i"
+            it[cycleType] = "Type $i"
+            it[periodName] = "Period $i"
+            it[periodNumPeriods] = i
         }
     }
 
@@ -160,4 +163,18 @@ fun fillDb() {
          it[userId] = 1
          it[roleId] = 1
      }*/
+}
+
+fun dropDb() {
+    SchemaUtils.drop(
+        SellerTable,
+        TeamTable,
+        UserCredentialsTable,
+        UserRolesTable,
+        RoleTable,
+        UserTable,
+        ServiceTable,
+        LocationTable,
+        ClientTable,
+    )
 }

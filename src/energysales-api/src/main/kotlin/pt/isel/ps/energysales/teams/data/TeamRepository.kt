@@ -1,6 +1,6 @@
 package pt.isel.ps.energysales.teams.data
 
-import pt.isel.ps.energysales.sellers.domain.model.Seller
+import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.domain.model.Team
 import pt.isel.ps.energysales.teams.domain.model.TeamDetails
 

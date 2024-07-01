@@ -26,12 +26,12 @@ import pt.isel.ps.energysales.plugins.authorize
 import pt.isel.ps.energysales.plugins.configureDatabases
 import pt.isel.ps.energysales.plugins.configureHTTP
 import pt.isel.ps.energysales.plugins.configureSerialization
-import pt.isel.ps.energysales.products.data.PsqlProductRepository
-import pt.isel.ps.energysales.products.domain.service.ProductService
-import pt.isel.ps.energysales.products.http.productRoutes
+import pt.isel.ps.energysales.sellers.application.SellerService
 import pt.isel.ps.energysales.sellers.data.PsqlSellerRepository
-import pt.isel.ps.energysales.sellers.domain.service.SellerService
 import pt.isel.ps.energysales.sellers.http.sellerRoutes
+import pt.isel.ps.energysales.services.application.ServiceService
+import pt.isel.ps.energysales.services.data.PsqlServiceRepository
+import pt.isel.ps.energysales.services.http.serviceRoutes
 import pt.isel.ps.energysales.teams.data.PsqlTeamRepository
 import pt.isel.ps.energysales.teams.domain.service.TeamService
 import pt.isel.ps.energysales.teams.http.teamRoutes
@@ -67,7 +67,7 @@ fun Application.module() {
     }
     val teamService by lazy { TeamService(teamRepository = PsqlTeamRepository()) }
     val sellerService by lazy { SellerService(sellerRepository = PsqlSellerRepository()) }
-    val productService by lazy { ProductService(productRepository = PsqlProductRepository()) }
+    val productService by lazy { ServiceService(serviceRepository = PsqlServiceRepository()) }
     val clientService by lazy { ClientService(clientRepository = PsqlClientRepository()) }
 
     /**
@@ -98,7 +98,7 @@ fun Application.module() {
                 authorize("ADMIN") {
                     teamRoutes(teamService)
                     sellerRoutes(sellerService)
-                    productRoutes(productService)
+                    serviceRoutes(productService)
                     clientRoutes(clientService)
                 }
                 authorize("SELLER") {

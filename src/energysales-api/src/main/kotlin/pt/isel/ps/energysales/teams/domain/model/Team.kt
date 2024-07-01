@@ -1,6 +1,6 @@
 package pt.isel.ps.energysales.teams.domain.model
 
-import pt.isel.ps.energysales.sellers.domain.model.Seller
+import pt.isel.ps.energysales.sellers.domain.Seller
 
 data class Team(
     val id: Int,

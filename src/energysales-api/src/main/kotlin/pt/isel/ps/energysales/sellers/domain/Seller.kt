@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.sellers.domain.model
+package pt.isel.ps.energysales.sellers.domain
 
 import pt.isel.ps.energysales.auth.domain.model.User
 

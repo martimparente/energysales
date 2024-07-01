@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.sellers.domain.service.dto
+package pt.isel.ps.energysales.sellers.application.dto
 
 data class CreateSellerInput(
     val name: String,

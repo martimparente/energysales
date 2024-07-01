@@ -1,13 +1,13 @@
-package pt.isel.ps.energysales.sellers.domain.service
+package pt.isel.ps.energysales.sellers.application
 
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.auth.domain.model.User
+import pt.isel.ps.energysales.sellers.application.dto.CreateSellerInput
 import pt.isel.ps.energysales.sellers.data.SellerRepository
-import pt.isel.ps.energysales.sellers.domain.model.Seller
-import pt.isel.ps.energysales.sellers.domain.service.dto.CreateSellerInput
+import pt.isel.ps.energysales.sellers.domain.Seller
 
 class SellerService(
     private val sellerRepository: SellerRepository,

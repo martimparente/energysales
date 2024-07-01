@@ -15,7 +15,7 @@ import pt.isel.ps.energysales.auth.data.UserEntity
 import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
-import pt.isel.ps.energysales.sellers.domain.model.Seller
+import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.data.TeamEntity
 import pt.isel.ps.energysales.teams.data.TeamTable
 

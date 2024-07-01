@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.products
+package pt.isel.ps.energysales.services
 
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
@@ -17,37 +17,37 @@ import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
 import pt.isel.ps.energysales.auth.http.model.Problem
-import pt.isel.ps.energysales.products.http.model.CreateProductRequest
-import pt.isel.ps.energysales.products.http.model.ProductJSON
-import pt.isel.ps.energysales.products.http.model.UpdateProductRequest
+import pt.isel.ps.energysales.services.http.model.CreateServiceRequest
+import pt.isel.ps.energysales.services.http.model.ServiceJSON
+import pt.isel.ps.energysales.services.http.model.UpdateServiceRequest
 import kotlin.test.Test
 
-class ProductRoutesTest : BaseRouteTest() {
+class ServiceRoutesTest : BaseRouteTest() {
     @Test
-    fun `Create Product - Success`() =
+    fun `Create Service - Success`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.PRODUCTS) {
+                .post(Uris.API + Uris.SERVICES) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateProductRequest("newProduct", 0.0, ""))
+                    setBody(CreateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.PRODUCTS}/11")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.SERVICES}/11")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }
 
     @Test
-    fun `Create Product - Unauthorized`() =
+    fun `Create Service - Unauthorized`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.PRODUCTS) {
+                .post(Uris.API + Uris.SERVICES) {
                     headers.append(
                         "Authorization",
                         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateProductRequest("newProduct", 0.0, ""))
+                    setBody(CreateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -58,10 +58,10 @@ class ProductRoutesTest : BaseRouteTest() {
     /*
         // todo
         @Test
-        fun `Create Product - Forbidden - No permission Roles`() = testApplication {
+        fun `Create Service - Forbidden - No permission Roles`() = testApplication {
             testClient().post(Uris.API + Uris.PRODUCT) {
                 headers.append("Authorization", "Bearer $token")
-                setBody(CreateProductRequest("newProduct", "newLocation", null))
+                setBody(CreateServiceRequest("newService", "newLocation", null))
             }.also { response ->
                 response.body<Problem>().type.shouldBeEqual(Problem.userIsInvalid.type)
                 response.shouldHaveStatus(HttpStatusCode.Forbidden)
@@ -69,62 +69,61 @@ class ProductRoutesTest : BaseRouteTest() {
             }
         }
         @Test
-        fun `Create Product - Bad Request`() = testApplication {
+        fun `Create Service - Bad Request`() = testApplication {
             testClient().post(Uris.API + Uris.PRODUCT) {
             }.also { response ->
-                response.body<Problem>().type.shouldBeEqual(Problem.noProductProvided.type)
+                response.body<Problem>().type.shouldBeEqual(Problem.noServiceProvided.type)
                 response.shouldHaveStatus(HttpStatusCode.BadRequest)
                 response.shouldHaveContentType(ContentType.Application.ProblemJson)
             }
-        }*/
-
-    @Test
-    fun `Create Product - Product already exists`() =
+        }
+          @Test
+    fun `Create Service - Service already exists`() =
         testApplication {
             testClient()
-                .post(Uris.API + Uris.PRODUCTS) {
+                .post(Uris.API + Uris.SERVICES) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateProductRequest("Product 1", 0.0, ""))
+                    setBody(CreateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.productAlreadyExists.type)
+                    response.body<Problem>().type.shouldBeEqual(Problem.serviceAlreadyExists.type)
                     response.shouldHaveStatus(HttpStatusCode.Conflict)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
-        }
+        }*/
 
     @Test
-    fun `Get Product by ID - Success`() =
+    fun `Get Service by ID - Success`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .get(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 1)
                 }.also { response ->
-                    val product = response.call.response.body<ProductJSON>()
-                    product.name.shouldBe("Product 1")
+                    val service = response.call.response.body<ServiceJSON>()
+                    service.name.shouldBe("Service 1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
 
     @Test
-    fun `Get Product by ID - Not Found`() =
+    fun `Get Service by ID - Not Found`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .get(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.productNotFound.type)
+                    response.body<Problem>().type.shouldBeEqual(Problem.serviceNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
 
     @Test
-    fun `Get Product by ID - Bad request`() =
+    fun `Get Service by ID - Bad request`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .get(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
@@ -135,36 +134,36 @@ class ProductRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Get All Products - Success`() =
+    fun `Get All Services - Success`() =
         testApplication {
             testClient()
-                .get(Uris.API + Uris.PRODUCTS) {
+                .get(Uris.API + Uris.SERVICES) {
                     headers.append("Authorization", "Bearer $adminToken")
                 }.also { response ->
-                    response.body<List<ProductJSON>>()
+                    response.body<List<ServiceJSON>>()
                 }
         }
 
     @Test
-    fun `Update Product - Success`() =
+    fun `Update Service - Success`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
-                    setBody(UpdateProductRequest("updatedProduct", 0.0, ""))
+                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
 
     @Test
-    fun `Update Product - Unauthorized`() =
+    fun `Update Service - Unauthorized`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .put(Uris.API + Uris.SERVICES_BY_ID) {
                     parameter("id", 2)
-                    setBody(UpdateProductRequest("newProduct", 0.0, ""))
+                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -175,9 +174,9 @@ class ProductRoutesTest : BaseRouteTest() {
     /*
       // todo
       @Test
-        fun `Update Product - Forbidden`() = testApplication {
+        fun `Update Service - Forbidden`() = testApplication {
             testClient().put(Uris.API + Uris.PRODUCT_BY_ID) {
-                setBody(UpdateProductRequest("newProduct", "newLocation", null))
+                setBody(UpdateServiceRequest("newService", "newLocation", null))
             }.also { response ->
                 response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                 response.shouldHaveStatus(HttpStatusCode.Forbidden)
@@ -186,28 +185,28 @@ class ProductRoutesTest : BaseRouteTest() {
         }*/
 
     @Test
-    fun `Update Product - Not Found`() =
+    fun `Update Service - Not Found`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
-                    setBody(UpdateProductRequest("nonExistingProduct", 0.0, ""))
+                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.productNotFound.type)
+                    response.body<Problem>().type.shouldBeEqual(Problem.serviceNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
 
     @Test
-    fun `Update Product - Bad Request`() =
+    fun `Update Service - Bad Request`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
-                    setBody(UpdateProductRequest("", 0.0, ""))
+                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
@@ -216,10 +215,10 @@ class ProductRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Delete Product - Success`() =
+    fun `Delete Service - Success`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .delete(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 3)
                 }.also { response ->
@@ -228,10 +227,10 @@ class ProductRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Delete Product - Unauthorized`() =
+    fun `Delete Service - Unauthorized`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .delete(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Invalid Token")
                     parameter("id", 1)
                 }.also { response ->
@@ -240,10 +239,10 @@ class ProductRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Delete Product - Not Found`() =
+    fun `Delete Service - Not Found`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .delete(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -252,10 +251,10 @@ class ProductRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Delete Product - Product Not Found`() =
+    fun `Delete Service - Service Not Found`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .delete(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
@@ -264,10 +263,10 @@ class ProductRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Delete Product - Bad Request`() =
+    fun `Delete Service - Bad Request`() =
         testApplication {
             testClient()
-                .delete(Uris.API + Uris.PRODUCTS_BY_ID) {
+                .delete(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->

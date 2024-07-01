@@ -38,8 +38,8 @@ object Uris {
     const val SELLERS_HOME = "$SELLERS/me"
 
     // Product routes
-    const val PRODUCTS = "/products"
-    const val PRODUCTS_BY_ID = "$PRODUCTS/{id}"
+    const val SERVICES = "/services"
+    const val SERVICES_BY_ID = "$SERVICES/{id}"
 
     // Client routes
     const val CLIENTS = "/clients"

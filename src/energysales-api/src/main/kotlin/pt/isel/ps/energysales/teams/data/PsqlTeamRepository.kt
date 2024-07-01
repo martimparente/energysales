@@ -10,7 +10,7 @@ import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.data.SellerEntity
 import pt.isel.ps.energysales.sellers.data.SellerTable
-import pt.isel.ps.energysales.sellers.domain.model.Seller
+import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.domain.model.Location
 import pt.isel.ps.energysales.teams.domain.model.Team
 import pt.isel.ps.energysales.teams.domain.model.TeamDetails

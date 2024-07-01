@@ -1,7 +1,7 @@
 package pt.isel.ps.energysales.sellers.http.model
 
 import kotlinx.serialization.Serializable
-import pt.isel.ps.energysales.sellers.domain.model.Seller
+import pt.isel.ps.energysales.sellers.domain.Seller
 
 @Serializable
 data class SellerJSON(
