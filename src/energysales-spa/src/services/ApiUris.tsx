@@ -14,19 +14,19 @@ export namespace ApiUris {
     export const updateTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`;
     export const deleteTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`;
 
-    export const addTeamSeller = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/sellers`;
-    export const deleteTeamSeller = (teamId: string, sellerId: string) => `${API_BASE_URL}/teams/${teamId}/sellers/${sellerId}`;
+    export const addTeamUser = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/users`;
+    export const deleteTeamUser = (teamId: string, userId: string) => `${API_BASE_URL}/teams/${teamId}/users/${userId}`;
 
     // Managers
     export const getManagerCandidates = () => `${API_BASE_URL}/users?role=MANAGER&available=true`;
 
-    // Sellers
-    export const getSellers = (lastKeySeen: string) => `${API_BASE_URL}/sellers?lastKeySeen=${lastKeySeen}`;
-    export const getSellersWithNoTeam = (lastKeySeen: string) => `${API_BASE_URL}/sellers?lastKeySeen=${lastKeySeen}&noTeam=true`;
-    export const getSeller = (sellerId: string) => `${API_BASE_URL}/sellers/${sellerId}`;
-    export const createSeller = `${API_BASE_URL}/sellers`;
-    export const updateSeller = (sellerId: string) => `${API_BASE_URL}/sellers/${sellerId}`;
-    export const deleteSeller = (sellerId: string) => `${API_BASE_URL}/sellers/${sellerId}`;
+    // Users
+    export const getUsers = (lastKeySeen: string) => `${API_BASE_URL}/users?lastKeySeen=${lastKeySeen}`;
+    export const getUsersWithNoTeam = (lastKeySeen: string) => `${API_BASE_URL}/users?lastKeySeen=${lastKeySeen}&noTeam=true`;
+    export const getUser = (userId: string) => `${API_BASE_URL}/users/${userId}`;
+    export const createUser = `${API_BASE_URL}/users`;
+    export const updateUser = (userId: string) => `${API_BASE_URL}/users/${userId}`;
+    export const deleteUser = (userId: string) => `${API_BASE_URL}/users/${userId}`;
 
     // Products
     export const getProducts = (lastKeySeen: string) => `${API_BASE_URL}/products?lastKeySeen=${lastKeySeen}`;

@@ -10,7 +10,7 @@ import {CreateTeamInputModel, Team, UpdateTeamInputModel} from "../../services/m
 import {useState} from "react";
 import {Column} from "../../components/GenericTable.tsx";
 import {useDisclosure} from "@mantine/hooks";
-import {ManagerInfo} from "../../services/models/SellersModel.tsx";
+import {ManagerInfo} from "../../services/models/UserModel.tsx";
 
 export function useTeamsPage() {
 

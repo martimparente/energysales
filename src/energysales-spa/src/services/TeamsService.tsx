@@ -8,7 +8,7 @@ import {
     TeamDetails,
     UpdateTeamInputModel
 } from "./models/TeamModel";
-import {ManagerInfo, Seller} from "./models/SellersModel.tsx";
+import {ManagerInfo, User} from "./models/UserModel.tsx";
 import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
 
 
@@ -73,9 +73,9 @@ export function useDeleteTeam() {
 }
 
 export function useGetAvailableSellers(lastKeySeen: string = "0") {
-    return useQuery<Seller[]>({
+    return useQuery<User[]>({
         queryKey: ["availableSellers", lastKeySeen],
-        queryFn: () => fetchData<Seller[]>(ApiUris.getSellersWithNoTeam(lastKeySeen)),
+        queryFn: () => fetchData<User[]>(ApiUris.getSellersWithNoTeam(lastKeySeen)),
     });
 }
 

@@ -13,14 +13,14 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.auth.http.model.Problem
-import pt.isel.ps.energysales.auth.http.model.respondProblem
 import pt.isel.ps.energysales.sellers.application.SellerCreationError
 import pt.isel.ps.energysales.sellers.application.SellerDeletingError
 import pt.isel.ps.energysales.sellers.application.SellerService
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerInput
 import pt.isel.ps.energysales.sellers.http.model.CreateSellerRequest
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
+import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.users.http.model.respondProblem
 
 @Resource(Uris.SELLERS)
 class SellerResource(

@@ -3,8 +3,8 @@ import {MainLayout} from '../layouts/MainLayout.tsx'
 import {HomePage} from '../pages/HomePage.tsx';
 import {TeamPage} from '../pages/Teams/Team/TeamPage.tsx';
 import {TeamsPage} from '../pages/Teams/TeamsPage.tsx';
-import {SellersPage} from '../pages/Sellers/SellersPage.tsx';
-import {SellerPage} from '../pages/Sellers/Seller/SellerPage.tsx';
+import {UsersPage} from '../pages/Users/UsersPage.tsx';
+import {UserPage} from '../pages/Users/User/UserPage.tsx';
 import {ProductsPage} from '../pages/Products/ProductsPage.tsx';
 import {ProductPage} from '../pages/Products/Product/ProductPage.tsx';
 import {LoginPage} from '../pages/Auth/LoginPage.tsx';
@@ -39,8 +39,8 @@ const routes = [
                 children: [
                     {path: "/teams", element: <TeamsPage/>},
                     {path: "/teams/:id", element: <TeamPage/>},
-                    {path: "/sellers", element: <SellersPage/>},
-                    {path: "/sellers/:id", element: <SellerPage/>},
+                    {path: "/users", element: <UsersPage/>},
+                    {path: "/users/:id", element: <UserPage/>},
                     {path: "/products", element: <ProductsPage/>},
                     {path: "/products/:id", element: <ProductPage/>}
                 ]

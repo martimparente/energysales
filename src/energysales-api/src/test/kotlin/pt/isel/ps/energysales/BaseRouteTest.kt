@@ -18,8 +18,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.BeforeClass
-import pt.isel.ps.energysales.auth.http.model.LoginRequest
-import pt.isel.ps.energysales.auth.http.model.LoginResponse
+import pt.isel.ps.energysales.users.http.model.LoginRequest
+import pt.isel.ps.energysales.users.http.model.LoginResponse
 
 open class BaseRouteTest {
     companion object {

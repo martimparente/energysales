@@ -16,13 +16,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.teams.http.model.AddTeamSellerRequest
 import pt.isel.ps.energysales.teams.http.model.CreateTeamRequest
 import pt.isel.ps.energysales.teams.http.model.LocationJSON
 import pt.isel.ps.energysales.teams.http.model.TeamJSON
 import pt.isel.ps.energysales.teams.http.model.UpdateTeamRequest
+import pt.isel.ps.energysales.users.http.model.Problem
 import kotlin.test.Test
 
 class TeamRoutesTest : BaseRouteTest() {

@@ -9,15 +9,15 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
-import pt.isel.ps.energysales.auth.data.RoleEntity
-import pt.isel.ps.energysales.auth.data.RoleTable
-import pt.isel.ps.energysales.auth.data.UserEntity
-import pt.isel.ps.energysales.auth.data.UserTable
-import pt.isel.ps.energysales.auth.domain.model.Role
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.data.TeamEntity
 import pt.isel.ps.energysales.teams.data.TeamTable
+import pt.isel.ps.energysales.users.data.entity.RoleEntity
+import pt.isel.ps.energysales.users.data.entity.UserEntity
+import pt.isel.ps.energysales.users.data.table.RoleTable
+import pt.isel.ps.energysales.users.data.table.UserTable
+import pt.isel.ps.energysales.users.domain.model.Role
 
 object SellerTable : IdTable<Int>() {
     val totalSales = float("total_sales").default(0.0f)

@@ -5,8 +5,6 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SortOrder
-import pt.isel.ps.energysales.auth.data.UserEntity
-import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.data.SellerEntity
 import pt.isel.ps.energysales.sellers.data.SellerTable
@@ -14,6 +12,8 @@ import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.domain.model.Location
 import pt.isel.ps.energysales.teams.domain.model.Team
 import pt.isel.ps.energysales.teams.domain.model.TeamDetails
+import pt.isel.ps.energysales.users.data.entity.UserEntity
+import pt.isel.ps.energysales.users.data.table.UserTable
 
 object TeamTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()

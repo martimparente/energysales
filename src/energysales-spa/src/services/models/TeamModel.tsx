@@ -1,4 +1,4 @@
-import {Seller} from "./SellersModel.tsx";
+import {User} from "./UserModel.tsx";
 
 export interface Team {
     id: string;
@@ -13,7 +13,7 @@ interface Location {
 
 export interface TeamDetails {
     team: Team;
-    members: Seller[];
+    members: User[];
 }
 
 export interface CreateTeamInputModel {

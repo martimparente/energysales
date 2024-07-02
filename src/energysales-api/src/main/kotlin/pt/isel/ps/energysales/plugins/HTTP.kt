@@ -9,9 +9,9 @@ import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.routing.routing
-import pt.isel.ps.energysales.auth.AuthenticationException
-import pt.isel.ps.energysales.auth.http.model.Problem
-import pt.isel.ps.energysales.auth.http.model.respondProblem
+import pt.isel.ps.energysales.users.AuthenticationException
+import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.users.http.model.respondProblem
 
 fun Application.configureHTTP() {
     routing {

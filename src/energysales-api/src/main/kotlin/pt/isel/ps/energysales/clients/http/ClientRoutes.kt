@@ -14,8 +14,6 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.auth.http.model.Problem
-import pt.isel.ps.energysales.auth.http.model.respondProblem
 import pt.isel.ps.energysales.clients.domain.model.Client
 import pt.isel.ps.energysales.clients.domain.service.ClientCreationError
 import pt.isel.ps.energysales.clients.domain.service.ClientDeletingError
@@ -25,6 +23,8 @@ import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
 import pt.isel.ps.energysales.teams.domain.model.Location
+import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.users.http.model.respondProblem
 
 @Resource(Uris.CLIENTS)
 class ClientResource(

@@ -2,16 +2,16 @@ package pt.isel.ps.energysales
 
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
-import pt.isel.ps.energysales.auth.data.RoleTable
-import pt.isel.ps.energysales.auth.data.UserCredentialsTable
-import pt.isel.ps.energysales.auth.data.UserRolesTable
-import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.clients.data.ClientTable
 import pt.isel.ps.energysales.sellers.data.SellerTable
 import pt.isel.ps.energysales.services.data.table.PriceTable
 import pt.isel.ps.energysales.services.data.table.ServiceTable
 import pt.isel.ps.energysales.teams.data.LocationTable
 import pt.isel.ps.energysales.teams.data.TeamTable
+import pt.isel.ps.energysales.users.data.entity.UserRolesTable
+import pt.isel.ps.energysales.users.data.table.RoleTable
+import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
+import pt.isel.ps.energysales.users.data.table.UserTable
 
 fun fillDb() {
     SchemaUtils.drop(

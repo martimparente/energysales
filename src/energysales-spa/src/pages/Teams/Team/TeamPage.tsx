@@ -1,5 +1,5 @@
 import {useTeamPage} from './useTeamPage'
-import {Seller} from '../../../services/models/SellersModel.tsx'
+import {User} from '../../../services/models/UserModel.tsx'
 import {Box, Button, LoadingOverlay, Select, Table} from '@mantine/core'
 
 export function TeamPage() {
@@ -25,7 +25,7 @@ export function TeamPage() {
                 label="Select seller to add to Team"
                 placeholder="Search for seller"
                 limit={5}
-                data={availableSellers?.map((member: Seller) => ({
+                data={availableSellers?.map((member: User) => ({
                     value: member.person.id,
                     label: member.person.name
                 })) || []}
@@ -44,7 +44,7 @@ export function TeamPage() {
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                    {teamDetails?.members?.map((member: Seller) => (
+                    {teamDetails?.members?.map((member: User) => (
                         <Table.Tr>
                             <Table.Td>{member.person.name}</Table.Td>
                             <Table.Td>{member.person.surname}</Table.Td>

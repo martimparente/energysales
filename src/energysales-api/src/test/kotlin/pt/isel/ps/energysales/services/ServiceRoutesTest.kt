@@ -16,11 +16,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.services.http.model.CreateServiceRequest
 import pt.isel.ps.energysales.services.http.model.PriceJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
 import pt.isel.ps.energysales.services.http.model.UpdateServiceRequest
+import pt.isel.ps.energysales.users.http.model.Problem
 import kotlin.test.Test
 
 class ServiceRoutesTest : BaseRouteTest() {

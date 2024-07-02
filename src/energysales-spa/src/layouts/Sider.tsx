@@ -22,7 +22,7 @@ const data = [
     {link: '/login', label: 'Login', icon: IconLogin2},
     {link: '/forgot-password', label: 'Forgot Password', icon: IconKey},
     {link: '/teams', label: 'Teams', icon: IconBrandAsana},
-    {link: '/sellers', label: 'Sellers', icon: IconUsersGroup},
+    {link: '/users', label: 'Users', icon: IconUsersGroup},
     {link: '/products', label: 'Products', icon: IconBulb},
     {link: '/clients', label: 'Clients', icon: IconBuilding},
     {link: '/settings', label: 'Settings', icon: IconSettings},
