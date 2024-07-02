@@ -14,22 +14,12 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.mockk.impl.instantiation.AbstractInstantiator.Companion.log
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.BeforeClass
-import pt.isel.ps.energysales.auth.data.RoleTable
-import pt.isel.ps.energysales.auth.data.UserCredentialsTable
-import pt.isel.ps.energysales.auth.data.UserRolesTable
-import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.auth.http.model.LoginRequest
 import pt.isel.ps.energysales.auth.http.model.LoginResponse
-import pt.isel.ps.energysales.clients.data.ClientTable
-import pt.isel.ps.energysales.products.data.ProductTable
-import pt.isel.ps.energysales.sellers.data.SellerTable
-import pt.isel.ps.energysales.teams.data.LocationTable
-import pt.isel.ps.energysales.teams.data.TeamTable
 
 open class BaseRouteTest {
     companion object {
@@ -100,17 +90,7 @@ open class BaseRouteTest {
         fun afterTest() {
             log.info { "After test" }
             transaction {
-                SchemaUtils.drop(
-                    SellerTable,
-                    TeamTable,
-                    UserCredentialsTable,
-                    UserRolesTable,
-                    RoleTable,
-                    UserTable,
-                    ProductTable,
-                    LocationTable,
-                    ClientTable,
-                )
+                dropDb()
             }
         }
     }

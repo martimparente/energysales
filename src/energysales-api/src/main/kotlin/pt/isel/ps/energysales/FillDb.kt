@@ -7,8 +7,9 @@ import pt.isel.ps.energysales.auth.data.UserCredentialsTable
 import pt.isel.ps.energysales.auth.data.UserRolesTable
 import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.clients.data.ClientTable
-import pt.isel.ps.energysales.products.data.ProductTable
 import pt.isel.ps.energysales.sellers.data.SellerTable
+import pt.isel.ps.energysales.services.data.table.PriceTable
+import pt.isel.ps.energysales.services.data.table.ServiceTable
 import pt.isel.ps.energysales.teams.data.LocationTable
 import pt.isel.ps.energysales.teams.data.TeamTable
 
@@ -20,7 +21,7 @@ fun fillDb() {
         UserRolesTable,
         RoleTable,
         UserTable,
-        ProductTable,
+        ServiceTable,
         LocationTable,
         ClientTable,
     )
@@ -32,7 +33,7 @@ fun fillDb() {
             TeamTable,
             UserCredentialsTable,
             SellerTable,
-            ProductTable,
+            ServiceTable,
             LocationTable,
             ClientTable,
         )
@@ -88,10 +89,24 @@ fun fillDb() {
             it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[location] = i
         }
-        ProductTable.insert {
-            it[name] = "Product $i"
-            it[price] = 0.0
+        PriceTable.insert {
+            it[ponta] = i.toFloat()
+            it[cheia] = i.toFloat()
+            it[vazio] = i.toFloat()
+            it[superVazio] = i.toFloat()
+            it[operadorMercado] = i.toFloat()
+            it[gdo] = i.toFloat()
+            it[omip] = i.toFloat()
+            it[margem] = i.toFloat()
+        }
+        ServiceTable.insert {
+            it[name] = "Service $i"
             it[description] = "Description $i"
+            it[cycleName] = "Cycle $i"
+            it[cycleType] = "Type $i"
+            it[periodName] = "Period $i"
+            it[periodNumPeriods] = i
+            it[price] = i
         }
     }
 
@@ -160,4 +175,18 @@ fun fillDb() {
          it[userId] = 1
          it[roleId] = 1
      }*/
+}
+
+fun dropDb() {
+    SchemaUtils.drop(
+        SellerTable,
+        TeamTable,
+        UserCredentialsTable,
+        UserRolesTable,
+        RoleTable,
+        UserTable,
+        ServiceTable,
+        LocationTable,
+        ClientTable,
+    )
 }

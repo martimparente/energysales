@@ -96,25 +96,25 @@ data class Problem(
                 "",
             )
 
-        val productAlreadyExists: Problem =
+        val serviceAlreadyExists: Problem =
             Problem(
                 "todo",
                 PROBLEM_URL + "todo.md",
                 "",
             )
-        val productNotFound: Problem =
+        val serviceNotFound: Problem =
             Problem(
                 "todo",
                 PROBLEM_URL + "todo.md",
                 "",
             )
-        val productInfoIsInvalid: Problem =
+        val serviceInfoIsInvalid: Problem =
             Problem(
                 "todo",
                 PROBLEM_URL + "todo.md",
                 "",
             )
-        val productEmailAlreadyInUse: Problem =
+        val serviceEmailAlreadyInUse: Problem =
             Problem(
                 "todo",
                 PROBLEM_URL + "todo.md",

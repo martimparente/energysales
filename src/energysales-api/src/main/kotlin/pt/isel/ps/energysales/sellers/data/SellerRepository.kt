@@ -1,6 +1,6 @@
 package pt.isel.ps.energysales.sellers.data
 
-import pt.isel.ps.energysales.sellers.domain.model.Seller
+import pt.isel.ps.energysales.sellers.domain.Seller
 
 interface SellerRepository {
     suspend fun create(seller: Seller): Int
