@@ -8,4 +8,5 @@ data class Service(
     val cycleType: String,
     val periodName: String,
     val periodNumPeriods: Int,
+    val price: Price,
 )

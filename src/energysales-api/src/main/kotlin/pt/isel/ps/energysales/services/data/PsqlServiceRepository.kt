@@ -1,36 +1,11 @@
 package pt.isel.ps.energysales.services.data
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SortOrder
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
+import pt.isel.ps.energysales.services.data.entity.PriceEntity
+import pt.isel.ps.energysales.services.data.entity.ServiceEntity
+import pt.isel.ps.energysales.services.data.table.ServiceTable
 import pt.isel.ps.energysales.services.domain.Service
-
-object ServiceTable : IntIdTable() {
-    val name = varchar("name", 50).uniqueIndex()
-    val description = varchar("description", 255)
-    val cycleName = varchar("cycle_name", 50)
-    val cycleType = varchar("cycle_type", 50)
-    val periodName = varchar("period_name", 50)
-    val periodNumPeriods = integer("period_num_periods")
-}
-
-class ServiceEntity(
-    id: EntityID<Int>,
-) : IntEntity(id) {
-    companion object : IntEntityClass<ServiceEntity>(ServiceTable)
-
-    fun toService() = Service(id.value, name, description, cycleName, cycleType, periodName, periodNumPeriods)
-
-    var name by ServiceTable.name
-    var description by ServiceTable.description
-    var cycleName by ServiceTable.cycleName
-    var cycleType by ServiceTable.cycleType
-    var periodName by ServiceTable.periodName
-    var periodNumPeriods by ServiceTable.periodNumPeriods
-}
 
 class PsqlServiceRepository : ServiceRepository {
     override suspend fun getById(id: Int): Service? =
@@ -60,6 +35,17 @@ class PsqlServiceRepository : ServiceRepository {
                     cycleType = service.cycleType
                     periodName = service.periodName
                     periodNumPeriods = service.periodNumPeriods
+                    price =
+                        PriceEntity.new {
+                            ponta = service.price.ponta
+                            cheia = service.price.cheia
+                            vazio = service.price.vazio
+                            superVazio = service.price.superVazio
+                            operadorMercado = service.price.operadorMercado
+                            gdo = service.price.gdo
+                            omip = service.price.omip
+                            margem = service.price.margem
+                        }
                 }.id
                 .value
         }
@@ -99,10 +85,7 @@ class PsqlServiceRepository : ServiceRepository {
 
     override suspend fun delete(service: Service): Boolean =
         dbQuery {
-            ServiceEntity
-                .find { ServiceTable.name eq service.name }
-                .firstOrNull()
-                ?.delete() ?: false
+            ServiceEntity.findById(service.id)?.delete() ?: false
             true
         }
 }

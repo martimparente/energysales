@@ -8,7 +8,8 @@ import pt.isel.ps.energysales.auth.data.UserRolesTable
 import pt.isel.ps.energysales.auth.data.UserTable
 import pt.isel.ps.energysales.clients.data.ClientTable
 import pt.isel.ps.energysales.sellers.data.SellerTable
-import pt.isel.ps.energysales.services.data.ServiceTable
+import pt.isel.ps.energysales.services.data.table.PriceTable
+import pt.isel.ps.energysales.services.data.table.ServiceTable
 import pt.isel.ps.energysales.teams.data.LocationTable
 import pt.isel.ps.energysales.teams.data.TeamTable
 
@@ -88,6 +89,16 @@ fun fillDb() {
             it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[location] = i
         }
+        PriceTable.insert {
+            it[ponta] = i.toFloat()
+            it[cheia] = i.toFloat()
+            it[vazio] = i.toFloat()
+            it[superVazio] = i.toFloat()
+            it[operadorMercado] = i.toFloat()
+            it[gdo] = i.toFloat()
+            it[omip] = i.toFloat()
+            it[margem] = i.toFloat()
+        }
         ServiceTable.insert {
             it[name] = "Service $i"
             it[description] = "Description $i"
@@ -95,6 +106,7 @@ fun fillDb() {
             it[cycleType] = "Type $i"
             it[periodName] = "Period $i"
             it[periodNumPeriods] = i
+            it[price] = i
         }
     }
 

@@ -8,6 +8,7 @@ import pt.isel.ps.energysales.services.application.dto.CreateServiceInput
 import pt.isel.ps.energysales.services.application.dto.UpdateServiceInput
 import pt.isel.ps.energysales.services.data.ServiceRepository
 import pt.isel.ps.energysales.services.domain.Service
+import pt.isel.ps.energysales.services.http.model.PriceJSON
 
 class ServiceService(
     private val serviceRepository: ServiceRepository,
@@ -27,6 +28,7 @@ class ServiceService(
                     input.cycleType,
                     input.periodName,
                     input.periodNumPeriods,
+                    PriceJSON.toPrice(input.price),
                 )
             serviceRepository.create(newService)
         }

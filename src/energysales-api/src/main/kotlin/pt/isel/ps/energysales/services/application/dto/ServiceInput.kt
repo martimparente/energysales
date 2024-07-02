@@ -1,5 +1,7 @@
 package pt.isel.ps.energysales.services.application.dto
 
+import pt.isel.ps.energysales.services.http.model.PriceJSON
+
 data class CreateServiceInput(
     val name: String,
     val description: String,
@@ -7,6 +9,7 @@ data class CreateServiceInput(
     val cycleType: String,
     val periodName: String,
     val periodNumPeriods: Int,
+    val price: PriceJSON,
 )
 
 data class UpdateServiceInput(

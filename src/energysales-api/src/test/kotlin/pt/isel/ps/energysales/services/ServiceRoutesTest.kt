@@ -18,6 +18,7 @@ import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
 import pt.isel.ps.energysales.auth.http.model.Problem
 import pt.isel.ps.energysales.services.http.model.CreateServiceRequest
+import pt.isel.ps.energysales.services.http.model.PriceJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
 import pt.isel.ps.energysales.services.http.model.UpdateServiceRequest
 import kotlin.test.Test
@@ -29,7 +30,17 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.SERVICES) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
+                    val body =
+                        CreateServiceRequest(
+                            "newService",
+                            "newDescription",
+                            "newCycleName",
+                            "newCycleType",
+                            "newPeriodName",
+                            1,
+                            PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
+                        )
+                    setBody(body)
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.SERVICES}/11")
                     response.shouldHaveStatus(HttpStatusCode.Created)
@@ -47,7 +58,17 @@ class ServiceRoutesTest : BaseRouteTest() {
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
+                    setBody(
+                        CreateServiceRequest(
+                            "newService",
+                            "newDescription",
+                            "newCycleName",
+                            "newCycleType",
+                            "newPeriodName",
+                            1,
+                            PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
+                        ),
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)

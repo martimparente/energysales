@@ -46,7 +46,16 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
 
     post<ServiceResource> {
         val body = call.receive<CreateServiceRequest>()
-        val input = CreateServiceInput(body.name, body.description, body.cycleName, body.cycleType, body.periodName, body.periodNumPeriods)
+        val input =
+            CreateServiceInput(
+                body.name,
+                body.description,
+                body.cycleName,
+                body.cycleType,
+                body.periodName,
+                body.periodNumPeriods,
+                body.price,
+            )
 
         val res = serviceService.createService(input)
 
