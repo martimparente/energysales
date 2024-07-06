@@ -174,9 +174,15 @@ class ServiceRoutesTest : BaseRouteTest() {
                     parameter("id", 2)
                     setBody(
                         UpdateServiceRequest(
-                            2, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            2,
+                            "newService",
+                            "newDescription",
+                            "newCycleName",
+                            "newCycleType",
+                            "newPeriodName",
+                            1,
                             PriceJSON(0.1904f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
-                        )
+                        ),
                     )
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
@@ -195,9 +201,15 @@ class ServiceRoutesTest : BaseRouteTest() {
                     parameter("id", 2)
                     setBody(
                         UpdateServiceRequest(
-                            2, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            2,
+                            "newService",
+                            "newDescription",
+                            "newCycleName",
+                            "newCycleType",
+                            "newPeriodName",
+                            1,
                             PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
-                        )
+                        ),
                     )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
@@ -228,9 +240,15 @@ class ServiceRoutesTest : BaseRouteTest() {
                     parameter("id", -1)
                     setBody(
                         UpdateServiceRequest(
-                            -1, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            -1,
+                            "newService",
+                            "newDescription",
+                            "newCycleName",
+                            "newCycleType",
+                            "newPeriodName",
+                            1,
                             PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
-                        )
+                        ),
                     )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.serviceNotFound.type)
@@ -248,9 +266,15 @@ class ServiceRoutesTest : BaseRouteTest() {
                     parameter("id", "abc")
                     setBody(
                         UpdateServiceRequest(
-                            1, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            1,
+                            "newService",
+                            "newDescription",
+                            "newCycleName",
+                            "newCycleType",
+                            "newPeriodName",
+                            1,
                             PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
-                        )
+                        ),
                     )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
