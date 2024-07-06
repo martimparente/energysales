@@ -172,8 +172,17 @@ class ServiceRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
-                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
+                    setBody(
+                        UpdateServiceRequest(
+                            2, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            PriceJSON(0.1904f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
+                        )
+                    )
                 }.also { response ->
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                    val service = response.call.response.body<ServiceJSON>()
+                    service.name.shouldBe("newService")
+                    service.price.shouldBe(PriceJSON(0.1904f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f))
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
@@ -184,7 +193,12 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     parameter("id", 2)
-                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
+                    setBody(
+                        UpdateServiceRequest(
+                            2, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
+                        )
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -212,7 +226,12 @@ class ServiceRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
-                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
+                    setBody(
+                        UpdateServiceRequest(
+                            -1, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
+                        )
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.serviceNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -227,7 +246,12 @@ class ServiceRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
-                    setBody(UpdateServiceRequest("newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1))
+                    setBody(
+                        UpdateServiceRequest(
+                            1, "newService", "newDescription", "newCycleName", "newCycleType", "newPeriodName", 1,
+                            PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
+                        )
+                    )
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

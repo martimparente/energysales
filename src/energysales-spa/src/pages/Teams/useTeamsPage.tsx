@@ -35,6 +35,7 @@ export function useTeamsPage() {
         {accessor: 'name', header: 'Name', sortable: true,},
         {accessor: 'location', header: 'District', sortable: true,},
         {accessor: 'manager', header: 'Manager', sortable: true,},
+        {accessor: 'actions', header: 'Actions', sortable: false,},
     ];
 
     /*    const mappedManagersCandidates: Record<string, { email: string }> = managersCandidates?.reduce((acc, manager) => {

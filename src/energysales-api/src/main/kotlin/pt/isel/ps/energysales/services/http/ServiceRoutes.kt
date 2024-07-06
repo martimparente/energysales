@@ -97,6 +97,11 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
 
     put<ServiceResource.Id> { pathParams ->
         val body = call.receive<UpdateServiceRequest>()
+        // check if path id is equal to body id
+        if (pathParams.id != body.id) {
+            call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+            return@put
+        }
         val input =
             UpdateServiceInput(
                 pathParams.id,
@@ -106,13 +111,15 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
                 body.cycleType,
                 body.periodName,
                 body.periodNumPeriods,
+                body.price,
             )
 
         val res = serviceService.updateService(input)
 
         when (res) {
             is Right -> {
-                call.response.status(HttpStatusCode.OK)
+                val serviceJson = ServiceJSON.fromService(res.value)
+                call.respond(serviceJson)
             }
 
             is Left -> {

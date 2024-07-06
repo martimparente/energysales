@@ -13,7 +13,6 @@ class PriceEntity(
 
     fun toPrice() =
         Price(
-            id.value,
             ponta,
             cheia,
             vazio,

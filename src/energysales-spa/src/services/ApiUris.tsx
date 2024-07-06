@@ -28,12 +28,12 @@ export namespace ApiUris {
     export const updateUser = (userId: string) => `${API_BASE_URL}/users/${userId}`;
     export const deleteUser = (userId: string) => `${API_BASE_URL}/users/${userId}`;
 
-    // Products
-    export const getProducts = (lastKeySeen: string) => `${API_BASE_URL}/products?lastKeySeen=${lastKeySeen}`;
-    export const getProduct = (productId: string) => `${API_BASE_URL}/products/${productId}`;
-    export const createProduct = `${API_BASE_URL}/products`;
-    export const updateProduct = (productId: string) => `${API_BASE_URL}/products/${productId}`;
-    export const deleteProduct = (productId: string) => `${API_BASE_URL}/products/${productId}`;
+    // Services
+    export const getServices = (lastKeySeen: string) => `${API_BASE_URL}/services?lastKeySeen=${lastKeySeen}`;
+    export const getService = (serviceId: string) => `${API_BASE_URL}/services/${serviceId}`;
+    export const createService = `${API_BASE_URL}/services`;
+    export const updateService = (serviceId: string) => `${API_BASE_URL}/services/${serviceId}`;
+    export const deleteService = (serviceId: string) => `${API_BASE_URL}/services/${serviceId}`;
 
     // Clients
     export const getClients = (lastKeySeen: string) => `${API_BASE_URL}/clients?lastKeySeen=${lastKeySeen}`;

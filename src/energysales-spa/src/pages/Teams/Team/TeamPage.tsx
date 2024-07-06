@@ -26,8 +26,8 @@ export function TeamPage() {
                 placeholder="Search for seller"
                 limit={5}
                 data={availableSellers?.map((member: User) => ({
-                    value: member.person.id,
-                    label: member.person.name
+                    value: member.id,
+                    label: member.name
                 })) || []}
                 onChange={(value) => handleSelectSellerChange(value!)}
             />
@@ -46,12 +46,11 @@ export function TeamPage() {
                 <Table.Tbody>
                     {teamDetails?.members?.map((member: User) => (
                         <Table.Tr>
-                            <Table.Td>{member.person.name}</Table.Td>
-                            <Table.Td>{member.person.surname}</Table.Td>
-                            <Table.Td>{member.person.email}</Table.Td>
-                            <Table.Td>{member.totalSales}</Table.Td>
+                            <Table.Td>{member.name}</Table.Td>
+                            <Table.Td>{member.surname}</Table.Td>
+                            <Table.Td>{member.email}</Table.Td>
                             <Table.Td>
-                                <Button onClick={() => handleDeleteSellerFromTeam(member.person.id)} color={"red"}>
+                                <Button onClick={() => handleDeleteSellerFromTeam(member.id)} color={"red"}>
                                     Remove from Team
                                 </Button>
                             </Table.Td>

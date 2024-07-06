@@ -7,14 +7,15 @@ export function UsersPage() {
     const {
         columns,
         Users,
-        deleteUser,
-        onShowClickHandler,
-
+        onShowUserButtonClick,
+        onCreateUserButtonClick,
+        onDeleteUserButtonClick
     } = useUsersPage();
 
     return (
         <div>
             <h1>Users</h1>
+            <Button onClick={() => onCreateUserButtonClick()} color={"green"}>Create User</Button>
             <Table>
                 <Table.Thead>
                     <Table.Tr>
@@ -31,9 +32,9 @@ export function UsersPage() {
                             <Table.Td>{User.email}</Table.Td>
                             <Table.Td>{User.role}</Table.Td>
                             <Table.Td>
-                                <Button onClick={() => onShowClickHandler(User)} color={"orange"}>Show</Button>
+                                <Button onClick={() => onShowUserButtonClick(User)} color={"orange"}>Show</Button>
                                 <Button color={"green"}>Edit</Button>
-                                <Button onClick={() => deleteUser(User)} color={"red"}><IconTrash
+                                <Button onClick={() => onDeleteUserButtonClick(User)} color={"red"}><IconTrash
                                     stroke={2}/></Button>
                             </Table.Td>
                         </Table.Tr>

@@ -10,7 +10,7 @@ export function useUsersPage() {
 
     const {data: Users, error: fetchError, isFetching} = useGetUsers();
     const {mutateAsync: createUser} = useCreateUser();
-    const {mutateAsync: updateUser} = useUpdateUser("");
+    const {mutateAsync: updateUser} = useUpdateUser();
     const {mutateAsync: deleteUser} = useDeleteUser();
 
     const [error, setError] = useState<string | null>(null)
@@ -50,10 +50,10 @@ export function useUsersPage() {
     return {
         columns,
         Users,
-        createUser: async (input: CreateUserInputModel) => await createUser(input).catch(e => setError(e.message)),
+        onCreateUserButtonClick: () => navigate(`/users/create`),
         updateUser: async (input: UpdateUserInputModel) => await updateUser(input).catch(e => setError(e)),
-        deleteUser: async (User: User) => await deleteUser(User.id).catch(e => setError(e)),
-        onShowClickHandler: (User: User) => navigate(`/Users/${User.id}`),
+        onDeleteUserButtonClick: async (User: User) => await deleteUser(User.id).catch(e => setError(e)),
+        onShowUserButtonClick: (User: User) => navigate(`/Users/${User.id}`),
         isFetching,
         error,
     }

@@ -65,7 +65,6 @@ data class PriceJSON(
 
         fun toPrice(price: PriceJSON) =
             Price(
-                -1,
                 price.ponta,
                 price.cheia,
                 price.vazio,
@@ -91,10 +90,12 @@ data class CreateServiceRequest(
 
 @Serializable
 data class UpdateServiceRequest(
+    val id: Int,
     val name: String,
     val description: String,
     val cycleName: String,
     val cycleType: String,
     val periodName: String,
     val periodNumPeriods: Int,
+    val price: PriceJSON,
 )

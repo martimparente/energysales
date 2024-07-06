@@ -25,10 +25,10 @@ export function useGetUser(id: string) {
     });
 }
 
-export function useUpdateUser(id: string) {
+export function useUpdateUser() {
     return useMutation({
         mutationFn: (newUserInfo: UpdateUserInputModel) =>
-            mutateData(ApiUris.updateUser(id), "PUT", newUserInfo),
+            mutateData(ApiUris.updateUser(newUserInfo.id), "PUT", newUserInfo),
     });
 }
 

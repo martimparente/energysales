@@ -22,6 +22,7 @@ export interface CreateUserInputModel {
 }
 
 export interface UpdateUserInputModel {
+    id: string,
     name: string,
     surname: string,
     email: string,

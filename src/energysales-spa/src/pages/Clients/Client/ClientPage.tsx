@@ -18,7 +18,7 @@ export function ClientPage() {
         </div>
 
         // List of simulations
-        // Create sim -> select product -> select price
+        // Create sim -> select service -> select price
         // Button to send to client
         // Button to generate link of sim
     )

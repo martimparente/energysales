@@ -20,4 +20,5 @@ data class UpdateServiceInput(
     val cycleType: String?,
     val periodName: String?,
     val periodNumPeriods: Int?,
+    val price: PriceJSON?,
 )
