@@ -8,7 +8,6 @@ export function CreateUserPage() {
         createUser,
         isFetching,
         error,
-        onCreateUserButtonClick
     } = useCreateUserPage();
 
     const [name, setName] = useState('');

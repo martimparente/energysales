@@ -16,6 +16,7 @@ import {ProtectedRouteAdmin} from "./ProtectedRouteAdmin.tsx";
 import {ProtectedRouteSeller} from "./ProtectedRouteSeller.tsx";
 import {AuthLayout} from "../providers/AuthLayout.tsx";
 import {CreateServicePage} from "../pages/Services/CreateService/CreateServicePage.tsx";
+import {CreateUserPage} from "../pages/Users/CreateUser/CreateUserPage.tsx";
 /*
 const PrivateRoutes = () => {
     const {isLoading, data} = useIsAuthenticated();
@@ -42,7 +43,7 @@ const routes = [
                     {path: "/teams/:id", element: <TeamPage/>},
                     {path: "/users", element: <UsersPage/>},
                     {path: "/users/:id", element: <UserPage/>},
-                    {path: "/users/create", element: <CreateUsersPage/>}
+                    {path: "/users/create", element: <CreateUserPage/>},
                     {path: "/services", element: <ServicesPage/>},
                     {path: "/services/:id", element: <ServicePage/>},
                     {path: "/services/create", element: <CreateServicePage/>}
