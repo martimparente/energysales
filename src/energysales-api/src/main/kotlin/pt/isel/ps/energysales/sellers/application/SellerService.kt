@@ -6,8 +6,8 @@ import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerInput
 import pt.isel.ps.energysales.sellers.data.SellerRepository
 import pt.isel.ps.energysales.sellers.domain.Seller
-import pt.isel.ps.energysales.users.domain.model.Role
-import pt.isel.ps.energysales.users.domain.model.User
+import pt.isel.ps.energysales.users.domain.Role
+import pt.isel.ps.energysales.users.domain.User
 
 class SellerService(
     private val sellerRepository: SellerRepository,

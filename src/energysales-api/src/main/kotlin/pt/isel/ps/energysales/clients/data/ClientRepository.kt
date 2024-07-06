@@ -1,6 +1,6 @@
 package pt.isel.ps.energysales.clients.data
 
-import pt.isel.ps.energysales.clients.domain.model.Client
+import pt.isel.ps.energysales.clients.domain.Client
 
 interface ClientRepository {
     suspend fun create(client: Client): Int

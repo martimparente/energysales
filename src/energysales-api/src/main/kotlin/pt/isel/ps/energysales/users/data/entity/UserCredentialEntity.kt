@@ -4,7 +4,7 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
-import pt.isel.ps.energysales.users.domain.model.UserCredentials
+import pt.isel.ps.energysales.users.domain.UserCredentials
 
 open class UserCredentialsEntity(
     id: EntityID<Int>,

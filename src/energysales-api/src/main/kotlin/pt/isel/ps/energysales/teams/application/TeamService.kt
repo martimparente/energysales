@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.teams.domain.service
+package pt.isel.ps.energysales.teams.application
 
 import arrow.core.Either
 import arrow.core.raise.either
@@ -6,9 +6,9 @@ import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.data.TeamRepository
-import pt.isel.ps.energysales.teams.domain.model.Location
-import pt.isel.ps.energysales.teams.domain.model.Team
-import pt.isel.ps.energysales.teams.domain.model.TeamDetails
+import pt.isel.ps.energysales.teams.domain.Location
+import pt.isel.ps.energysales.teams.domain.Team
+import pt.isel.ps.energysales.teams.domain.TeamDetails
 
 class TeamService(
     private val teamRepository: TeamRepository,
@@ -79,6 +79,15 @@ class TeamService(
             teamRepository.deleteSellerFromTeam(sellerId)
             true
         }
+
+    suspend fun addServiceToTeam(
+        teamId: Int,
+        serviceId: Int,
+    ): TeamAddServiceResult =
+        either {
+            ensure(teamRepository.teamExists(teamId)) { TeamAddServiceError.TeamNotFound }
+            teamRepository.addServiceToTeam(teamId, serviceId)
+        }
 }
 
 typealias TeamCreationResult = Either<TeamCreationError, Int>
@@ -89,6 +98,8 @@ typealias TeamDeletingResult = Either<TeamDeletingError, Boolean>
 typealias TeamSellersReadingResult = Either<TeamSellersReadingError, List<Seller>>
 typealias TeamAddSellerResult = Either<TeamSellersReadingError, Boolean>
 typealias TeamDeleteSellerResult = Either<TeamSellersReadingError, Boolean>
+
+typealias TeamAddServiceResult = Either<TeamAddServiceError, Boolean>
 
 sealed interface TeamCreationError {
     data object TeamAlreadyExists : TeamCreationError
@@ -128,4 +139,10 @@ sealed interface TeamDeleteSellerError {
     data object TeamNotFound : TeamDeleteSellerError
 
     data object SellerNotFound : TeamDeleteSellerError
+}
+
+sealed interface TeamAddServiceError {
+    data object TeamNotFound : TeamAddServiceError
+
+    data object SellerNotFound : TeamAddServiceError
 }

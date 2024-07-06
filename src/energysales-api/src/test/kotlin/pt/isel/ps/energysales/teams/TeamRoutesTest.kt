@@ -17,7 +17,8 @@ import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
-import pt.isel.ps.energysales.teams.http.model.AddTeamSellerRequest
+import pt.isel.ps.energysales.teams.http.model.AddServiceToTeamRequest
+import pt.isel.ps.energysales.teams.http.model.AddTeamToSellerRequest
 import pt.isel.ps.energysales.teams.http.model.CreateTeamRequest
 import pt.isel.ps.energysales.teams.http.model.LocationJSON
 import pt.isel.ps.energysales.teams.http.model.TeamJSON
@@ -309,7 +310,7 @@ class TeamRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.TEAMS_SELLERS) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "1")
-                    setBody(AddTeamSellerRequest("1", "1"))
+                    setBody(AddTeamToSellerRequest("1", "1"))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
@@ -323,6 +324,20 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "1")
                     parameter("sellerId", "1")
+                }.also { response ->
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                }
+        }
+
+    @Test
+    fun `Assign Service to Team - Success`() =
+        testApplication {
+            testClient()
+                .put(Uris.API + Uris.TEAMS_SERVICES) {
+                    headers.append("Authorization", "Bearer $adminToken")
+                    parameter("teamId", "1")
+                    parameter("serviceId", "1")
+                    setBody(AddServiceToTeamRequest("1", "1"))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }

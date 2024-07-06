@@ -8,10 +8,10 @@ import pt.isel.ps.energysales.users.data.entity.UserEntity
 import pt.isel.ps.energysales.users.data.table.RoleTable
 import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
 import pt.isel.ps.energysales.users.data.table.UserTable
-import pt.isel.ps.energysales.users.domain.model.Role
-import pt.isel.ps.energysales.users.domain.model.User
-import pt.isel.ps.energysales.users.domain.model.UserCredentials
-import pt.isel.ps.energysales.users.domain.model.toRole
+import pt.isel.ps.energysales.users.domain.Role
+import pt.isel.ps.energysales.users.domain.User
+import pt.isel.ps.energysales.users.domain.UserCredentials
+import pt.isel.ps.energysales.users.domain.toRole
 
 class PsqlUserRepository : UserRepository {
     override suspend fun createUser(

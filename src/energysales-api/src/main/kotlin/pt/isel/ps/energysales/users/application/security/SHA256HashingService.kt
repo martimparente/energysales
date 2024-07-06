@@ -1,7 +1,7 @@
-package pt.isel.ps.energysales.users.domain.service.security
+package pt.isel.ps.energysales.users.application.security
 
-import pt.isel.ps.energysales.users.domain.model.SaltedHash
-import pt.isel.ps.energysales.users.domain.service.HashingService
+import pt.isel.ps.energysales.users.application.HashingService
+import pt.isel.ps.energysales.users.domain.SaltedHash
 import java.security.MessageDigest
 import java.security.SecureRandom
 

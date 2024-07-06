@@ -3,11 +3,12 @@ package pt.isel.ps.energysales
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import pt.isel.ps.energysales.clients.data.ClientTable
-import pt.isel.ps.energysales.sellers.data.SellerTable
+import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.services.data.table.PriceTable
 import pt.isel.ps.energysales.services.data.table.ServiceTable
-import pt.isel.ps.energysales.teams.data.LocationTable
-import pt.isel.ps.energysales.teams.data.TeamTable
+import pt.isel.ps.energysales.teams.data.entity.TeamServices
+import pt.isel.ps.energysales.teams.data.table.LocationTable
+import pt.isel.ps.energysales.teams.data.table.TeamTable
 import pt.isel.ps.energysales.users.data.entity.UserRolesTable
 import pt.isel.ps.energysales.users.data.table.RoleTable
 import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
@@ -24,6 +25,7 @@ fun fillDb() {
         ServiceTable,
         LocationTable,
         ClientTable,
+        TeamServices,
     )
     SchemaUtils
         .create(
@@ -36,6 +38,7 @@ fun fillDb() {
             ServiceTable,
             LocationTable,
             ClientTable,
+            TeamServices,
         )
 
     RoleTable.insert {
@@ -188,5 +191,6 @@ fun dropDb() {
         ServiceTable,
         LocationTable,
         ClientTable,
+        TeamServices,
     )
 }

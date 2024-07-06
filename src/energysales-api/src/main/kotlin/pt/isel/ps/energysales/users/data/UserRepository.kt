@@ -1,8 +1,8 @@
 package pt.isel.ps.energysales.users.data
 
-import pt.isel.ps.energysales.users.domain.model.Role
-import pt.isel.ps.energysales.users.domain.model.User
-import pt.isel.ps.energysales.users.domain.model.UserCredentials
+import pt.isel.ps.energysales.users.domain.Role
+import pt.isel.ps.energysales.users.domain.User
+import pt.isel.ps.energysales.users.domain.UserCredentials
 
 interface UserRepository {
     suspend fun createUser(

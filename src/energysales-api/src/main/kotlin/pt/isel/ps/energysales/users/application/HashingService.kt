@@ -1,6 +1,6 @@
-package pt.isel.ps.energysales.users.domain.service
+package pt.isel.ps.energysales.users.application
 
-import pt.isel.ps.energysales.users.domain.model.SaltedHash
+import pt.isel.ps.energysales.users.domain.SaltedHash
 
 interface HashingService {
     fun generateSaltedHash(

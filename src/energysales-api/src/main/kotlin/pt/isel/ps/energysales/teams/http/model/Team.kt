@@ -2,9 +2,9 @@ package pt.isel.ps.energysales.teams.http.model
 
 import kotlinx.serialization.Serializable
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
-import pt.isel.ps.energysales.teams.domain.model.Location
-import pt.isel.ps.energysales.teams.domain.model.Team
-import pt.isel.ps.energysales.teams.domain.model.TeamDetails
+import pt.isel.ps.energysales.teams.domain.Location
+import pt.isel.ps.energysales.teams.domain.Team
+import pt.isel.ps.energysales.teams.domain.TeamDetails
 
 @Serializable
 data class LocationJSON(
@@ -65,7 +65,13 @@ data class UpdateTeamRequest(
 )
 
 @Serializable
-data class AddTeamSellerRequest(
-    val sellerId: String,
+data class AddTeamToSellerRequest(
     val teamId: String,
+    val sellerId: String,
+)
+
+@Serializable
+data class AddServiceToTeamRequest(
+    val teamId: String,
+    val serviceId: String,
 )
