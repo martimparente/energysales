@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Table
 import pt.isel.ps.energysales.users.data.table.RoleTable
 import pt.isel.ps.energysales.users.data.table.UserTable
-import pt.isel.ps.energysales.users.domain.model.toRole
+import pt.isel.ps.energysales.users.domain.toRole
 
 open class RoleEntity(
     id: EntityID<Int>,

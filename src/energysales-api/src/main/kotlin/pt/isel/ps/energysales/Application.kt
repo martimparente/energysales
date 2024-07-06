@@ -12,8 +12,8 @@ import io.ktor.server.resources.Resources
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.slf4j.event.Level
+import pt.isel.ps.energysales.clients.application.ClientService
 import pt.isel.ps.energysales.clients.data.PsqlClientRepository
-import pt.isel.ps.energysales.clients.domain.service.ClientService
 import pt.isel.ps.energysales.clients.http.clientRoutes
 import pt.isel.ps.energysales.plugins.authorize
 import pt.isel.ps.energysales.plugins.configureDatabases
@@ -25,15 +25,15 @@ import pt.isel.ps.energysales.sellers.http.sellerRoutes
 import pt.isel.ps.energysales.services.application.ServiceService
 import pt.isel.ps.energysales.services.data.PsqlServiceRepository
 import pt.isel.ps.energysales.services.http.serviceRoutes
+import pt.isel.ps.energysales.teams.application.TeamService
 import pt.isel.ps.energysales.teams.data.PsqlTeamRepository
-import pt.isel.ps.energysales.teams.domain.service.TeamService
 import pt.isel.ps.energysales.teams.http.teamRoutes
+import pt.isel.ps.energysales.users.application.UserService
+import pt.isel.ps.energysales.users.application.security.JwtConfig
+import pt.isel.ps.energysales.users.application.security.JwtTokenService
+import pt.isel.ps.energysales.users.application.security.SHA256HashingService
 import pt.isel.ps.energysales.users.configureAuth
 import pt.isel.ps.energysales.users.data.PsqlUserRepository
-import pt.isel.ps.energysales.users.domain.service.UserService
-import pt.isel.ps.energysales.users.domain.service.security.JwtConfig
-import pt.isel.ps.energysales.users.domain.service.security.JwtTokenService
-import pt.isel.ps.energysales.users.domain.service.security.SHA256HashingService
 import pt.isel.ps.energysales.users.http.authRoutes
 import pt.isel.ps.energysales.users.http.userRoutes
 

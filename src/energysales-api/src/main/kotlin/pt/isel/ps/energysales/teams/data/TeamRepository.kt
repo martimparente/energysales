@@ -1,8 +1,8 @@
 package pt.isel.ps.energysales.teams.data
 
 import pt.isel.ps.energysales.sellers.domain.Seller
-import pt.isel.ps.energysales.teams.domain.model.Team
-import pt.isel.ps.energysales.teams.domain.model.TeamDetails
+import pt.isel.ps.energysales.teams.domain.Team
+import pt.isel.ps.energysales.teams.domain.TeamDetails
 
 interface TeamRepository {
     suspend fun create(team: Team): Int
@@ -36,4 +36,14 @@ interface TeamRepository {
     ): Boolean
 
     suspend fun deleteSellerFromTeam(sellerId: Int): Boolean
+
+    suspend fun addServiceToTeam(
+        teamId: Int,
+        serviceId: Int,
+    ): Boolean
+
+    suspend fun addClientToTeam(
+        teamId: Int,
+        clientId: Int,
+    ): Boolean
 }

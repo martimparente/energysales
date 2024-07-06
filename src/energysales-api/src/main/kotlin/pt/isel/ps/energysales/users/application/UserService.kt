@@ -1,14 +1,14 @@
-package pt.isel.ps.energysales.users.domain.service
+package pt.isel.ps.energysales.users.application
 
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.users.data.UserRepository
-import pt.isel.ps.energysales.users.domain.model.Role
-import pt.isel.ps.energysales.users.domain.model.SaltedHash
-import pt.isel.ps.energysales.users.domain.model.User
-import pt.isel.ps.energysales.users.domain.model.UserCredentials
+import pt.isel.ps.energysales.users.domain.Role
+import pt.isel.ps.energysales.users.domain.SaltedHash
+import pt.isel.ps.energysales.users.domain.User
+import pt.isel.ps.energysales.users.domain.UserCredentials
 import pt.isel.ps.energysales.users.http.UserQueryParams
 import java.util.regex.Matcher
 import java.util.regex.Pattern

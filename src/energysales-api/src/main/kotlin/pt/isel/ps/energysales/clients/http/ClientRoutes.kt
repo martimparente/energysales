@@ -14,15 +14,15 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.clients.domain.model.Client
-import pt.isel.ps.energysales.clients.domain.service.ClientCreationError
-import pt.isel.ps.energysales.clients.domain.service.ClientDeletingError
-import pt.isel.ps.energysales.clients.domain.service.ClientService
-import pt.isel.ps.energysales.clients.domain.service.ClientUpdatingError
+import pt.isel.ps.energysales.clients.application.ClientCreationError
+import pt.isel.ps.energysales.clients.application.ClientDeletingError
+import pt.isel.ps.energysales.clients.application.ClientService
+import pt.isel.ps.energysales.clients.application.ClientUpdatingError
+import pt.isel.ps.energysales.clients.domain.Client
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
-import pt.isel.ps.energysales.teams.domain.model.Location
+import pt.isel.ps.energysales.teams.domain.Location
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.respondProblem
 

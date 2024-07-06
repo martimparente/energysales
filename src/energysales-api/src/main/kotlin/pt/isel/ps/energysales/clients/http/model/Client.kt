@@ -1,8 +1,8 @@
 package pt.isel.ps.energysales.clients.http.model
 
 import kotlinx.serialization.Serializable
-import pt.isel.ps.energysales.clients.domain.model.Client
-import pt.isel.ps.energysales.teams.domain.model.Location
+import pt.isel.ps.energysales.clients.domain.Client
+import pt.isel.ps.energysales.teams.domain.Location
 
 @Serializable
 data class ClientJSON(

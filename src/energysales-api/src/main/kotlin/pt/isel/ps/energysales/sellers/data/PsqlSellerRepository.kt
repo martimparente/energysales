@@ -1,47 +1,17 @@
 package pt.isel.ps.energysales.sellers.data
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IdTable
+import SellerEntity
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
+import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.sellers.domain.Seller
-import pt.isel.ps.energysales.teams.data.TeamEntity
-import pt.isel.ps.energysales.teams.data.TeamTable
+import pt.isel.ps.energysales.teams.data.entity.TeamEntity
 import pt.isel.ps.energysales.users.data.entity.RoleEntity
 import pt.isel.ps.energysales.users.data.entity.UserEntity
 import pt.isel.ps.energysales.users.data.table.RoleTable
-import pt.isel.ps.energysales.users.data.table.UserTable
-import pt.isel.ps.energysales.users.domain.model.Role
-
-object SellerTable : IdTable<Int>() {
-    val totalSales = float("total_sales").default(0.0f)
-    val team = reference("team_id", TeamTable.id, ReferenceOption.SET_NULL).nullable()
-    override val id: Column<EntityID<Int>> = reference("uid", UserTable)
-    override val primaryKey = PrimaryKey(id)
-}
-
-class SellerEntity(
-    id: EntityID<Int>,
-) : IntEntity(id) {
-    companion object : IntEntityClass<SellerEntity>(SellerTable)
-
-    var user by UserEntity referencedOn SellerTable.id
-    var totalSales by SellerTable.totalSales
-    var team by TeamEntity optionalReferencedOn SellerTable.team
-
-    fun toSeller() =
-        Seller(
-            user.toUser(),
-            totalSales,
-            team?.id?.value,
-        )
-}
+import pt.isel.ps.energysales.users.domain.Role
 
 class PsqlSellerRepository : SellerRepository {
     override suspend fun getById(id: Int): Seller? =

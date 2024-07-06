@@ -60,7 +60,7 @@ class ServiceService(
                     cycleType = input.cycleType ?: service.cycleType,
                     periodName = input.periodName ?: service.periodName,
                     periodNumPeriods = input.periodNumPeriods ?: service.periodNumPeriods,
-                    price = if(input.price != null) PriceJSON.toPrice(input.price) else service.price
+                    price = if (input.price != null) PriceJSON.toPrice(input.price) else service.price,
                 )
 
             val updatedService = serviceRepository.update(newService)

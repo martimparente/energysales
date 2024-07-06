@@ -176,8 +176,8 @@ class UserRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("userId", "1")
                 }.also { response ->
-                    val User = response.call.response.body<UserJSON>()
-                    User.id.shouldBe(1)
+                    val user = response.call.response.body<UserJSON>()
+                    user.id.shouldBe(1)
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }

@@ -5,10 +5,10 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SortOrder
-import pt.isel.ps.energysales.clients.domain.model.Client
+import pt.isel.ps.energysales.clients.domain.Client
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
-import pt.isel.ps.energysales.teams.data.LocationEntity
-import pt.isel.ps.energysales.teams.data.LocationTable
+import pt.isel.ps.energysales.teams.data.entity.LocationEntity
+import pt.isel.ps.energysales.teams.data.table.LocationTable
 
 object ClientTable : IntIdTable() {
     val name = varchar("name", 50)

@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.users.domain.model
+package pt.isel.ps.energysales.users.domain
 
 enum class Role { ADMIN, SELLER, MANAGER, NONE }
 

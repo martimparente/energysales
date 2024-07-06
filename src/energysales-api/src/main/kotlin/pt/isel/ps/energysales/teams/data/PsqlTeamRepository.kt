@@ -1,59 +1,18 @@
 package pt.isel.ps.energysales.teams.data
 
-import org.jetbrains.exposed.dao.Entity
-import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
+import SellerEntity
+import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.SortOrder
+import pt.isel.ps.energysales.clients.data.ClientEntity
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
-import pt.isel.ps.energysales.sellers.data.SellerEntity
-import pt.isel.ps.energysales.sellers.data.SellerTable
 import pt.isel.ps.energysales.sellers.domain.Seller
-import pt.isel.ps.energysales.teams.domain.model.Location
-import pt.isel.ps.energysales.teams.domain.model.Team
-import pt.isel.ps.energysales.teams.domain.model.TeamDetails
+import pt.isel.ps.energysales.services.data.entity.ServiceEntity
+import pt.isel.ps.energysales.teams.data.entity.LocationEntity
+import pt.isel.ps.energysales.teams.data.entity.TeamEntity
+import pt.isel.ps.energysales.teams.data.table.TeamTable
+import pt.isel.ps.energysales.teams.domain.Team
+import pt.isel.ps.energysales.teams.domain.TeamDetails
 import pt.isel.ps.energysales.users.data.entity.UserEntity
-import pt.isel.ps.energysales.users.data.table.UserTable
-
-object TeamTable : IntIdTable() {
-    val name = varchar("name", 50).uniqueIndex()
-    val location = reference("location", LocationTable)
-    val manager = reference("manager", UserTable).nullable()
-}
-
-object LocationTable : IntIdTable() {
-    val district = varchar("district", 50).uniqueIndex()
-}
-
-class LocationEntity(
-    id: EntityID<Int>,
-) : Entity<Int>(id) {
-    companion object : EntityClass<Int, LocationEntity>(LocationTable)
-
-    var district by LocationTable.district
-    val teams by TeamEntity referrersOn TeamTable.location
-
-    fun toLocation() = Location(district)
-}
-
-class TeamEntity(
-    id: EntityID<Int>,
-) : Entity<Int>(id) {
-    companion object : EntityClass<Int, TeamEntity>(TeamTable)
-
-    fun toTeam() =
-        Team(
-            id.value,
-            name,
-            location.toLocation(),
-            manager?.id?.value,
-        )
-
-    var name by TeamTable.name
-    var location by LocationEntity referencedOn TeamTable.location
-    var manager by UserEntity optionalReferencedOn TeamTable.manager
-    val sellers by SellerEntity optionalReferrersOn SellerTable.team
-}
 
 class PsqlTeamRepository : TeamRepository {
     override suspend fun getByName(name: String): Team? =
@@ -175,6 +134,30 @@ class PsqlTeamRepository : TeamRepository {
         dbQuery {
             val seller = SellerEntity.findById(sellerId) ?: return@dbQuery false
             seller.team = null
+            true
+        }
+
+    override suspend fun addServiceToTeam(
+        teamId: Int,
+        serviceId: Int,
+    ): Boolean =
+        dbQuery {
+            // add a service to team - is a many to many relationship on
+            val team = TeamEntity.findById(teamId) ?: return@dbQuery false
+            val service = ServiceEntity.findById(serviceId) ?: return@dbQuery false
+            team.services = SizedCollection(team.services + service)
+            true
+        }
+
+    override suspend fun addClientToTeam(
+        teamId: Int,
+        clientId: Int,
+    ): Boolean =
+        dbQuery {
+            // add a client to team - is a many to many relationship on
+            val team = TeamEntity.findById(teamId) ?: return@dbQuery false
+            val client = ClientEntity.findById(clientId) ?: return@dbQuery false
+            team.clients = SizedCollection(team.clients + client)
             true
         }
 }

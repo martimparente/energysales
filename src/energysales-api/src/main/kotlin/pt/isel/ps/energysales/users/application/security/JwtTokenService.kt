@@ -1,8 +1,8 @@
-package pt.isel.ps.energysales.users.domain.service.security
+package pt.isel.ps.energysales.users.application.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import pt.isel.ps.energysales.users.domain.service.TokenService
+import pt.isel.ps.energysales.users.application.TokenService
 import java.util.Date
 
 data class JwtConfig(

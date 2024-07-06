@@ -6,7 +6,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import pt.isel.ps.energysales.users.domain.service.security.JwtConfig
+import pt.isel.ps.energysales.users.application.security.JwtConfig
 
 data class AuthenticationException(
     override val message: String? = null,

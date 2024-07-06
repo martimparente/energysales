@@ -76,26 +76,27 @@ class PsqlServiceRepository : ServiceRepository {
 
     override suspend fun update(service: Service): Service? =
         dbQuery {
-            ServiceEntity.findById(service.id)?.apply {
-                name = service.name
-                description = service.description
-                cycleName = service.cycleName
-                cycleType = service.cycleType
-                periodName = service.periodName
-                periodNumPeriods = service.periodNumPeriods
-                price.apply {
-                    ponta = service.price.ponta
-                    cheia = service.price.cheia
-                    vazio = service.price.vazio
-                    superVazio = service.price.superVazio
-                    operadorMercado = service.price.operadorMercado
-                    gdo = service.price.gdo
-                    omip = service.price.omip
-                    margem = service.price.margem
-                }
-            }?.toService()
+            ServiceEntity
+                .findById(service.id)
+                ?.apply {
+                    name = service.name
+                    description = service.description
+                    cycleName = service.cycleName
+                    cycleType = service.cycleType
+                    periodName = service.periodName
+                    periodNumPeriods = service.periodNumPeriods
+                    price.apply {
+                        ponta = service.price.ponta
+                        cheia = service.price.cheia
+                        vazio = service.price.vazio
+                        superVazio = service.price.superVazio
+                        operadorMercado = service.price.operadorMercado
+                        gdo = service.price.gdo
+                        omip = service.price.omip
+                        margem = service.price.margem
+                    }
+                }?.toService()
         }
-
 
     override suspend fun delete(service: Service): Boolean =
         dbQuery {

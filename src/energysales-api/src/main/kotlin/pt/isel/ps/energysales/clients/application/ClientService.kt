@@ -1,12 +1,12 @@
-package pt.isel.ps.energysales.clients.domain.service
+package pt.isel.ps.energysales.clients.application
 
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.clients.data.ClientRepository
-import pt.isel.ps.energysales.clients.domain.model.Client
-import pt.isel.ps.energysales.teams.domain.model.Location
+import pt.isel.ps.energysales.clients.domain.Client
+import pt.isel.ps.energysales.teams.domain.Location
 
 class ClientService(
     private val clientRepository: ClientRepository,

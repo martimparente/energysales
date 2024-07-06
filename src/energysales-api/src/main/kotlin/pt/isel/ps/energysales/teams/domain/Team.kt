@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.teams.domain.model
+package pt.isel.ps.energysales.teams.domain
 
 import pt.isel.ps.energysales.sellers.domain.Seller
 

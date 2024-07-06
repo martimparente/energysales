@@ -4,8 +4,8 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import pt.isel.ps.energysales.users.data.table.UserTable
-import pt.isel.ps.energysales.users.domain.model.User
-import pt.isel.ps.energysales.users.domain.model.toRole
+import pt.isel.ps.energysales.users.domain.User
+import pt.isel.ps.energysales.users.domain.toRole
 
 open class UserEntity(
     id: EntityID<Int>,

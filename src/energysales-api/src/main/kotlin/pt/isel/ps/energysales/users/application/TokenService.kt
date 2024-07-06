@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.users.domain.service
+package pt.isel.ps.energysales.users.application
 
 interface TokenService {
     fun generateJwtToken(
