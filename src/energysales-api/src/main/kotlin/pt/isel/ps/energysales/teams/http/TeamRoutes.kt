@@ -15,6 +15,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
+import pt.isel.ps.energysales.teams.application.TeamAddClientError
 import pt.isel.ps.energysales.teams.application.TeamAddServiceError
 import pt.isel.ps.energysales.teams.application.TeamCreationError
 import pt.isel.ps.energysales.teams.application.TeamDeletingError
@@ -23,6 +24,7 @@ import pt.isel.ps.energysales.teams.application.TeamService
 import pt.isel.ps.energysales.teams.application.TeamUpdatingError
 import pt.isel.ps.energysales.teams.domain.Location
 import pt.isel.ps.energysales.teams.domain.Team
+import pt.isel.ps.energysales.teams.http.model.AddClientToTeamRequest
 import pt.isel.ps.energysales.teams.http.model.AddServiceToTeamRequest
 import pt.isel.ps.energysales.teams.http.model.AddTeamToSellerRequest
 import pt.isel.ps.energysales.teams.http.model.CreateTeamRequest
@@ -58,9 +60,20 @@ class TeamResource(
             val parent: TeamId,
         ) {
             @Resource("{serviceId}")
-            class SellerId(
+            class ServiceId(
                 val parent: Sellers,
                 val serviceId: Int,
+            )
+        }
+
+        @Resource(Uris.CLIENTS)
+        class Clients(
+            val parent: TeamId,
+        ) {
+            @Resource("{clientId}")
+            class ClientId(
+                val parent: Sellers,
+                val clientId: Int,
             )
         }
     }
@@ -232,6 +245,40 @@ fun Route.teamRoutes(teamService: TeamService) {
                             Problem.teamNotFound,
                             HttpStatusCode.NotFound,
                         ) // todo error message
+                }
+            }
+        }
+    }
+
+    put<TeamResource.TeamId.Clients> { pathParams ->
+        val body = call.receive<AddClientToTeamRequest>()
+        val teamId = pathParams.parent.teamId
+        val clientId =
+            body.clientId.toIntOrNull()
+                ?: return@put call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest) // todo error message
+
+        // todo Check if the teamId in the request body = teamId in the path
+
+        val res = teamService.addClientToTeam(teamId, clientId)
+
+        when (res) {
+            is Right -> {
+                call.response.status(HttpStatusCode.OK)
+            }
+
+            is Left -> {
+                when (res.value) {
+                    TeamAddClientError.SellerNotFound ->
+                        call.respondProblem(
+                            Problem.teamNotFound,
+                            HttpStatusCode.NotFound,
+                        )
+
+                    TeamAddClientError.TeamNotFound ->
+                        call.respondProblem(
+                            Problem.teamNotFound,
+                            HttpStatusCode.NotFound,
+                        )
                 }
             }
         }

@@ -88,6 +88,15 @@ class TeamService(
             ensure(teamRepository.teamExists(teamId)) { TeamAddServiceError.TeamNotFound }
             teamRepository.addServiceToTeam(teamId, serviceId)
         }
+
+    suspend fun addClientToTeam(
+        teamId: Int,
+        clientId: Int,
+    ): TeamAddClientResult =
+        either {
+            ensure(teamRepository.teamExists(teamId)) { TeamAddClientError.TeamNotFound }
+            teamRepository.addClientToTeam(teamId, clientId)
+        }
 }
 
 typealias TeamCreationResult = Either<TeamCreationError, Int>
@@ -100,6 +109,7 @@ typealias TeamAddSellerResult = Either<TeamSellersReadingError, Boolean>
 typealias TeamDeleteSellerResult = Either<TeamSellersReadingError, Boolean>
 
 typealias TeamAddServiceResult = Either<TeamAddServiceError, Boolean>
+typealias TeamAddClientResult = Either<TeamAddClientError, Boolean>
 
 sealed interface TeamCreationError {
     data object TeamAlreadyExists : TeamCreationError
@@ -145,4 +155,10 @@ sealed interface TeamAddServiceError {
     data object TeamNotFound : TeamAddServiceError
 
     data object SellerNotFound : TeamAddServiceError
+}
+
+sealed interface TeamAddClientError {
+    data object TeamNotFound : TeamAddClientError
+
+    data object SellerNotFound : TeamAddClientError
 }

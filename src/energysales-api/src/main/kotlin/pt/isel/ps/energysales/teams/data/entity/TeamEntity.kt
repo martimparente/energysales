@@ -4,19 +4,14 @@ import SellerEntity
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Table
+import pt.isel.ps.energysales.clients.data.ClientEntity
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.services.data.entity.ServiceEntity
-import pt.isel.ps.energysales.services.data.table.ServiceTable
+import pt.isel.ps.energysales.teams.data.table.TeamClients
+import pt.isel.ps.energysales.teams.data.table.TeamServices
 import pt.isel.ps.energysales.teams.data.table.TeamTable
 import pt.isel.ps.energysales.teams.domain.Team
 import pt.isel.ps.energysales.users.data.entity.UserEntity
-
-object TeamServices : Table() {
-    val team = reference("team", TeamTable)
-    val service = reference("service", ServiceTable)
-    override val primaryKey = PrimaryKey(team, service)
-}
 
 class TeamEntity(
     id: EntityID<Int>,
@@ -36,4 +31,5 @@ class TeamEntity(
     var manager by UserEntity optionalReferencedOn TeamTable.manager
     val sellers by SellerEntity optionalReferrersOn SellerTable.team
     var services by ServiceEntity via TeamServices
+    var clients by ClientEntity via TeamClients
 }

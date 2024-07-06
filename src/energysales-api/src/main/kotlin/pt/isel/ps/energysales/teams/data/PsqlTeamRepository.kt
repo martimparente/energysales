@@ -3,6 +3,7 @@ package pt.isel.ps.energysales.teams.data
 import SellerEntity
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.SortOrder
+import pt.isel.ps.energysales.clients.data.ClientEntity
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.services.data.entity.ServiceEntity
@@ -145,6 +146,18 @@ class PsqlTeamRepository : TeamRepository {
             val team = TeamEntity.findById(teamId) ?: return@dbQuery false
             val service = ServiceEntity.findById(serviceId) ?: return@dbQuery false
             team.services = SizedCollection(team.services + service)
+            true
+        }
+
+    override suspend fun addClientToTeam(
+        teamId: Int,
+        clientId: Int,
+    ): Boolean =
+        dbQuery {
+            // add a client to team - is a many to many relationship on
+            val team = TeamEntity.findById(teamId) ?: return@dbQuery false
+            val client = ClientEntity.findById(clientId) ?: return@dbQuery false
+            team.clients = SizedCollection(team.clients + client)
             true
         }
 }

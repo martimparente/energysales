@@ -41,4 +41,9 @@ interface TeamRepository {
         teamId: Int,
         serviceId: Int,
     ): Boolean
+
+    suspend fun addClientToTeam(
+        teamId: Int,
+        clientId: Int,
+    ): Boolean
 }

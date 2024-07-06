@@ -75,3 +75,9 @@ data class AddServiceToTeamRequest(
     val teamId: String,
     val serviceId: String,
 )
+
+@Serializable
+data class AddClientToTeamRequest(
+    val teamId: String,
+    val clientId: String,
+)
