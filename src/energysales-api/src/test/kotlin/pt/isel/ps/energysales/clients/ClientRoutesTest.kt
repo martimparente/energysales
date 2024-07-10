@@ -29,7 +29,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.CLIENTS) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "Location 1"))
+                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "Location 1", 1, null))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.CLIENTS}/11")
                     response.shouldHaveStatus(HttpStatusCode.Created)
@@ -47,7 +47,7 @@ class ClientRoutesTest : BaseRouteTest() {
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "newLocation"))
+                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "newLocation", 1, null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -153,7 +153,7 @@ class ClientRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", 2)
-                    setBody(UpdateClientRequest("newClient", "123456789", "123456789", "newLocation"))
+                    setBody(UpdateClientRequest(2, "newClient", "123456789", "123456789", "newLocation", 1, null))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
@@ -165,7 +165,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     parameter("id", 2)
-                    setBody(UpdateClientRequest("newClient", "123456789", "123456789", "newLocation"))
+                    setBody(UpdateClientRequest(2, "newClient", "123456789", "123456789", "newLocation", 1, null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -193,7 +193,7 @@ class ClientRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
-                    setBody(UpdateClientRequest("nonClient", "123456789", "123456789", "newLocation"))
+                    setBody(UpdateClientRequest(-1, "nonClient", "123456789", "123456789", "newLocation", 1, null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.clientNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -208,7 +208,7 @@ class ClientRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
-                    setBody(UpdateClientRequest("", "123456789", "123456789", "newLocation"))
+                    setBody(UpdateClientRequest(-1, "123456789", "123456789", "newLocation", "lisboa", 1, null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

@@ -8,7 +8,6 @@ export function CreateServicePage() {
         createService,
         isFetching,
         error,
-        onCreateServiceButtonClick
     } = useCreateServicePage();
 
     const [serviceName, setServiceName] = useState('');

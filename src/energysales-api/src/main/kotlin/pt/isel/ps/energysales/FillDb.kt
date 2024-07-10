@@ -2,7 +2,7 @@ package pt.isel.ps.energysales
 
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
-import pt.isel.ps.energysales.clients.data.ClientTable
+import pt.isel.ps.energysales.clients.data.table.ClientTable
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.services.data.table.PriceTable
 import pt.isel.ps.energysales.services.data.table.ServiceTable
@@ -94,6 +94,8 @@ fun fillDb() {
             it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[location] = i
+            it[team] = i
+            it[seller] = i
         }
         PriceTable.insert {
             it[ponta] = i.toFloat()

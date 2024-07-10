@@ -42,12 +42,17 @@ data class CreateClientRequest(
     val nif: String,
     val phone: String,
     val district: String,
+    val teamId: Int,
+    val sellerId: Int?,
 )
 
 @Serializable
 data class UpdateClientRequest(
+    val id: Int,
     val name: String,
     val nif: String,
     val phone: String,
     val district: String,
+    val teamId: Int,
+    val sellerId: Int?,
 )

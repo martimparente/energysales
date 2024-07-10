@@ -4,6 +4,8 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import pt.isel.ps.energysales.clients.application.dto.CreateClientInput
+import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.data.ClientRepository
 import pt.isel.ps.energysales.clients.domain.Client
 import pt.isel.ps.energysales.teams.domain.Location
@@ -12,22 +14,16 @@ class ClientService(
     private val clientRepository: ClientRepository,
 ) {
     // Create
-    suspend fun createClient(
-        name: String,
-        nif: String,
-        phone: String,
-        district: String,
-    ): ClientCreationResult =
+    suspend fun createClient(input: CreateClientInput): ClientCreationResult =
         either {
-            ensure(name.length in 2..16) { ClientCreationError.ClientNameIsInvalid }
-            ensure(nif.length == 9) { ClientCreationError.ClientInfoIsInvalid }
-            ensure(phone.length == 9) { ClientCreationError.ClientInfoIsInvalid }
-            ensure(district.length in 2..16) { ClientCreationError.ClientInfoIsInvalid }
+            ensure(input.name.length in 2..16) { ClientCreationError.ClientNameIsInvalid }
+            ensure(input.nif.length == 9) { ClientCreationError.ClientInfoIsInvalid }
+            ensure(input.phone.length == 9) { ClientCreationError.ClientInfoIsInvalid }
+            ensure(input.district.length in 2..16) { ClientCreationError.ClientInfoIsInvalid }
             // ensure(!clientRepository.clientExistsByName(name)) { ClientCreationError.ClientAlreadyExists } //TODO SHOULD CHECK HERE OR LET SQL HANDLE IT?
 
-            clientRepository.create(
-                Client(-1, name, nif, phone, Location(district)),
-            )
+            val client = Client(-1, input.name, input.nif, input.phone, Location(input.district), input.teamId, input.sellerId)
+            clientRepository.create(client)
         }
 
     // Read
@@ -43,14 +39,26 @@ class ClientService(
     suspend fun getById(id: Int): Client? = clientRepository.getById(id)
 
     // Update
-    suspend fun updateClient(client: Client): ClientUpdatingResult =
+    suspend fun updateClient(input: UpdateClientInput): ClientUpdatingResult =
         either {
-            ensure(client.name.length in 2..16) { ClientUpdatingError.ClientNameIsInvalid }
-            ensure(client.nif.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
-            ensure(client.phone.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
-            ensure(client.location.district.length in 2..16) { ClientUpdatingError.ClientInfoIsInvalid }
-            ensure(clientRepository.clientExists(client.id)) { ClientUpdatingError.ClientNotFound }
-            val updatedClient = clientRepository.update(client)
+            ensure(input.name.length in 2..16) { ClientUpdatingError.ClientNameIsInvalid }
+            ensure(input.nif.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
+            ensure(input.phone.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
+            ensure(input.district.length in 2..16) { ClientUpdatingError.ClientInfoIsInvalid }
+            val client = clientRepository.getById(input.id)
+            ensureNotNull(client) { ClientUpdatingError.ClientNotFound }
+
+            val newClient =
+                client.copy(
+                    name = input.name,
+                    nif = input.nif,
+                    phone = input.phone,
+                    location = Location(input.district),
+                    teamId = input.teamId,
+                    sellerId = input.sellerId,
+                )
+
+            val updatedClient = clientRepository.update(newClient)
             ensureNotNull(updatedClient) { ClientUpdatingError.ClientNotFound }
         }
 

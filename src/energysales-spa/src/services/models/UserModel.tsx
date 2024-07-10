@@ -15,10 +15,13 @@ export interface ManagerInfo {
 }
 
 export interface CreateUserInputModel {
-    name: string,
-    surname: string,
-    email: string,
-    team: string
+    username: string;
+    password: string;
+    repeatPassword: string;
+    name: string;
+    surname: string;
+    email: string;
+    role: string;
 }
 
 export interface UpdateUserInputModel {

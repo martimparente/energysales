@@ -4,7 +4,7 @@ import SellerEntity
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import pt.isel.ps.energysales.clients.data.ClientEntity
+import pt.isel.ps.energysales.clients.data.entity.ClientEntity
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.services.data.entity.ServiceEntity
 import pt.isel.ps.energysales.teams.data.table.TeamClients

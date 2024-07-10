@@ -4,11 +4,13 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import pt.isel.ps.energysales.users.application.dto.CreateUserInput
 import pt.isel.ps.energysales.users.data.UserRepository
 import pt.isel.ps.energysales.users.domain.Role
 import pt.isel.ps.energysales.users.domain.SaltedHash
 import pt.isel.ps.energysales.users.domain.User
 import pt.isel.ps.energysales.users.domain.UserCredentials
+import pt.isel.ps.energysales.users.domain.toRole
 import pt.isel.ps.energysales.users.http.UserQueryParams
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -30,30 +32,22 @@ class UserService(
      * @param repeatPassword the password of the new user
      * @return the id of the new user
      */
-    suspend fun createUser(
-        username: String,
-        password: String,
-        repeatPassword: String,
-        name: String,
-        surname: String,
-        email: String,
-        role: Role,
-    ): Either<UserCreationError, Unit> =
+    suspend fun createUser(input: CreateUserInput): Either<UserCreationError, String> =
         either {
-            ensure(name.length in 2..16) { UserCreationError.UserNameIsInvalid }
-            ensure(surname.length in 2..16) { UserCreationError.UserSurnameIsInvalid }
-            ensure(isValidEmail(email)) { UserCreationError.UserEmailIsInvalid }
-            ensure(username.length in 5..16) { UserCreationError.UserIsInvalid }
-            ensure(password == repeatPassword) { UserCreationError.PasswordMismatch }
-            ensure(isSafePassword(password)) { UserCreationError.InsecurePassword }
-            ensure(userRepository.isEmailAvailable(email)) { UserCreationError.UserAlreadyExists }
-            ensure(!userRepository.userExists(username)) { UserCreationError.UserAlreadyExists }
+            ensure(input.name.length in 2..16) { UserCreationError.UserNameIsInvalid }
+            ensure(input.surname.length in 2..16) { UserCreationError.UserSurnameIsInvalid }
+            ensure(isValidEmail(input.email)) { UserCreationError.UserEmailIsInvalid }
+            ensure(input.username.length in 5..16) { UserCreationError.UserIsInvalid }
+            ensure(input.password == input.repeatPassword) { UserCreationError.PasswordMismatch }
+            ensure(isSafePassword(input.password)) { UserCreationError.InsecurePassword }
+            ensure(userRepository.isEmailAvailable(input.email)) { UserCreationError.UserAlreadyExists }
+            ensure(!userRepository.userExists(input.username)) { UserCreationError.UserAlreadyExists }
             // todo role ensure
 
             // todo what happens if the user suddenly exists? Transaction?
-            val saltedHash = hashingService.generateSaltedHash(password, SALT_NUM_OF_BYTES)
-            val user = User(-1, name, surname, email, role)
-            val userCredentials = UserCredentials(-1, username, saltedHash.hash, saltedHash.salt)
+            val saltedHash = hashingService.generateSaltedHash(input.password, SALT_NUM_OF_BYTES)
+            val user = User(-1, input.name, input.surname, input.email, input.role.toRole())
+            val userCredentials = UserCredentials(-1, input.username, saltedHash.hash, saltedHash.salt)
             userRepository.createUser(user, userCredentials)
         }
 

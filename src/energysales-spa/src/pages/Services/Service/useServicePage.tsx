@@ -1,29 +1,29 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useGetService, useUpdateService, useDeleteService } from '../../../services/ServicesService';
-import { Service, UpdateServiceInputModel } from '../../../services/models/ServiceModel';
+import {useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {useDeleteService, useGetService, useUpdateService} from '../../../services/ServicesService';
+import {Service, UpdateServiceInputModel} from '../../../services/models/ServiceModel';
 
 export function useServicePage() {
     const navigate = useNavigate();
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
 
-    const { data: service, isLoading: isLoadingService } = useGetService(id || '');
-    const { mutateAsync: updateService } = useUpdateService();
-    const { mutateAsync: deleteService } = useDeleteService();
+    const {data: service, isLoading: isLoadingService} = useGetService(id || '');
+    const {mutateAsync: updateService} = useUpdateService();
+    const {mutateAsync: deleteService} = useDeleteService();
 
     const [error, setError] = useState<string | null>(null);
     const [editableService, setEditableService] = useState<UpdateServiceInputModel>();
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         if (editableService) {
             if (name in editableService.price) {
                 setEditableService({
                     ...editableService,
-                    price: { ...editableService.price, [name]: parseFloat(value) }
+                    price: {...editableService.price, [name]: parseFloat(value)}
                 });
             } else {
-                setEditableService({ ...editableService, [name]: value });
+                setEditableService({...editableService, [name]: value});
             }
         }
     };
@@ -50,7 +50,7 @@ export function useServicePage() {
                     cycleType: service!.cycleType,
                     periodName: service!.periodName,
                     periodNumPeriods: service!.periodNumPeriods,
-                    price: { ...service!.price }
+                    price: {...service!.price}
                 } as UpdateServiceInputModel
             )
         },

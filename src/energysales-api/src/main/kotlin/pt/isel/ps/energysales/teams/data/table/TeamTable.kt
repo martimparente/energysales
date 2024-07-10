@@ -2,7 +2,7 @@ package pt.isel.ps.energysales.teams.data.table
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
-import pt.isel.ps.energysales.clients.data.ClientTable
+import pt.isel.ps.energysales.clients.data.table.ClientTable
 import pt.isel.ps.energysales.services.data.table.ServiceTable
 import pt.isel.ps.energysales.users.data.table.UserTable
 

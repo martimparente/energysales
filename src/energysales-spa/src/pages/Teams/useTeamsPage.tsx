@@ -9,7 +9,6 @@ import {useNavigate} from "react-router-dom"
 import {CreateTeamInputModel, Team, UpdateTeamInputModel} from "../../services/models/TeamModel";
 import {useState} from "react";
 import {Column} from "../../components/GenericTable.tsx";
-import {useDisclosure} from "@mantine/hooks";
 import {ManagerInfo} from "../../services/models/UserModel.tsx";
 
 export function useTeamsPage() {
@@ -21,10 +20,6 @@ export function useTeamsPage() {
     const {mutateAsync: updateTeam} = useUpdateTeam();
     const {mutateAsync: deleteTeam} = useDeleteTeam();
     const {data: managersCandidates} = useGetManagerCandidates();
-
-    const [isCreating, {open: openCreateModal, close: closeCreateModal}] = useDisclosure(false);
-    const [isEditing, {open: openEditModal, close: closeEditModal}] = useDisclosure(false);
-
     const [error, setError] = useState<string | null>()
 
     if (fetchError && !error) {
@@ -56,17 +51,10 @@ export function useTeamsPage() {
         createTeam: async (input: CreateTeamInputModel) => await createTeam(input).catch(e => setError(e.message)),
         updateTeam: async (input: UpdateTeamInputModel) => await updateTeam(input).catch(e => setError(e.message)),
         deleteTeam: async (team: Team) => await deleteTeam(team.id).catch(e => setError(e.message)),
-        openCreateModal,
-        onEditButtonHandler: () => {// Optionally set the editing team here
-            openEditModal();
-        },
         onShowClickHandler: (team: Team) => navigate(`/teams/${team.id}`),
-        closeCreateModal,
-        closeEditModal,
         managersCandidates,
         mappedManagersCandidates,
-        isCreating,
-        isEditing,
+        onCreateTeamButtonClick: () => navigate(`/teams/create`),
         isFetching,
         error,
     }

@@ -1,34 +1,14 @@
 package pt.isel.ps.energysales.clients.data
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
+import SellerEntity
 import org.jetbrains.exposed.sql.SortOrder
+import pt.isel.ps.energysales.clients.data.entity.ClientEntity
+import pt.isel.ps.energysales.clients.data.table.ClientTable
 import pt.isel.ps.energysales.clients.domain.Client
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.teams.data.entity.LocationEntity
+import pt.isel.ps.energysales.teams.data.entity.TeamEntity
 import pt.isel.ps.energysales.teams.data.table.LocationTable
-
-object ClientTable : IntIdTable() {
-    val name = varchar("name", 50)
-    val nif = varchar("nif", 9).uniqueIndex()
-    val phone = varchar("phone", 9).uniqueIndex()
-    val location = reference("location", LocationTable)
-}
-
-class ClientEntity(
-    id: EntityID<Int>,
-) : IntEntity(id) {
-    companion object : IntEntityClass<ClientEntity>(ClientTable)
-
-    fun toClient() = Client(id.value, name, nif, phone, location.toLocation())
-
-    var name by ClientTable.name
-    var nif by ClientTable.nif
-    var phone by ClientTable.phone
-    var location by LocationEntity referencedOn ClientTable.location
-}
 
 class PsqlClientRepository : ClientRepository {
     override suspend fun getById(id: Int): Client? =
@@ -56,6 +36,8 @@ class PsqlClientRepository : ClientRepository {
                     nif = client.nif
                     phone = client.phone
                     location = LocationEntity.find { LocationTable.district eq client.location.district }.first()
+                    team = TeamEntity.findById(client.teamId) ?: throw IllegalArgumentException("Team not found")
+                    seller = client.sellerId?.let { SellerEntity.findById(it) }
                 }.id
                 .value
         }

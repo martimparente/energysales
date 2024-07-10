@@ -3,7 +3,7 @@ package pt.isel.ps.energysales.teams.data
 import SellerEntity
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.SortOrder
-import pt.isel.ps.energysales.clients.data.ClientEntity
+import pt.isel.ps.energysales.clients.data.entity.ClientEntity
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.services.data.entity.ServiceEntity

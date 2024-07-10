@@ -1,13 +1,12 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {CreateUserInputModel, User, UpdateUserInputModel} from "./models/UserModel.tsx";
+import {CreateUserInputModel, UpdateUserInputModel, User} from "./models/UserModel.tsx";
 import {ApiUris} from "./ApiUris";
 import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
 
 
 export function useCreateUser() {
     return useMutation({
-        mutationFn: (input: CreateUserInputModel) =>
-            mutateData(ApiUris.createUser, "POST", input),
+        mutationFn: (input: CreateUserInputModel) => mutateData(ApiUris.createUser, "POST", input),
     });
 }
 

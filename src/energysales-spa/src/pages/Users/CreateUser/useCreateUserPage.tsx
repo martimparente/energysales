@@ -1,29 +1,30 @@
-import { useState } from 'react';
-import { CreateUserInputModel } from '../../../services/models/UserModel';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {CreateUserInputModel} from '../../../services/models/UserModel';
+import {useCreateUser} from "../../../services/UsersService.tsx";
+
 
 export function useCreateUserPage() {
-    const [isFetching, setIsFetching] = useState(false);
+    const {control, handleSubmit} = useForm<CreateUserInputModel>({
+        defaultValues: {
+            username: '',
+            password: '',
+            repeatPassword: '',
+            name: '',
+            surname: '',
+            email: '',
+            role: ''
+        }
+    });
+
+    const {mutateAsync: createUser, isPending} = useCreateUser();
     const [error, setError] = useState<string | null>(null);
 
-    const createUser = async (input: CreateUserInputModel) => {
-        setIsFetching(true);
-        setError(null);
-
-        try {
-            // Replace with your actual API call logic
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            console.log('User created:', input);
-        } catch (e) {
-            setError('Failed to create user');
-        } finally {
-            setIsFetching(false);
-        }
-    };
-
     return {
-        createUser,
-        isFetching,
+        control,
+        handleSubmit,
+        createUser: async (input: CreateUserInputModel) => await createUser(input).catch(() => setError("error")),
+        isPending,
         error,
-        onCreateUserButtonClick: () => {} // Placeholder, you can extend this as needed
     };
 }

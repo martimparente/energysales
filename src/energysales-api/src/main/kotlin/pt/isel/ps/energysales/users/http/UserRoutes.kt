@@ -7,6 +7,7 @@ import io.ktor.resources.Resource
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
+import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -20,7 +21,7 @@ import pt.isel.ps.energysales.users.application.ResetPasswordError
 import pt.isel.ps.energysales.users.application.RoleReadingError
 import pt.isel.ps.energysales.users.application.UserCreationError
 import pt.isel.ps.energysales.users.application.UserService
-import pt.isel.ps.energysales.users.domain.toRole
+import pt.isel.ps.energysales.users.application.dto.CreateUserInput
 import pt.isel.ps.energysales.users.http.model.ChangePasswordRequest
 import pt.isel.ps.energysales.users.http.model.CreateUserRequest
 import pt.isel.ps.energysales.users.http.model.LoginRequest
@@ -89,21 +90,22 @@ fun Route.userRoutes(userService: UserService) {
         authorize("ADMIN") {
             post(Uris.USERS) {
                 val body = call.receive<CreateUserRequest>()
-                val res =
-                    userService.createUser(
+                val input =
+                    CreateUserInput(
                         body.username,
                         body.password,
                         body.repeatPassword,
                         body.name,
                         body.surname,
                         body.email,
-                        body.role.toRole(),
+                        body.role,
                     )
+                val res = userService.createUser(input)
 
                 when (res) {
                     is Right -> {
+                        call.response.header("Location", "${Uris.USERS}/${res.value}")
                         call.response.status(HttpStatusCode.Created)
-                        // todo call.response.header("Location", "${Uris.USERS}/${res.value}")
                     }
 
                     is Left ->

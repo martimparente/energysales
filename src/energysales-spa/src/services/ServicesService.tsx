@@ -42,7 +42,7 @@ export function useUpdateService() {
 export function useDeleteService() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (id : string) =>
+        mutationFn: (id: string) =>
             mutateData(ApiUris.deleteService(id), "DELETE"),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['services']});

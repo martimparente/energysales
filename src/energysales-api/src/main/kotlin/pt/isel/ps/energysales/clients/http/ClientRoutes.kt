@@ -18,11 +18,11 @@ import pt.isel.ps.energysales.clients.application.ClientCreationError
 import pt.isel.ps.energysales.clients.application.ClientDeletingError
 import pt.isel.ps.energysales.clients.application.ClientService
 import pt.isel.ps.energysales.clients.application.ClientUpdatingError
-import pt.isel.ps.energysales.clients.domain.Client
+import pt.isel.ps.energysales.clients.application.dto.CreateClientInput
+import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
-import pt.isel.ps.energysales.teams.domain.Location
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.respondProblem
 
@@ -46,8 +46,17 @@ fun Route.clientRoutes(clientService: ClientService) {
 
     post<ClientResource> {
         val body = call.receive<CreateClientRequest>()
+        val input =
+            CreateClientInput(
+                body.name,
+                body.nif,
+                body.phone,
+                body.district,
+                body.teamId,
+                body.sellerId,
+            )
 
-        val res = clientService.createClient(body.name, body.nif, body.phone, body.district)
+        val res = clientService.createClient(input)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -86,9 +95,18 @@ fun Route.clientRoutes(clientService: ClientService) {
 
     put<ClientResource.Id> { pathParams ->
         val body = call.receive<UpdateClientRequest>()
-        val updatedClient = Client(pathParams.id, body.name, body.nif, body.phone, Location(body.district))
+        val input =
+            UpdateClientInput(
+                body.id,
+                body.name,
+                body.nif,
+                body.phone,
+                body.district,
+                body.teamId,
+                body.sellerId,
+            )
 
-        val res = clientService.updateClient(updatedClient)
+        val res = clientService.updateClient(input)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.OK)

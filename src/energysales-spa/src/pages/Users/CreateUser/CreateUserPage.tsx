@@ -1,74 +1,112 @@
-import {CreateUserInputModel} from '../../../services/models/UserModel'
-import {Button, Group, TextInput} from "@mantine/core"
-import React, {useState} from "react"
-import {useCreateUserPage} from "./useCreateUserPage.tsx"
+import {Button, Group, PasswordInput, Select, TextInput} from '@mantine/core';
+import {Controller} from 'react-hook-form';
+import {useCreateUserPage} from './useCreateUserPage.tsx';
 
 export function CreateUserPage() {
     const {
+        control,
+        handleSubmit,
         createUser,
-        isFetching,
+        isPending,
         error,
     } = useCreateUserPage();
-
-    const [name, setName] = useState('');
-    const [surname, setSurname] = useState('');
-    const [email, setEmail] = useState('');
-    const [team, setTeam] = useState('');
-
-    const handleCreateUser = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const input: CreateUserInputModel = {
-            name: name,
-            surname: surname,
-            email: email,
-            team: team
-        };
-        await createUser(input);
-        setName('');
-        setSurname('');
-        setEmail('');
-        setTeam('');
-    };
 
     return (
         <div>
             <h1>Create User</h1>
-            <form onSubmit={(e) => handleCreateUser(e)}>
-                <TextInput
-                    label="First Name"
-                    placeholder="Enter first name"
-                    value={name}
-                    onChange={(e) => setName(e.currentTarget.value)}
-                    required
+            <form onSubmit={handleSubmit(createUser)}>
+                <Controller
+                    name="username"
+                    control={control}
+                    render={({field}) => (
+                        <TextInput
+                            label="Username"
+                            placeholder="Enter username"
+                            {...field}
+                            required
+                        />
+                    )}
                 />
-                <TextInput
-                    label="Surname"
-                    placeholder="Enter surname"
-                    value={surname}
-                    onChange={(e) => setSurname(e.currentTarget.value)}
-                    required
+                <Controller
+                    name="password"
+                    control={control}
+                    render={({field}) => (
+                        <PasswordInput
+                            label="Password"
+                            placeholder="Enter password"
+                            {...field}
+                            required
+                        />
+                    )}
                 />
-                <TextInput
-                    label="Email"
-                    placeholder="Enter email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.currentTarget.value)}
-                    required
+                <Controller
+                    name="repeatPassword"
+                    control={control}
+                    render={({field}) => (
+                        <PasswordInput
+                            label="Repeat Password"
+                            placeholder="Repeat password"
+                            {...field}
+                            required
+                        />
+                    )}
                 />
-                <TextInput
-                    label="Team"
-                    placeholder="Enter team"
-                    value={team}
-                    onChange={(e) => setTeam(e.currentTarget.value)}
-                    required
+                <Controller
+                    name="name"
+                    control={control}
+                    render={({field}) => (
+                        <TextInput
+                            label="First Name"
+                            placeholder="Enter first name"
+                            {...field}
+                            required
+                        />
+                    )}
+                />
+                <Controller
+                    name="surname"
+                    control={control}
+                    render={({field}) => (
+                        <TextInput
+                            label="Surname"
+                            placeholder="Enter surname"
+                            {...field}
+                            required
+                        />
+                    )}
+                />
+                <Controller
+                    name="email"
+                    control={control}
+                    render={({field}) => (
+                        <TextInput
+                            label="Email"
+                            placeholder="Enter email"
+                            type="email"
+                            {...field}
+                            required
+                        />
+                    )}
+                />
+                <Controller
+                    name="role"
+                    control={control}
+                    render={({field}) => (
+                        <Select
+                            label="Role"
+                            placeholder="Select role"
+                            data={['Admin', 'User']}
+                            {...field}
+                            required
+                        />
+                    )}
                 />
                 <Group mt="md">
                     <Button type="submit">Create</Button>
                 </Group>
             </form>
 
-            {isFetching && <p>Loading...</p>}
+            {isPending && <p>Loading...</p>}
             {error && <p>{error}</p>}
         </div>
     );

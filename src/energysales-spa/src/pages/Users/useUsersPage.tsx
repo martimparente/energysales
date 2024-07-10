@@ -1,6 +1,6 @@
 import {useCreateUser, useDeleteUser, useGetUsers, useUpdateUser} from '../../services/UsersService';
 import {useNavigate} from "react-router-dom"
-import {CreateUserInputModel, UpdateUserInputModel, User} from "../../services/models/UserModel.tsx";
+import {UpdateUserInputModel, User} from "../../services/models/UserModel.tsx";
 import {Column} from '../../components/GenericTable';
 import {useState} from "react";
 
