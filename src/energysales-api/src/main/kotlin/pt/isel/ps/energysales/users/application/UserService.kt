@@ -119,13 +119,9 @@ class UserService(
             userRepository.changeUserRole(uid, role)
         }
 
-    suspend fun getUsers(params: UserQueryParams): UsersReadingResult =
+    suspend fun getUsers(params: UserQueryParams): Either<UserReadingError, List<User>> =
         either {
-            if (params.role == "MANAGER" && params.available == true) {
-                userRepository.getManagerCandidates()
-            } else {
-                userRepository.getAll()
-            }
+            userRepository.getAll()
         }
 
     suspend fun getUser(uid: Int): UserReadingResult =

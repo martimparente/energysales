@@ -13,11 +13,21 @@ import {ClientPage} from "../pages/Clients/Client/ClientPage.tsx";
 import {ClientsPage} from "../pages/Clients/ClientsPage.tsx";
 import {SettingsPage} from "../pages/Settings/SettingsPage.tsx";
 import {ProtectedRouteAdmin} from "./ProtectedRouteAdmin.tsx";
-import {ProtectedRouteSeller} from "./ProtectedRouteSeller.tsx";
+import {ProtectedRouteManager} from "./ProtectedRouteManager.tsx";
 import {AuthLayout} from "../providers/AuthLayout.tsx";
 import {CreateServicePage} from "../pages/Services/CreateService/CreateServicePage.tsx";
 import {CreateUserPage} from "../pages/Users/CreateUser/CreateUserPage.tsx";
 import {CreateTeamPage} from "../pages/Teams/CreateTeam/CreateTeamPage.tsx";
+import {
+    IconBrandAsana,
+    IconBuilding,
+    IconBulb,
+    IconHome,
+    IconKey,
+    IconLogin2,
+    IconSettings,
+    IconUsersGroup
+} from "@tabler/icons-react";
 /*
 const PrivateRoutes = () => {
     const {isLoading, data} = useIsAuthenticated();
@@ -30,6 +40,17 @@ const PrivateRoutes = () => {
         return <Navigate to="/login"/>
     } else return <Outlet/>
 }*/
+
+export const sidebarLinks = [
+    {link: '/', label: 'Home', icon: IconHome, roles: ['admin', 'manager']},
+    {link: '/login', label: 'Login', icon: IconLogin2, roles: ['admin', 'manager']},
+    {link: '/forgot-password', label: 'Forgot Password', icon: IconKey, roles: ['admin', 'manager']},
+    {link: '/teams', label: 'Teams', icon: IconBrandAsana, roles: ['admin']},
+    {link: '/users', label: 'Users', icon: IconUsersGroup, roles: ['admin']},
+    {link: '/services', label: 'Services', icon: IconBulb, roles: ['admin']},
+    {link: '/clients', label: 'Clients', icon: IconBuilding, roles: ['admin', 'manager']},
+    {link: '/settings', label: 'Settings', icon: IconSettings, roles: ['admin', 'manager']},
+];
 
 const routes = [
     {
@@ -52,7 +73,7 @@ const routes = [
                 ]
             },
             {
-                element: <ProtectedRouteSeller/>,
+                element: <ProtectedRouteManager/>,
                 children: [
                     {path: "/", element: <HomePage/>},
                     {path: "/clients", element: <ClientsPage/>},

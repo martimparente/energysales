@@ -63,6 +63,6 @@ export const authProvider: AuthProvider = {
         }
         return Promise.resolve();
     },
-    getIdentity: () => Promise.resolve({id: 'user', fullName: 'John Doe'}),
+    getIdentity: () => Promise.resolve({id: 'user', role: 'admin'}),
     getRoles: () => Promise.resolve([]),
 };

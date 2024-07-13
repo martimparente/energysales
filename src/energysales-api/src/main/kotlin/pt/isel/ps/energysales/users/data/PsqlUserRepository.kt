@@ -105,13 +105,6 @@ class PsqlUserRepository : UserRepository {
                 ?.toRole()
         }
 
-    override suspend fun getManagerCandidates(): List<User> =
-        dbQuery {
-            UserEntity
-                .find { UserTable.role eq RoleEntity.find { RoleTable.name eq "MANAGER" }.first().name }
-                .map { User(it.id.value, it.name, it.surname, it.email, it.role.toRole()) }
-        }
-
     override suspend fun getAll(): List<User> =
         dbQuery {
             UserEntity.all().map { it.toUser() }

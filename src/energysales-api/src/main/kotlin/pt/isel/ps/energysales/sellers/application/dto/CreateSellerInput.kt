@@ -6,3 +6,9 @@ data class CreateSellerInput(
     val email: String,
     val team: Int? = null,
 )
+
+data class GetAllSellerInput(
+    val lastKeySeen: Int? = null,
+    val noTeam: Boolean = false,
+    val searchQuery: String?,
+)

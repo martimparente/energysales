@@ -1,3 +1,5 @@
+package pt.isel.ps.energysales.sellers.data.entity
+
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

@@ -31,8 +31,6 @@ interface UserRepository {
         roleName: String,
     ): Boolean
 
-    suspend fun getManagerCandidates(): List<User>
-
     suspend fun getAll(): List<User>
 
     suspend fun getAllKeyPaging(

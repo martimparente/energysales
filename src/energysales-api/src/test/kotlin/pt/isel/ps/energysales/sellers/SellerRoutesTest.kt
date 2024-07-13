@@ -79,7 +79,7 @@ class SellerRoutesTest : BaseRouteTest() {
                     parameter("id", 1)
                 }.also { response ->
                     val seller = response.call.response.body<SellerJSON>()
-                    seller.uid.shouldBe("1")
+                    seller.id.shouldBe("1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }

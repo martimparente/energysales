@@ -1,6 +1,6 @@
 package pt.isel.ps.energysales.teams.data
 
-import SellerEntity
+import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.SortOrder
 import pt.isel.ps.energysales.clients.data.entity.ClientEntity

@@ -34,7 +34,6 @@ import pt.isel.ps.energysales.users.http.model.respondProblem
 
 data class UserQueryParams(
     val role: String?,
-    val available: Boolean?,
 )
 
 @Resource(Uris.USERS)
@@ -131,6 +130,36 @@ fun Route.userRoutes(userService: UserService) {
                 }
             }
 
+            // ROUTE TO get manager candidates for a team, query parameters are "role" and "available"
+            get(Uris.USERS) {
+                val params = UserQueryParams(call.request.queryParameters["role"])
+
+                val res = userService.getUsers(params)
+
+                when (res) {
+                    is Right -> {
+                        val users = res.value.map { UserJSON.fromUser(it) }
+                        call.respond(users)
+                    }
+
+                    is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
+                }
+            }
+
+            // Get user by id
+            get(Uris.USERS_BY_ID) {
+                val uid =
+                    call.parameters["userId"]?.toIntOrNull()
+                        ?: return@get call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
+
+                val res = userService.getUser(uid)
+
+                when (res) {
+                    is Right -> call.respond(UserJSON.fromUser(res.value))
+                    is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
+                }
+            }
+
             route(Uris.USER_CHANGE_PASSWORD) {
                 post {
                     val uid =
@@ -197,39 +226,6 @@ fun Route.userRoutes(userService: UserService) {
                 }
             }
 
-            // ROUTE TO get manager candidates for a team, query parameters are "role" and "available"
-            get(Uris.USERS) {
-                val params =
-                    UserQueryParams(
-                        call.request.queryParameters["role"],
-                        call.request.queryParameters["available"]?.toBoolean(),
-                    )
-
-                val res = userService.getUsers(params)
-
-                when (res) {
-                    is Right -> {
-                        val managers = res.value.map { UserJSON.fromUser(it) }
-                        call.respond(managers)
-                    }
-
-                    is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
-                }
-            }
-
-            // Get user by id
-            get(Uris.USERS_BY_ID) {
-                val uid =
-                    call.parameters["userId"]?.toIntOrNull()
-                        ?: return@get call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
-
-                val res = userService.getUser(uid)
-
-                when (res) {
-                    is Right -> call.respond(UserJSON.fromUser(res.value))
-                    is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
-                }
-            }
         }
     }
 }

@@ -20,4 +20,6 @@ interface SellerRepository {
     suspend fun update(seller: Seller): Seller?
 
     suspend fun delete(seller: Seller): Boolean
+
+    suspend fun getSellersWithNoTeam(searchQuery: String?): List<Seller>
 }

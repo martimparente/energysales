@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerInput
+import pt.isel.ps.energysales.sellers.application.dto.GetAllSellerInput
 import pt.isel.ps.energysales.sellers.data.SellerRepository
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.users.domain.Role
@@ -22,7 +23,10 @@ class SellerService(
         }
 
     // Read
-    suspend fun getAllSellers() = sellerRepository.getAll()
+    suspend fun getAllSellers(input: GetAllSellerInput): Either<SellerReadingError, List<Seller>> = either {
+        if (input.noTeam) sellerRepository.getSellersWithNoTeam(input.searchQuery)
+        else sellerRepository.getAll()
+    }
 
     suspend fun getAllSellersPaging(
         pageSize: Int,
@@ -51,6 +55,7 @@ class SellerService(
 
 typealias SellerCreationResult = Either<SellerCreationError, Int>
 typealias SellerReadingResult = Either<SellerReadingError, Seller>
+
 typealias SellerUpdatingResult = Either<SellerUpdatingError, Seller>
 typealias SellerDeletingResult = Either<SellerDeletingError, Boolean>
 

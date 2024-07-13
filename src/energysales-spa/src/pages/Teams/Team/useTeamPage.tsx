@@ -6,40 +6,51 @@ import {
     useGetTeamDetails,
     useUpdateTeam
 } from '../../../services/TeamsService';
-import {useNavigate, useParams} from "react-router-dom"
+import {useParams} from "react-router-dom"
 import {Team, UpdateTeamInputModel} from "../../../services/models/TeamModel";
 import {useState} from "react";
+import {useDebounce} from "@uidotdev/usehooks";
+import {User} from "../../../services/models/UserModel.tsx";
 
 export function useTeamPage() {
 
-    const navigate = useNavigate();
     const {id} = useParams<string>()
-    const {lastKeySeen} = useParams<{ lastKeySeen: string }>();
-    const {data: teamDetails, isLoading: isLoadingTeamDetails} = useGetTeamDetails(id || '');
-    const {data: availableSellers,} = useGetAvailableSellers(lastKeySeen || "0");
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
+    const {data: availableSellers} = useGetAvailableSellers(debouncedSearchQuery);
+    const {data: teamDetails} = useGetTeamDetails(id || '');
     const {mutateAsync: addSeller} = useAddTeamSeller();
     const {mutateAsync: deleteSeller} = useDeleteTeamSeller();
+
+    const [selectedSeller, setSelectedSeller] = useState<string>("")
     const {mutateAsync: updateTeam} = useUpdateTeam();
     const {mutateAsync: deleteTeam} = useDeleteTeam();
-    const [sellerId, setSellerId] = useState<string>("")
+    const [isPending, setIsPending] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-
-    const handleUpdateTeamForm = async (input: UpdateTeamInputModel) => await updateTeam(input)
-    const handleDeleteTeam = async (team: Team) => await deleteTeam(team.id)
-    const handleSelectSellerChange = (value: string) => setSellerId(value)
-    const handleAddSelectSellerToTeam = () => addSeller({teamId: id!, sellerId: sellerId})
-    const handleDeleteSellerFromTeam = (sellerId: string) => deleteSeller({teamId: id!, sellerId: sellerId})
+    const handleUpdateTeam = async (input: UpdateTeamInputModel) => {
+        setIsPending(true);
+        try {
+            await updateTeam({ ...input, id: id! });
+            setIsPending(false);
+        } catch (error) {
+            setError("Failed to update team");
+            setIsPending(false);
+        }
+    };
 
     return {
         teamDetails,
-        isLoadingTeamDetails,
-        addSeller: addSeller,
-        updateTeam: handleUpdateTeamForm,
-        deleteTeam: handleDeleteTeam,
-        onShowClickHandler: (team: Team) => navigate(`/teams/${team.id}`),
         availableSellers,
-        handleSelectSellerChange,
-        handleAddSelectSellerToTeam,
-        handleDeleteSellerFromTeam,
+        updateTeam: async (input: UpdateTeamInputModel) => await updateTeam(input),
+        handleOnDeleteTeam: async (team: Team) => await deleteTeam(team.id),
+        handleOnSellerSearch: (string: string) => setSearchQuery(string),
+        handleOnSellerSelect: (item: User) => setSelectedSeller(item.id),
+        handleOnAddSellerToTeam: () => addSeller({teamId: id!, sellerId: selectedSeller}),
+        handleOnDeleteSellerFromTeam: (sellerId: string) => deleteSeller({teamId: id!, sellerId: sellerId}),
+        handleUpdateTeam,
+        isPending,
+        error,
     }
 }

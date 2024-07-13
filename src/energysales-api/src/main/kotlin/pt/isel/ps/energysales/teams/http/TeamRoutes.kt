@@ -171,6 +171,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Left ->
                 when (res.value) {
                     TeamSellersReadingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    TeamSellersReadingError.SellerNotFound -> TODO()
                 }
         }
     }
@@ -197,6 +198,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Left ->
                 when (res.value) {
                     TeamSellersReadingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    TeamSellersReadingError.SellerNotFound -> TODO()
                 }
         }
     }
@@ -213,6 +215,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Left ->
                 when (res.value) {
                     TeamSellersReadingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    TeamSellersReadingError.SellerNotFound -> TODO()
                 }
         }
     }

@@ -6,6 +6,15 @@ export interface User {
     role: string;
 }
 
+export interface Seller {
+    id: string;
+    name: string;
+    surname: string;
+    email: string;
+    role: string;
+}
+
+
 export interface ManagerInfo {
     id: string;
     name: string;

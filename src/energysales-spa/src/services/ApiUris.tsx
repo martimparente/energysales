@@ -14,15 +14,15 @@ export namespace ApiUris {
     export const updateTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`;
     export const deleteTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`;
 
-    export const addTeamUser = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/users`;
-    export const deleteTeamUser = (teamId: string, userId: string) => `${API_BASE_URL}/teams/${teamId}/users/${userId}`;
+    export const getAvailableSellers = (searchQuery : string ) => `${API_BASE_URL}/sellers?&noTeam=true&searchQuery=${searchQuery}`;
+    export const addTeamSeller = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/sellers`;
+    export const deleteTeamSeller = (teamId: string, sellerId: string) => `${API_BASE_URL}/teams/${teamId}/sellers/${sellerId}`;
 
     // Managers
     export const getManagerCandidates = () => `${API_BASE_URL}/users?role=MANAGER&available=true`;
 
     // Users
     export const getUsers = (lastKeySeen: string) => `${API_BASE_URL}/users?lastKeySeen=${lastKeySeen}`;
-    export const getUsersWithNoTeam = (lastKeySeen: string) => `${API_BASE_URL}/users?lastKeySeen=${lastKeySeen}&noTeam=true`;
     export const getUser = (userId: string) => `${API_BASE_URL}/users/${userId}`;
     export const createUser = `${API_BASE_URL}/users`;
     export const updateUser = (userId: string) => `${API_BASE_URL}/users/${userId}`;

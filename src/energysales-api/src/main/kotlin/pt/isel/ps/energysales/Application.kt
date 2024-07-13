@@ -66,7 +66,7 @@ fun Application.module() {
             hashingService = SHA256HashingService(),
         )
     }
-    val teamService by lazy { TeamService(teamRepository = PsqlTeamRepository()) }
+    val teamService by lazy { TeamService(teamRepository = PsqlTeamRepository(), sellerRepository = PsqlSellerRepository()) }
     val sellerService by lazy { SellerService(sellerRepository = PsqlSellerRepository()) }
     val productService by lazy { ServiceService(serviceRepository = PsqlServiceRepository()) }
     val clientService by lazy { ClientService(clientRepository = PsqlClientRepository()) }

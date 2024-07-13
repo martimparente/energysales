@@ -1,16 +1,17 @@
 package pt.isel.ps.energysales.sellers.data
 
-import SellerEntity
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
+import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.data.entity.TeamEntity
 import pt.isel.ps.energysales.users.data.entity.RoleEntity
 import pt.isel.ps.energysales.users.data.entity.UserEntity
 import pt.isel.ps.energysales.users.data.table.RoleTable
+import pt.isel.ps.energysales.users.data.table.UserTable
 import pt.isel.ps.energysales.users.domain.Role
 
 class PsqlSellerRepository : SellerRepository {
@@ -83,5 +84,20 @@ class PsqlSellerRepository : SellerRepository {
         dbQuery {
             SellerEntity.findById(seller.user.id)?.delete() ?: false
             true
+        }
+
+    override suspend fun getSellersWithNoTeam(searchQuery: String?): List<Seller> =
+        dbQuery {
+            val query = SellerTable
+                .innerJoin(UserTable)
+                .select(SellerTable.columns)
+                .where {
+                    if (searchQuery != null)
+                        SellerTable.team.isNull() and (UserTable.name like "%$searchQuery%")
+                    else
+                        SellerTable.team.isNull()
+                }
+
+            SellerEntity.wrapRows(query).map { it.toSeller() }
         }
 }

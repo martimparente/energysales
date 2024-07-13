@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import pt.isel.ps.energysales.sellers.data.SellerRepository
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.teams.data.TeamRepository
 import pt.isel.ps.energysales.teams.domain.Location
@@ -12,6 +13,7 @@ import pt.isel.ps.energysales.teams.domain.TeamDetails
 
 class TeamService(
     private val teamRepository: TeamRepository,
+    private val sellerRepository: SellerRepository,
 ) {
     // Create
     suspend fun createTeam(
@@ -70,6 +72,8 @@ class TeamService(
     ): TeamAddSellerResult =
         either {
             ensure(teamRepository.teamExists(teamId)) { TeamSellersReadingError.TeamNotFound }
+            ensureNotNull(sellerRepository.sellerExists(sellerId)) { TeamSellersReadingError.SellerNotFound }
+
             teamRepository.addSellerToTeam(teamId, sellerId)
         }
 
@@ -137,6 +141,7 @@ sealed interface TeamDeletingError {
 
 sealed interface TeamSellersReadingError {
     data object TeamNotFound : TeamSellersReadingError
+    data object SellerNotFound : TeamSellersReadingError
 }
 
 sealed interface TeamAddSellerError {

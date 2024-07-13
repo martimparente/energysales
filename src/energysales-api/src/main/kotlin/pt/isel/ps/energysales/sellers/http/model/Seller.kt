@@ -5,7 +5,7 @@ import pt.isel.ps.energysales.sellers.domain.Seller
 
 @Serializable
 data class SellerJSON(
-    val uid: String,
+    val id: String,
     val name: String,
     val surname: String,
     val email: String,

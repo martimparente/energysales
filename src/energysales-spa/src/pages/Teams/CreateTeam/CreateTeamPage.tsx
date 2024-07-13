@@ -1,15 +1,32 @@
-import {Button, Group, NumberInput, TextInput} from '@mantine/core';
+import {Button, Group, NumberInput, Text, TextInput} from '@mantine/core';
 import {Controller} from 'react-hook-form';
 import {useCreateTeamPage} from './useCreateTeamPage.tsx';
+import {Seller} from "../../../services/models/UserModel.tsx";
+import {ReactSearchAutocomplete} from "react-search-autocomplete";
 
 export function CreateTeamPage() {
     const {
+        availableUsers,
+        handleOnUsersSearch,
+        handleOnUsersSelect,
         control,
         handleSubmit,
         createTeam,
         isPending,
         error,
     } = useCreateTeamPage();
+
+    const formatResult = (item: Seller) => {
+        return (
+            <Group gap="sm">
+                {/*<Avatar src={item.image} size={36} radius="xl" />*/}
+                <div>
+                    <Text size="sm">{item.name}</Text>
+                    <Text size="xs" opacity={0.5}>{item.email}</Text>
+                </div>
+            </Group>
+        )
+    }
 
     return (
         <div>
@@ -39,17 +56,14 @@ export function CreateTeamPage() {
                         />
                     )}
                 />
-                <Controller
-                    name="managerId"
-                    control={control}
-                    render={({field}) => (
-                        <NumberInput
-                            label="Manager ID"
-                            placeholder="Enter manager ID"
-                            {...field}
-                        />
-                    )}
+
+                <ReactSearchAutocomplete<Seller>
+                    items={availableUsers}
+                    onSearch={handleOnUsersSearch}
+                    onSelect={handleOnUsersSelect}
+                    formatResult={formatResult}
                 />
+
                 <Group mt="md">
                     <Button type="submit">Create</Button>
                 </Group>

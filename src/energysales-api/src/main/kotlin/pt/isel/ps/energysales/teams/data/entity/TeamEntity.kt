@@ -1,6 +1,6 @@
 package pt.isel.ps.energysales.teams.data.entity
 
-import SellerEntity
+import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID

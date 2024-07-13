@@ -3,7 +3,7 @@
 import {Navigate, Outlet} from 'react-router-dom';
 import {useAuth} from '../providers/AuthContext';
 
-export const ProtectedRouteSeller = () => {
+export const ProtectedRouteManager = () => {
     const {auth} = useAuth();
 
     if (auth === null) {

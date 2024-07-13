@@ -17,6 +17,7 @@ import pt.isel.ps.energysales.sellers.application.SellerCreationError
 import pt.isel.ps.energysales.sellers.application.SellerDeletingError
 import pt.isel.ps.energysales.sellers.application.SellerService
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerInput
+import pt.isel.ps.energysales.sellers.application.dto.GetAllSellerInput
 import pt.isel.ps.energysales.sellers.http.model.CreateSellerRequest
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.users.http.model.Problem
@@ -26,6 +27,7 @@ import pt.isel.ps.energysales.users.http.model.respondProblem
 class SellerResource(
     val lastKeySeen: Int? = null,
     val noTeam: Boolean = false,
+    val searchQuery: String? = null
 ) {
     @Resource("{id}")
     class Id(
@@ -36,9 +38,18 @@ class SellerResource(
 
 fun Route.sellerRoutes(sellerService: SellerService) {
     get<SellerResource> { queryParams ->
-        val sellers = sellerService.getAllSellersPaging(10, queryParams.lastKeySeen, queryParams.noTeam)
-        val sellersResponse = sellers.map { seller -> SellerJSON.fromSeller(seller) }
-        call.respond(sellersResponse)
+        val input = GetAllSellerInput(queryParams.lastKeySeen, queryParams.noTeam, queryParams.searchQuery)
+
+        val res = sellerService.getAllSellers(input)
+
+        when (res) {
+            is Right -> {
+                val sellers = res.value.map { SellerJSON.fromSeller(it) }
+                call.respond(sellers)
+            }
+
+            is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
+        }
     }
 
     post<SellerResource> {

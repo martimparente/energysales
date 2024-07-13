@@ -29,7 +29,7 @@ export function TeamsPage() {
     return (
         <div>
             <h1>Teams</h1>
-            <Button onClick={() => onCreateTeamButtonClick()} color={"green"}>Create Service</Button>
+            <Button onClick={() => onCreateTeamButtonClick()} color={"green"}>Create Team</Button>
 
             <Table>
                 <Table.Thead>
