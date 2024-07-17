@@ -2,8 +2,10 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {ApiUris} from "./ApiUris";
 import {
     AddTeamSellerInputModel,
+    AddTeamServiceInputModel,
     CreateTeamInputModel,
     DeleteTeamSellerInput,
+    DeleteTeamServiceInput,
     Team,
     TeamDetails,
     UpdateTeamInputModel
@@ -104,7 +106,7 @@ export function useAddTeamSeller() {
     });
 }
 
-// delete member to team
+// delete member of team
 export function useDeleteTeamSeller() {
     const queryClient = useQueryClient();
     return useMutation({
@@ -117,6 +119,41 @@ export function useDeleteTeamSeller() {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
             queryClient.invalidateQueries({queryKey: ["availableSellers"]});
+        },
+    });
+}
+
+// add service to team
+export function useAddServiceToTeam() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (input: AddTeamServiceInputModel) =>
+            fetch(ApiUris.addServiceToTeam(input.teamId), {
+                method: "PUT",
+                headers: AUTHORIZATION_HEADER,
+                body: JSON.stringify(input),
+            }),
+        onSuccess: () => {
+            // Invalidate and re-fetch the teams query to get the updated list
+            queryClient.invalidateQueries({queryKey: ["teamDetails"]});
+            queryClient.invalidateQueries({queryKey: ["availableSellers"]});
+        },
+    });
+}
+
+// delete service of team
+export function useDeleteServiceFromTeam() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (input: DeleteTeamServiceInput) =>
+            fetch(ApiUris.deleteServiceFromTeam(input.teamId, input.serviceId), {
+                method: "DELETE",
+                headers: AUTHORIZATION_HEADER,
+            }),
+        onSuccess: () => {
+            // Invalidate and refetch the teams query to get the updated list
+            queryClient.invalidateQueries({queryKey: ["teamDetails"]});
+            queryClient.invalidateQueries({queryKey: ["teamDetails"]});
         },
     });
 }

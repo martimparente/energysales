@@ -12,7 +12,7 @@ const energySalesIcon = <img src={logoName} width="150" height="50" alt="Logo"/>
 
 export function Sider() {
     const [active, setActive] = useState('');
-/*    const user = authProvider.getIdentity()*/
+    /*    const user = authProvider.getIdentity()*/
 
     const links = sidebarLinks.filter(item => item.roles.includes("admin")).map((item) => (
         <Link

@@ -22,6 +22,7 @@ import pt.isel.ps.energysales.teams.http.model.AddServiceToTeamRequest
 import pt.isel.ps.energysales.teams.http.model.AddTeamToSellerRequest
 import pt.isel.ps.energysales.teams.http.model.CreateTeamRequest
 import pt.isel.ps.energysales.teams.http.model.LocationJSON
+import pt.isel.ps.energysales.teams.http.model.TeamDetailsJSON
 import pt.isel.ps.energysales.teams.http.model.TeamJSON
 import pt.isel.ps.energysales.teams.http.model.UpdateTeamRequest
 import pt.isel.ps.energysales.users.http.model.Problem
@@ -98,6 +99,23 @@ class TeamRoutesTest : BaseRouteTest() {
                 }.also { response ->
                     val team = response.call.response.body<TeamJSON>()
                     team.id.shouldBe("1")
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                }
+        }
+
+    @Test
+    fun `Get Team by ID with Details - Success`() =
+        testApplication {
+            testClient()
+                .get(Uris.API + Uris.TEAMS_BY_ID) {
+                    headers.append("Authorization", "Bearer $adminToken")
+                    url {
+                        parameters.append("teamId", "1")
+                        parameters.append("include", "details")
+                    }
+                }.also { response ->
+                    val teamDeails = response.call.response.body<TeamDetailsJSON>()
+                    teamDeails.team.id.shouldBe("1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
@@ -337,8 +355,20 @@ class TeamRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.TEAMS_SERVICES) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "1")
-                    parameter("serviceId", "1")
                     setBody(AddServiceToTeamRequest("1", "1"))
+                }.also { response ->
+                    response.shouldHaveStatus(HttpStatusCode.OK)
+                }
+        }
+
+    @Test
+    fun `Delete Service from Team - Success`() =
+        testApplication {
+            testClient()
+                .delete(Uris.API + Uris.TEAMS_SERVICE) {
+                    headers.append("Authorization", "Bearer $adminToken")
+                    parameter("teamId", "1")
+                    parameter("serviceId", "1")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }

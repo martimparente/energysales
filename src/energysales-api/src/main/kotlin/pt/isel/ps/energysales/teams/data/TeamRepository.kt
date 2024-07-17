@@ -18,7 +18,7 @@ interface TeamRepository {
 
     suspend fun getById(id: Int): Team?
 
-    suspend fun getByIdWithMembers(id: Int): TeamDetails?
+    suspend fun getByIdWithDetails(id: Int): TeamDetails?
 
     suspend fun teamExists(id: Int): Boolean
 
@@ -39,6 +39,11 @@ interface TeamRepository {
 
     suspend fun addServiceToTeam(
         teamId: Int,
+        serviceId: Int,
+    ): Boolean
+
+    suspend fun deleteServiceFromTeam(
+        teamID: Int,
         serviceId: Int,
     ): Boolean
 

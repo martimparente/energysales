@@ -1,4 +1,5 @@
 import {User} from "./UserModel.tsx";
+import {Service} from "./ServiceModel.tsx";
 
 export interface Team {
     id: string;
@@ -14,6 +15,7 @@ interface Location {
 export interface TeamDetails {
     team: Team;
     members: User[];
+    services: Service[];
 }
 
 export interface CreateTeamInputModel {
@@ -37,4 +39,14 @@ export interface AddTeamSellerInputModel {
 export interface DeleteTeamSellerInput {
     teamId: string;
     sellerId: string;
+}
+
+export interface AddTeamServiceInputModel {
+    teamId: string,
+    serviceId: string
+}
+
+export interface DeleteTeamServiceInput {
+    teamId: string;
+    serviceId: string;
 }

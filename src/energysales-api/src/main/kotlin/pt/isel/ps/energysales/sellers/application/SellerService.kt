@@ -23,10 +23,14 @@ class SellerService(
         }
 
     // Read
-    suspend fun getAllSellers(input: GetAllSellerInput): Either<SellerReadingError, List<Seller>> = either {
-        if (input.noTeam) sellerRepository.getSellersWithNoTeam(input.searchQuery)
-        else sellerRepository.getAll()
-    }
+    suspend fun getAllSellers(input: GetAllSellerInput): Either<SellerReadingError, List<Seller>> =
+        either {
+            if (input.noTeam) {
+                sellerRepository.getSellersWithNoTeam(input.searchQuery)
+            } else {
+                sellerRepository.getAll()
+            }
+        }
 
     suspend fun getAllSellersPaging(
         pageSize: Int,

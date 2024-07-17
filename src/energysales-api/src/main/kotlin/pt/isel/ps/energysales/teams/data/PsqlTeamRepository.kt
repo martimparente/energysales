@@ -1,14 +1,18 @@
 package pt.isel.ps.energysales.teams.data
 
-import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import pt.isel.ps.energysales.clients.data.entity.ClientEntity
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
+import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import pt.isel.ps.energysales.sellers.domain.Seller
 import pt.isel.ps.energysales.services.data.entity.ServiceEntity
 import pt.isel.ps.energysales.teams.data.entity.LocationEntity
 import pt.isel.ps.energysales.teams.data.entity.TeamEntity
+import pt.isel.ps.energysales.teams.data.table.TeamServices
 import pt.isel.ps.energysales.teams.data.table.TeamTable
 import pt.isel.ps.energysales.teams.domain.Team
 import pt.isel.ps.energysales.teams.domain.TeamDetails
@@ -28,7 +32,7 @@ class PsqlTeamRepository : TeamRepository {
             TeamEntity.findById(id)?.toTeam()
         }
 
-    override suspend fun getByIdWithMembers(id: Int): TeamDetails =
+    override suspend fun getByIdWithDetails(id: Int): TeamDetails =
         dbQuery {
             TeamEntity
                 .findById(id)
@@ -36,6 +40,7 @@ class PsqlTeamRepository : TeamRepository {
                     TeamDetails(
                         it.toTeam(),
                         it.sellers.map { it.toSeller() },
+                        it.services.map { it.toService() },
                     )
                 } ?: throw IllegalArgumentException("Team not found")
         }
@@ -147,6 +152,16 @@ class PsqlTeamRepository : TeamRepository {
             val service = ServiceEntity.findById(serviceId) ?: return@dbQuery false
             team.services = SizedCollection(team.services + service)
             true
+        }
+
+    override suspend fun deleteServiceFromTeam(
+        teamID: Int,
+        serviceId: Int,
+    ): Boolean =
+        dbQuery {
+            TeamServices.deleteWhere {
+                (TeamServices.team eq teamID) and (TeamServices.service eq serviceId)
+            } > 0
         }
 
     override suspend fun addClientToTeam(

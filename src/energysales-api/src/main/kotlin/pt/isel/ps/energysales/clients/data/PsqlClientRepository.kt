@@ -1,11 +1,11 @@
 package pt.isel.ps.energysales.clients.data
 
-import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import org.jetbrains.exposed.sql.SortOrder
 import pt.isel.ps.energysales.clients.data.entity.ClientEntity
 import pt.isel.ps.energysales.clients.data.table.ClientTable
 import pt.isel.ps.energysales.clients.domain.Client
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
+import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import pt.isel.ps.energysales.teams.data.entity.LocationEntity
 import pt.isel.ps.energysales.teams.data.entity.TeamEntity
 import pt.isel.ps.energysales.teams.data.table.LocationTable

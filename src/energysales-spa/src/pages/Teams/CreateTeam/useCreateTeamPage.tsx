@@ -24,7 +24,6 @@ export function useCreateTeamPage() {
     const {data: availableUsers} = useGetAvailableSellers(debouncedSearchQuery);
 
 
-
     return {
         availableUsers,
         control,

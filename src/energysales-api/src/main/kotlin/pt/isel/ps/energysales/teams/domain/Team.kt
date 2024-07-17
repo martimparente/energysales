@@ -1,6 +1,7 @@
 package pt.isel.ps.energysales.teams.domain
 
 import pt.isel.ps.energysales.sellers.domain.Seller
+import pt.isel.ps.energysales.services.domain.Service
 
 data class Team(
     val id: Int,
@@ -12,4 +13,5 @@ data class Team(
 data class TeamDetails(
     val team: Team,
     val members: List<Seller>,
+    val services: List<Service>,
 )

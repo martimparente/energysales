@@ -27,7 +27,7 @@ import pt.isel.ps.energysales.users.http.model.respondProblem
 class SellerResource(
     val lastKeySeen: Int? = null,
     val noTeam: Boolean = false,
-    val searchQuery: String? = null
+    val searchQuery: String? = null,
 ) {
     @Resource("{id}")
     class Id(

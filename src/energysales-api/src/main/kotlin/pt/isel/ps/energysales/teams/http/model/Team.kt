@@ -2,6 +2,7 @@ package pt.isel.ps.energysales.teams.http.model
 
 import kotlinx.serialization.Serializable
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
+import pt.isel.ps.energysales.services.http.model.ServiceJSON
 import pt.isel.ps.energysales.teams.domain.Location
 import pt.isel.ps.energysales.teams.domain.Team
 import pt.isel.ps.energysales.teams.domain.TeamDetails
@@ -40,12 +41,14 @@ data class TeamJSON(
 data class TeamDetailsJSON(
     val team: TeamJSON,
     val members: List<SellerJSON>,
+    val services: List<ServiceJSON>,
 ) {
     companion object {
         fun fromTeamDetails(teamDetails: TeamDetails) =
             TeamDetailsJSON(
                 team = TeamJSON.fromTeam(teamDetails.team),
                 members = teamDetails.members.map { SellerJSON.fromSeller(it) },
+                services = teamDetails.services.map { ServiceJSON.fromService(it) },
             )
     }
 }

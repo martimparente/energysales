@@ -1,11 +1,11 @@
 package pt.isel.ps.energysales.clients.data.entity
 
-import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import pt.isel.ps.energysales.clients.data.table.ClientTable
 import pt.isel.ps.energysales.clients.domain.Client
+import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import pt.isel.ps.energysales.teams.data.entity.LocationEntity
 import pt.isel.ps.energysales.teams.data.entity.TeamEntity
 

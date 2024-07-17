@@ -88,15 +88,17 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun getSellersWithNoTeam(searchQuery: String?): List<Seller> =
         dbQuery {
-            val query = SellerTable
-                .innerJoin(UserTable)
-                .select(SellerTable.columns)
-                .where {
-                    if (searchQuery != null)
-                        SellerTable.team.isNull() and (UserTable.name like "%$searchQuery%")
-                    else
-                        SellerTable.team.isNull()
-                }
+            val query =
+                SellerTable
+                    .innerJoin(UserTable)
+                    .select(SellerTable.columns)
+                    .where {
+                        if (searchQuery != null) {
+                            SellerTable.team.isNull() and (UserTable.name like "%$searchQuery%")
+                        } else {
+                            SellerTable.team.isNull()
+                        }
+                    }
 
             SellerEntity.wrapRows(query).map { it.toSeller() }
         }

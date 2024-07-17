@@ -18,6 +18,7 @@ import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.teams.application.TeamAddClientError
 import pt.isel.ps.energysales.teams.application.TeamAddServiceError
 import pt.isel.ps.energysales.teams.application.TeamCreationError
+import pt.isel.ps.energysales.teams.application.TeamDeleteServiceError
 import pt.isel.ps.energysales.teams.application.TeamDeletingError
 import pt.isel.ps.energysales.teams.application.TeamSellersReadingError
 import pt.isel.ps.energysales.teams.application.TeamService
@@ -61,7 +62,7 @@ class TeamResource(
         ) {
             @Resource("{serviceId}")
             class ServiceId(
-                val parent: Sellers,
+                val parent: Services,
                 val serviceId: Int,
             )
         }
@@ -72,7 +73,7 @@ class TeamResource(
         ) {
             @Resource("{clientId}")
             class ClientId(
-                val parent: Sellers,
+                val parent: Clients,
                 val clientId: Int,
             )
         }
@@ -106,9 +107,9 @@ fun Route.teamRoutes(teamService: TeamService) {
 
     get<TeamResource.TeamId> { pathParams ->
         val res =
-            if (pathParams.include == "members") {
+            if (pathParams.include == "details") {
                 val res =
-                    teamService.getByIdWithMembers(pathParams.teamId)
+                    teamService.getByIdWithDetails(pathParams.teamId)
                         ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 val teamDetailsJson = TeamDetailsJSON.fromTeamDetails(res)
                 call.response.status(HttpStatusCode.OK)
@@ -238,12 +239,39 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    TeamAddServiceError.SellerNotFound ->
+                    TeamAddServiceError.ServiceNotFound ->
                         call.respondProblem(
                             Problem.teamNotFound,
                             HttpStatusCode.NotFound,
                         ) // todo error message
                     TeamAddServiceError.TeamNotFound ->
+                        call.respondProblem(
+                            Problem.teamNotFound,
+                            HttpStatusCode.NotFound,
+                        ) // todo error message
+                }
+            }
+        }
+    }
+
+    delete<TeamResource.TeamId.Services.ServiceId> { pathParams ->
+        val serviceId = pathParams.serviceId
+        val teamId = pathParams.parent.parent.teamId
+        val res = teamService.deleteServiceFromTeam(teamId, serviceId)
+
+        when (res) {
+            is Right -> {
+                call.response.status(HttpStatusCode.OK)
+            }
+
+            is Left -> {
+                when (res.value) {
+                    TeamDeleteServiceError.ServiceNotFound ->
+                        call.respondProblem(
+                            Problem.teamNotFound,
+                            HttpStatusCode.NotFound,
+                        ) // todo error message
+                    TeamDeleteServiceError.TeamNotFound ->
                         call.respondProblem(
                             Problem.teamNotFound,
                             HttpStatusCode.NotFound,

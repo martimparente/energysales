@@ -1,4 +1,4 @@
-import {Button, Group, NumberInput, Text, TextInput} from '@mantine/core';
+import {Button, Group, Text, TextInput} from '@mantine/core';
 import {Controller} from 'react-hook-form';
 import {useCreateTeamPage} from './useCreateTeamPage.tsx';
 import {Seller} from "../../../services/models/UserModel.tsx";

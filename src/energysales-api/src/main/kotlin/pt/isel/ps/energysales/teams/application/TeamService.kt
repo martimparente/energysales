@@ -41,7 +41,7 @@ class TeamService(
 
     suspend fun getById(id: Int): Team? = teamRepository.getById(id)
 
-    suspend fun getByIdWithMembers(id: Int): TeamDetails? = teamRepository.getByIdWithMembers(id)
+    suspend fun getByIdWithDetails(id: Int): TeamDetails? = teamRepository.getByIdWithDetails(id)
 
     // Update
     suspend fun updateTeam(team: Team): TeamUpdatingResult =
@@ -93,6 +93,15 @@ class TeamService(
             teamRepository.addServiceToTeam(teamId, serviceId)
         }
 
+    suspend fun deleteServiceFromTeam(
+        teamID: Int,
+        serviceId: Int,
+    ): TeamDeleteServiceResult =
+        either {
+            ensure(teamRepository.teamExists(teamID)) { TeamDeleteServiceError.TeamNotFound }
+            teamRepository.deleteServiceFromTeam(teamID, serviceId)
+        }
+
     suspend fun addClientToTeam(
         teamId: Int,
         clientId: Int,
@@ -113,6 +122,7 @@ typealias TeamAddSellerResult = Either<TeamSellersReadingError, Boolean>
 typealias TeamDeleteSellerResult = Either<TeamSellersReadingError, Boolean>
 
 typealias TeamAddServiceResult = Either<TeamAddServiceError, Boolean>
+typealias TeamDeleteServiceResult = Either<TeamDeleteServiceError, Boolean>
 typealias TeamAddClientResult = Either<TeamAddClientError, Boolean>
 
 sealed interface TeamCreationError {
@@ -141,6 +151,7 @@ sealed interface TeamDeletingError {
 
 sealed interface TeamSellersReadingError {
     data object TeamNotFound : TeamSellersReadingError
+
     data object SellerNotFound : TeamSellersReadingError
 }
 
@@ -159,7 +170,13 @@ sealed interface TeamDeleteSellerError {
 sealed interface TeamAddServiceError {
     data object TeamNotFound : TeamAddServiceError
 
-    data object SellerNotFound : TeamAddServiceError
+    data object ServiceNotFound : TeamAddServiceError
+}
+
+sealed interface TeamDeleteServiceError {
+    data object TeamNotFound : TeamDeleteServiceError
+
+    data object ServiceNotFound : TeamDeleteServiceError
 }
 
 sealed interface TeamAddClientError {
