@@ -9,11 +9,14 @@ export function ClientsPage() {
         data: clients,
         deleteClient,
         onShowClickHandler,
+        onCreateClientButtonClick
     } = useClientsPage();
 
     return (
         <div>
             <h1>Clients</h1>
+            <Button onClick={() => onCreateClientButtonClick()} color={"green"}>Create Client</Button>
+
             <Table>
                 <Table.Thead>
                     <Table.Tr>

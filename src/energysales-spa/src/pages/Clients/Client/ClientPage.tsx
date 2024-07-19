@@ -1,5 +1,5 @@
 import {useParams} from 'react-router-dom';
-import {useGetClient} from '../../../services/ClientsService';
+import {useGetClient} from '../../../services/ClientService.tsx';
 
 export function ClientPage() {
     const {id} = useParams<string>();

@@ -36,7 +36,6 @@ class PsqlClientRepository : ClientRepository {
                     nif = client.nif
                     phone = client.phone
                     location = LocationEntity.find { LocationTable.district eq client.location.district }.first()
-                    team = TeamEntity.findById(client.teamId) ?: throw IllegalArgumentException("Team not found")
                     seller = client.sellerId?.let { SellerEntity.findById(it) }
                 }.id
                 .value

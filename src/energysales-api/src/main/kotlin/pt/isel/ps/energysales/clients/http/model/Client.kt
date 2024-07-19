@@ -28,6 +28,8 @@ data class ClientJSON(
 data class LocationJSON(
     val district: String,
 ) {
+    fun toLocation() = Location(this.district)
+
     companion object {
         fun fromLocation(location: Location) =
             LocationJSON(
@@ -41,9 +43,8 @@ data class CreateClientRequest(
     val name: String,
     val nif: String,
     val phone: String,
-    val district: String,
-    val teamId: Int,
-    val sellerId: Int?,
+    val location: LocationJSON,
+    val sellerId: String,
 )
 
 @Serializable
@@ -52,7 +53,6 @@ data class UpdateClientRequest(
     val name: String,
     val nif: String,
     val phone: String,
-    val district: String,
-    val teamId: Int,
-    val sellerId: Int?,
+    val location: LocationJSON,
+    val sellerId: String,
 )

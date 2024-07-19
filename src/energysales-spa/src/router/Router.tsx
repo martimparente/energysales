@@ -28,6 +28,7 @@ import {
     IconSettings,
     IconUsersGroup
 } from "@tabler/icons-react";
+import {CreateClientPage} from "../pages/Clients/CreateClient/CreateClientPage.tsx";
 /*
 const PrivateRoutes = () => {
     const {isLoading, data} = useIsAuthenticated();
@@ -78,6 +79,7 @@ const routes = [
                     {path: "/", element: <HomePage/>},
                     {path: "/clients", element: <ClientsPage/>},
                     {path: "/clients/:id", element: <ClientPage/>},
+                    {path: "/clients/create", element: <CreateClientPage/>},
                     {path: "/settings", element: <SettingsPage/>}
                 ]
             }]

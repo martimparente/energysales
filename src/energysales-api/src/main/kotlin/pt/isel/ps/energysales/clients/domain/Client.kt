@@ -8,6 +8,5 @@ data class Client(
     val nif: String,
     val phone: String,
     val location: Location,
-    val teamId: Int,
     val sellerId: Int?,
 )

@@ -22,6 +22,7 @@ import pt.isel.ps.energysales.clients.application.dto.CreateClientInput
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
+import pt.isel.ps.energysales.clients.http.model.LocationJSON
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.respondProblem
@@ -51,8 +52,7 @@ fun Route.clientRoutes(clientService: ClientService) {
                 body.name,
                 body.nif,
                 body.phone,
-                body.district,
-                body.teamId,
+                body.location.toLocation(),
                 body.sellerId,
             )
 
@@ -101,8 +101,7 @@ fun Route.clientRoutes(clientService: ClientService) {
                 body.name,
                 body.nif,
                 body.phone,
-                body.district,
-                body.teamId,
+                body.location.toLocation(),
                 body.sellerId,
             )
 

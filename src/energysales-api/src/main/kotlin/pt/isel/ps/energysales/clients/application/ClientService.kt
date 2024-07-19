@@ -19,10 +19,10 @@ class ClientService(
             ensure(input.name.length in 2..16) { ClientCreationError.ClientNameIsInvalid }
             ensure(input.nif.length == 9) { ClientCreationError.ClientInfoIsInvalid }
             ensure(input.phone.length == 9) { ClientCreationError.ClientInfoIsInvalid }
-            ensure(input.district.length in 2..16) { ClientCreationError.ClientInfoIsInvalid }
+            ensure(input.location.district.length in 2..16) { ClientCreationError.ClientInfoIsInvalid }
             // ensure(!clientRepository.clientExistsByName(name)) { ClientCreationError.ClientAlreadyExists } //TODO SHOULD CHECK HERE OR LET SQL HANDLE IT?
 
-            val client = Client(-1, input.name, input.nif, input.phone, Location(input.district), input.teamId, input.sellerId)
+            val client = Client(-1, input.name, input.nif, input.phone, Location(input.location.district), input.sellerId.toInt())
             clientRepository.create(client)
         }
 
@@ -44,7 +44,7 @@ class ClientService(
             ensure(input.name.length in 2..16) { ClientUpdatingError.ClientNameIsInvalid }
             ensure(input.nif.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
             ensure(input.phone.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
-            ensure(input.district.length in 2..16) { ClientUpdatingError.ClientInfoIsInvalid }
+            ensure(input.location.district.length in 2..16) { ClientUpdatingError.ClientInfoIsInvalid }
             val client = clientRepository.getById(input.id)
             ensureNotNull(client) { ClientUpdatingError.ClientNotFound }
 
@@ -53,9 +53,8 @@ class ClientService(
                     name = input.name,
                     nif = input.nif,
                     phone = input.phone,
-                    location = Location(input.district),
-                    teamId = input.teamId,
-                    sellerId = input.sellerId,
+                    location = Location(input.location.district),
+                    sellerId = input.sellerId.toInt(),
                 )
 
             val updatedClient = clientRepository.update(newClient)

@@ -1,4 +1,4 @@
-import {useCreateClient, useDeleteClient, useGetClients, useUpdateClient} from '../../services/ClientsService';
+import {useCreateClient, useDeleteClient, useGetClients, useUpdateClient} from '../../services/ClientService.tsx';
 import {useNavigate} from "react-router-dom"
 import {Client, CreateClientInputModel, UpdateClientInputModel} from '../../services/models/ClientModel';
 import {Column} from '../../components/GenericTable';
@@ -50,6 +50,7 @@ export function useClientsPage() {
         updateClient: async (input: UpdateClientInputModel) => await updateClient(input).catch(e => setError(e)),
         deleteClient: async (client: Client) => await deleteClient(client.id).catch(e => setError(e)),
         onShowClickHandler: (client: Client) => navigate(`/clients/${client.id}`),
+        onCreateClientButtonClick: () => navigate(`/clients/create`),
         isFetching,
         error,
     }
