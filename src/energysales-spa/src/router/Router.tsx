@@ -1,5 +1,14 @@
+import {
+    IconBrandAsana,
+    IconBuilding,
+    IconBulb,
+    IconHome,
+    IconKey,
+    IconLogin2,
+    IconSettings,
+    IconUsersGroup
+} from "@tabler/icons-react";
 import {createBrowserRouter} from 'react-router-dom';
-import {MainLayout} from '../layouts/MainLayout.tsx'
 import {HomePage} from '../pages/HomePage.tsx';
 import {TeamPage} from '../pages/Teams/Team/TeamPage.tsx';
 import {TeamsPage} from '../pages/Teams/TeamsPage.tsx';
@@ -12,35 +21,12 @@ import {ForgotPassword} from '../pages/Auth/ForgotPasswordPage.tsx';
 import {ClientPage} from "../pages/Clients/Client/ClientPage.tsx";
 import {ClientsPage} from "../pages/Clients/ClientsPage.tsx";
 import {SettingsPage} from "../pages/Settings/SettingsPage.tsx";
-import {ProtectedRouteAdmin} from "./ProtectedRouteAdmin.tsx";
-import {ProtectedRouteManager} from "./ProtectedRouteManager.tsx";
-import {AuthLayout} from "../providers/AuthLayout.tsx";
 import {CreateServicePage} from "../pages/Services/CreateService/CreateServicePage.tsx";
 import {CreateUserPage} from "../pages/Users/CreateUser/CreateUserPage.tsx";
 import {CreateTeamPage} from "../pages/Teams/CreateTeam/CreateTeamPage.tsx";
-import {
-    IconBrandAsana,
-    IconBuilding,
-    IconBulb,
-    IconHome,
-    IconKey,
-    IconLogin2,
-    IconSettings,
-    IconUsersGroup
-} from "@tabler/icons-react";
 import {CreateClientPage} from "../pages/Clients/CreateClient/CreateClientPage.tsx";
-/*
-const PrivateRoutes = () => {
-    const {isLoading, data} = useIsAuthenticated();
-
-    if (isLoading) {
-        return <p>Loading...</p>
-    }
-
-    if (data?.authenticated === false) {
-        return <Navigate to="/login"/>
-    } else return <Outlet/>
-}*/
+import {ProtectedRoute} from "./ProtectedRoute.tsx";
+import App from "../App.tsx";
 
 export const sidebarLinks = [
     {link: '/', label: 'Home', icon: IconHome, roles: ['admin', 'manager']},
@@ -53,14 +39,21 @@ export const sidebarLinks = [
     {link: '/settings', label: 'Settings', icon: IconSettings, roles: ['admin', 'manager']},
 ];
 
-const routes = [
+export const router = createBrowserRouter([
     {
-        element: <MainLayout/>,
+        element: <App/>,
         children: [
             {path: "/login", element: <LoginPage/>},
             {path: "/forgot-password", element: <ForgotPassword/>},
             {
-                element: <ProtectedRouteAdmin/>,
+                element: <ProtectedRoute/>,
+                children: [
+                    {path: "/", element: <HomePage/>},
+                    {path: "/settings", element: <SettingsPage/>}
+                ]
+            },
+            {
+                element: <ProtectedRoute role={"ADMIN"}/>,
                 children: [
                     {path: "/teams", element: <TeamsPage/>},
                     {path: "/teams/:id", element: <TeamPage/>},
@@ -74,20 +67,11 @@ const routes = [
                 ]
             },
             {
-                element: <ProtectedRouteManager/>,
+                element: <ProtectedRoute role={"SELLER"}/>,
                 children: [
-                    {path: "/", element: <HomePage/>},
                     {path: "/clients", element: <ClientsPage/>},
                     {path: "/clients/:id", element: <ClientPage/>},
                     {path: "/clients/create", element: <CreateClientPage/>},
-                    {path: "/settings", element: <SettingsPage/>}
                 ]
             }]
-    }]
-
-export const router = createBrowserRouter([
-    {
-        element: <AuthLayout/>,
-        children: [...routes],
-    }
-])
+    }])

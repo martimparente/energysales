@@ -5,14 +5,14 @@ import classes from './NavbarSimpleColored.module.css';
 import {Link} from "react-router-dom";
 import logoName from '../assets/logo+name.svg';
 import {sidebarLinks} from "../router/Router.tsx";
-import {authProvider} from '../providers/AuthProvider.tsx';
+import {useAuth} from "../context/useAuth.tsx";
 
 
 const energySalesIcon = <img src={logoName} width="150" height="50" alt="Logo"/>
 
 export function Sider() {
     const [active, setActive] = useState('');
-    /*    const user = authProvider.getIdentity()*/
+    const {logout} = useAuth();
 
     const links = sidebarLinks.filter(item => item.roles.includes("admin")).map((item) => (
         <Link
@@ -42,7 +42,7 @@ export function Sider() {
             <div className={classes.footer}>
                 <a href="#" className={classes.link} onClick={(e) => {
                     e.preventDefault()
-                    authProvider.logout
+                    logout()
                 }}>
                     <IconLogout className={classes.linkIcon} stroke={1.5}/>
                     <span>Logout</span>

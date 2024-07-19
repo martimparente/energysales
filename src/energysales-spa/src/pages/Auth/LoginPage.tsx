@@ -1,10 +1,8 @@
 import {Anchor, Button, Checkbox, Paper, PasswordInput, Text, TextInput, Title,} from '@mantine/core';
 import classes from './AuthenticationImage.module.css';
 import {useForm} from '@mantine/form';
-
 import {Link} from "react-router-dom";
-import {useAuth} from "../../providers/AuthContext.tsx";
-
+import {useAuth} from "../../context/useAuth.tsx";
 
 export function LoginPage() {
     const form = useForm({
@@ -20,7 +18,7 @@ export function LoginPage() {
         },
     });
 
-    const auth = useAuth()
+    const {loginUser} = useAuth();
 
     return (
         <div className={classes.wrapper}>
@@ -30,10 +28,8 @@ export function LoginPage() {
                 </Title>
 
 
-                <form onSubmit={form.onSubmit((values) => auth.login({
-                    username: values.username,
-                    password: values.password,
-                }))}>
+                <form onSubmit={form.onSubmit((values) => loginUser(values.username, values.password))}>
+
                     <TextInput
                         required
                         label="Username"

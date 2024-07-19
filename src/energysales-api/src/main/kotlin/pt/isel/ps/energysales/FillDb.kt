@@ -94,7 +94,6 @@ fun fillDb() {
             it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
             it[location] = i
-            it[team] = i
             it[seller] = i
         }
         PriceTable.insert {

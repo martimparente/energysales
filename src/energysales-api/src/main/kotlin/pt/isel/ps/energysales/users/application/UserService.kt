@@ -71,7 +71,7 @@ class UserService(
             ensure(passwordIsValid) { TokenCreationError.UserOrPasswordAreInvalid }
             val role = userRepository.getUserRole(credentials.id)
             // Generate token TODO HARDCODED EXPIRATION TIME
-            tokenService.generateJwtToken(credentials.username, role.toString(), 3600000)
+            tokenService.generateJwtToken(credentials.username, credentials.id.toString(), role.toString(), 3600000)
         }
 
     suspend fun changeUserPassword(

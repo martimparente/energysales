@@ -6,6 +6,13 @@ export interface User {
     role: string;
 }
 
+export interface UserProfile {
+    username: string;
+    userId: string;
+    role: string;
+}
+
+
 export interface Seller {
     id: string;
     name: string;
