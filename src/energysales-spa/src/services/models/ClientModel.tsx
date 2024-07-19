@@ -11,7 +11,6 @@ export interface CreateClientInputModel {
     nif: string;
     phone: string;
     location: Location;
-    sellerId: string;
 }
 
 export interface UpdateClientInputModel {
@@ -19,7 +18,6 @@ export interface UpdateClientInputModel {
     nif: string;
     phone: string;
     location: Location;
-    sellerId: string;
 }
 
 interface Location {
