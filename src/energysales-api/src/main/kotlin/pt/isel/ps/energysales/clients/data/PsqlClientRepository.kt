@@ -7,7 +7,6 @@ import pt.isel.ps.energysales.clients.domain.Client
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import pt.isel.ps.energysales.teams.data.entity.LocationEntity
-import pt.isel.ps.energysales.teams.data.entity.TeamEntity
 import pt.isel.ps.energysales.teams.data.table.LocationTable
 
 class PsqlClientRepository : ClientRepository {

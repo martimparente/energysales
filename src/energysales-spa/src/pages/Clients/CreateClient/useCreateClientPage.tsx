@@ -3,7 +3,6 @@ import {useForm} from 'react-hook-form';
 import {CreateClientInputModel} from "../../../services/models/ClientModel.tsx";
 import {useCreateClient} from "../../../services/ClientService.tsx";
 
-
 export function useCreateClientPage() {
     const {control, handleSubmit} = useForm<CreateClientInputModel>({
         defaultValues: {
@@ -12,8 +11,7 @@ export function useCreateClientPage() {
             phone: '',
             location: {
                 district: '',
-            },
-            sellerId: '',
+            }
         }
     });
 

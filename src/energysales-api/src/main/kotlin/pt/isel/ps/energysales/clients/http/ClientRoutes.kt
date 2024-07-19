@@ -5,6 +5,8 @@ import arrow.core.Either.Right
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
 import io.ktor.server.application.call
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.resources.delete
 import io.ktor.server.resources.get
@@ -22,7 +24,6 @@ import pt.isel.ps.energysales.clients.application.dto.CreateClientInput
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
-import pt.isel.ps.energysales.clients.http.model.LocationJSON
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.respondProblem
@@ -46,6 +47,7 @@ fun Route.clientRoutes(clientService: ClientService) {
     }
 
     post<ClientResource> {
+        val userId = call.principal<JWTPrincipal>()?.getClaim("userId", String::class) ?: "Unknown"
         val body = call.receive<CreateClientRequest>()
         val input =
             CreateClientInput(
@@ -53,7 +55,7 @@ fun Route.clientRoutes(clientService: ClientService) {
                 body.nif,
                 body.phone,
                 body.location.toLocation(),
-                body.sellerId,
+                userId,
             )
 
         val res = clientService.createClient(input)
@@ -94,6 +96,8 @@ fun Route.clientRoutes(clientService: ClientService) {
     }
 
     put<ClientResource.Id> { pathParams ->
+        val userId = call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
+            ?: call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
         val body = call.receive<UpdateClientRequest>()
         val input =
             UpdateClientInput(
@@ -102,7 +106,7 @@ fun Route.clientRoutes(clientService: ClientService) {
                 body.nif,
                 body.phone,
                 body.location.toLocation(),
-                body.sellerId,
+                userId.toString(),
             )
 
         val res = clientService.updateClient(input)

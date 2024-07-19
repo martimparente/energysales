@@ -44,7 +44,6 @@ data class CreateClientRequest(
     val nif: String,
     val phone: String,
     val location: LocationJSON,
-    val sellerId: String,
 )
 
 @Serializable
@@ -54,5 +53,4 @@ data class UpdateClientRequest(
     val nif: String,
     val phone: String,
     val location: LocationJSON,
-    val sellerId: String,
 )

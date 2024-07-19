@@ -32,6 +32,7 @@
     "ag-grid-react": "^31.3.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.11",
+    "jwt-decode": "^4.0.0",
     "mantine-contextmenu": "^7.9.1",
     "mantine-datatable": "^7.9.1",
     "mantine-react-table": "^2.0.0-beta.3",
