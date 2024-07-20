@@ -1,16 +1,20 @@
+import {toast} from "react-toastify";
+
 export const AUTHORIZATION_HEADER = {
     "Content-Type": "application/json",
     "Authorization": "Bearer " + localStorage.getItem("token"),
 };
 
 export async function fetchData<T>(url: string): Promise<T> {
+
     const response = await fetch(url, {headers: AUTHORIZATION_HEADER})
+    const data = await response.json();
+
     if (!(response.status >= 200 && response.status < 300)) {
-        const errorData = await response.json();
-        console.log("ERROR")
-        throw new Error(errorData.message || 'Something went wrong');
+        console.log("fetch failed")
+        toast.warning(data.title || 'Something went wrong');
     }
-    return response.json();
+    return data;
 }
 
 export async function mutateData<T>(url: string, method: string, body?: any): Promise<T> {
@@ -19,11 +23,11 @@ export async function mutateData<T>(url: string, method: string, body?: any): Pr
         headers: AUTHORIZATION_HEADER,
         body: JSON.stringify(body),
     });
-    if (!(response.status >= 200 && response.status < 300)) {
-        const errorData = await response.json();
-        console.log("ERROR")
+    const data = await response.json();
 
-        throw new Error(errorData.message || 'Something went wrong');
+    if (!(response.status >= 200 && response.status < 300)) {
+        console.log("mutate failed")
+        toast.warning(data.title || 'Something went wrong');
     }
-    return response.json();
+    return data;
 }
