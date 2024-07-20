@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {loginAPI} from "../services/AuthService.tsx";
 import {UserProfile} from "../services/models/UserModel.tsx";
 import {jwtDecode} from "jwt-decode";
+import {toast} from "react-toastify";
 
 type AuthContextType = {
     user: UserProfile | null;
@@ -53,6 +54,7 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
                     setToken(token);
                     setUserProfile(userProfile);
                     navigate("/");
+                    toast.success(`Welcome back, ${userProfile.username}!`, {position: "bottom-right"});
                 }
             })
             .catch((e) => console.log(e));
@@ -67,6 +69,7 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         setUserProfile(null);
         setToken("");
         navigate("/login");
+        toast.success(`Goodbye!`, {position: "bottom-right"})
     };
 
     return (

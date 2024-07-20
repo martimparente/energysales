@@ -1,13 +1,3 @@
-import {
-    IconBrandAsana,
-    IconBuilding,
-    IconBulb,
-    IconHome,
-    IconKey,
-    IconLogin2,
-    IconSettings,
-    IconUsersGroup
-} from "@tabler/icons-react";
 import {createBrowserRouter} from 'react-router-dom';
 import {HomePage} from '../pages/HomePage.tsx';
 import {TeamPage} from '../pages/Teams/Team/TeamPage.tsx';
@@ -27,17 +17,6 @@ import {CreateTeamPage} from "../pages/Teams/CreateTeam/CreateTeamPage.tsx";
 import {CreateClientPage} from "../pages/Clients/CreateClient/CreateClientPage.tsx";
 import {ProtectedRoute} from "./ProtectedRoute.tsx";
 import App from "../App.tsx";
-
-export const sidebarLinks = [
-    {link: '/', label: 'Home', icon: IconHome, roles: ['admin', 'manager']},
-    {link: '/login', label: 'Login', icon: IconLogin2, roles: ['admin', 'manager']},
-    {link: '/forgot-password', label: 'Forgot Password', icon: IconKey, roles: ['admin', 'manager']},
-    {link: '/teams', label: 'Teams', icon: IconBrandAsana, roles: ['admin']},
-    {link: '/users', label: 'Users', icon: IconUsersGroup, roles: ['admin']},
-    {link: '/services', label: 'Services', icon: IconBulb, roles: ['admin']},
-    {link: '/clients', label: 'Clients', icon: IconBuilding, roles: ['admin', 'manager']},
-    {link: '/settings', label: 'Settings', icon: IconSettings, roles: ['admin', 'manager']},
-];
 
 export const router = createBrowserRouter([
     {

@@ -34,9 +34,10 @@ export function LoginPage() {
                         required
                         label="Username"
                         placeholder="Your Username"
+                        mt="md" size="md"
                         value={form.values.username}
                         onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
-                        error={form.errors.username && 'Invalid username'}
+                        error={form.errors.username && 'Username should include at least 5 characters'}
                         radius="md"
                     />
                     <PasswordInput
