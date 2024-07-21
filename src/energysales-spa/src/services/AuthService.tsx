@@ -32,10 +32,12 @@ export const resetPasswordAPI = async (email: string): Promise<void> => {
             headers: {"Content-Type": "application/json"},
         });
 
-        if (!(response.status >= 200 && response.status < 300)) {
+        if (response.status == 200)
+            toast.success("Verify your e-mail inbox for the password reset link")
+        else {
             const data = await response.json();
             console.log("fetch failed")
-            toast.warning(data.title || 'Something went wrong');
+            toast.error(data.title || 'Something went wrong');
         }
     } catch (error) {
         toast.error("Something went wrong")

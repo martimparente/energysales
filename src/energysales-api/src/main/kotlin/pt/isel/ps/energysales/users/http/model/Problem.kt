@@ -33,6 +33,13 @@ data class Problem(
     val instance: String,
 ) {
     companion object {
+        val resetEmailSendingError: Problem =
+            Problem(
+                "E-mail not sent. Please try again later",
+                PROBLEM_URL + "resetEmailSendingError.md",
+                "",
+            )
+
         val sellerInfoIsInvalid: Problem =
             Problem(
                 "UserSurnameIsInvalid",

@@ -1,6 +1,8 @@
 package pt.isel.ps.energysales.email
 
+import arrow.core.Either
 import arrow.core.raise.either
+import arrow.core.raise.ensure
 import kotlinx.coroutines.future.await
 import org.simplejavamail.api.mailer.Mailer
 import org.simplejavamail.email.EmailBuilder
@@ -25,6 +27,7 @@ class SimpleJavaEmailService(
                     .buildEmail()
 
             try {
+                ensure(mailer.validate(email)) { SendEmailError.EmailNotValid }
                 mailer.sendMail(email).await()
                 println("Email sent successfully")
             } catch (ex: Exception) {
@@ -56,6 +59,10 @@ class SimpleJavaEmailService(
                     subject = subject,
                     message = message,
                 )
-            sendEmail(emailData)
+            val res = sendEmail(emailData)
+            when (res) {
+                is Either.Left -> raise(SendResetPasswordError.EmailNotSent)
+                is Either.Right -> Unit
+            }
         }
 }

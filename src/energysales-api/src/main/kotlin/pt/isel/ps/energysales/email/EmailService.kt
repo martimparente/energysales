@@ -14,8 +14,12 @@ typealias SendResetPasswordResult = Either<SendResetPasswordError, Unit>
 
 sealed interface SendEmailError {
     data object EmailNotSent : SendEmailError
+
+    data object EmailNotValid : SendEmailError
 }
 
 sealed interface SendResetPasswordError {
     data object EmailNotSent : SendResetPasswordError
+
+    data object EmailNotValid : SendResetPasswordError
 }

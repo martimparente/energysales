@@ -100,7 +100,12 @@ class UserService(
             val user = userRepository.getUserByEmail(email)
             // ensureNotNull(user) { ResetPasswordError.EmailNotFound }
 
-            emailService.sendResetPasswordEmail(email)
+            val res = emailService.sendResetPasswordEmail(email)
+
+            when (res) {
+                is Either.Left -> raise(ResetPasswordError.ResetEmailSendingError)
+                is Either.Right -> Unit
+            }
         }
 
     suspend fun getUserRole(uid: Int): RoleReadingResult =

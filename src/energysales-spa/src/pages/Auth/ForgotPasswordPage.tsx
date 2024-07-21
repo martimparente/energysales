@@ -4,7 +4,6 @@ import {useForm} from '@mantine/form';
 import {IconArrowLeft} from '@tabler/icons-react';
 import {Link} from "react-router-dom";
 import classes from './ForgotPassword.module.css';
-import {toast} from "react-toastify";
 import {resetPasswordAPI} from "../../services/AuthService.tsx";
 
 export function ForgotPassword() {
@@ -24,7 +23,6 @@ export function ForgotPassword() {
         setLoading(true);
         try {
             await resetPasswordAPI(email);
-            toast.success('Reset link sent to your email');
         } catch (error) {
             // The toast for errors is already handled in the service
         } finally {
@@ -63,7 +61,7 @@ export function ForgotPassword() {
                     <Button
                         color="orange"
                         className={classes.control}
-                        onClick={() => form.onSubmit(handleSubmit)}
+                        onClick={form.onSubmit(handleSubmit)}
                         loading={loading}
                     >
                         Reset password
