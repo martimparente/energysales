@@ -1,15 +1,11 @@
-import {
-    IconBrandAsana,
-    IconBuilding,
-    IconBulb,
-    IconHome,
-    IconSettings,
-    IconUsersGroup
-} from "@tabler/icons-react";
+import {IconBrandAsana, IconBuilding, IconBulb, IconHome, IconSettings, IconUsersGroup} from "@tabler/icons-react";
 import {Link} from 'react-router-dom';
 import {UserProfile} from "../services/models/UserModel.tsx";
 
-// ⚠️ Make sure the roles are the same as the protected routes in the router
+/**
+ ⚠️ - Make sure the roles are the same as the protected routes in the Router
+ Otherwise the user will see the links but won't be able to access the pages
+ */
 const navLinks = [
     {link: '/', label: 'Home', icon: IconHome, roles: ['ADMIN', 'MANAGER']},
     {link: '/teams', label: 'Teams', icon: IconBrandAsana, roles: ['ADMIN']},

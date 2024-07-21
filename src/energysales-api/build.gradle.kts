@@ -70,6 +70,9 @@ dependencies {
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrowVersion")
 
+    // Email Service
+    implementation("org.simplejavamail:simple-java-mail:8.11.2")
+
     // Testing
     testImplementation("io.ktor:ktor-server-tests-jvm:$kotlinVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")

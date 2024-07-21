@@ -11,10 +11,13 @@ import io.ktor.server.request.path
 import io.ktor.server.resources.Resources
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import org.simplejavamail.mailer.MailerBuilder
 import org.slf4j.event.Level
 import pt.isel.ps.energysales.clients.application.ClientService
 import pt.isel.ps.energysales.clients.data.PsqlClientRepository
 import pt.isel.ps.energysales.clients.http.clientRoutes
+import pt.isel.ps.energysales.email.SimpleJavaEmailService
+import pt.isel.ps.energysales.email.model.EmailConfig
 import pt.isel.ps.energysales.plugins.authorize
 import pt.isel.ps.energysales.plugins.configureDatabases
 import pt.isel.ps.energysales.plugins.configureHTTP
@@ -47,12 +50,29 @@ fun Application.module() {
      */
 
     fun configProperty(propertyName: String) = environment.config.property(propertyName).getString()
+
     val jwtConfig =
         JwtConfig(
             configProperty("jwt.issuer"),
             configProperty("jwt.audience"),
             configProperty("jwt.realm"),
             configProperty("jwt.secret"),
+        )
+
+    val mailer =
+        MailerBuilder
+            .withSMTPServer(
+                configProperty("email.smtp.host"),
+                configProperty("email.smtp.port").toInt(),
+                configProperty("email.smtp.user"),
+                configProperty("email.smtp.password"),
+            ).buildMailer()
+
+    val emailConfig =
+        EmailConfig(
+            configProperty("email.fromUsername"),
+            configProperty("email.fromEmail"),
+            configProperty("email.resetLinkBaseUrl"),
         )
 
     /**
@@ -64,9 +84,19 @@ fun Application.module() {
             userRepository = PsqlUserRepository(),
             tokenService = JwtTokenService(jwtConfig),
             hashingService = SHA256HashingService(),
+            emailService =
+            SimpleJavaEmailService(
+                mailer = mailer,
+                config = emailConfig,
+            ),
         )
     }
-    val teamService by lazy { TeamService(teamRepository = PsqlTeamRepository(), sellerRepository = PsqlSellerRepository()) }
+    val teamService by lazy {
+        TeamService(
+            teamRepository = PsqlTeamRepository(),
+            sellerRepository = PsqlSellerRepository(),
+        )
+    }
     val sellerService by lazy { SellerService(sellerRepository = PsqlSellerRepository()) }
     val productService by lazy { ServiceService(serviceRepository = PsqlServiceRepository()) }
     val clientService by lazy { ClientService(clientRepository = PsqlClientRepository()) }

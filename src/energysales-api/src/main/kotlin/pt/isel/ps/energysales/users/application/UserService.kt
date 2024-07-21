@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
+import pt.isel.ps.energysales.email.EmailService
 import pt.isel.ps.energysales.users.application.dto.CreateUserInput
 import pt.isel.ps.energysales.users.data.UserRepository
 import pt.isel.ps.energysales.users.domain.Role
@@ -19,6 +20,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val tokenService: TokenService,
     private val hashingService: HashingService,
+    private val emailService: EmailService,
 ) {
     companion object {
         const val SALT_NUM_OF_BYTES = 16
@@ -92,14 +94,13 @@ class UserService(
             userRepository.updateUserCredentials(updatedCredentials)
         }
 
-    fun resetPassword(email: String): Either<ResetPasswordError, Unit> =
+    suspend fun resetPassword(email: String): Either<ResetPasswordError, Unit> =
         either {
             ensure(isValidEmail(email)) { ResetPasswordError.EmailIsInvalid }
-            // val user = userRepository.getUserByEmail(email)
+            val user = userRepository.getUserByEmail(email)
             // ensureNotNull(user) { ResetPasswordError.EmailNotFound }
 
-            // send email with reset password link
-            // todo
+            emailService.sendResetPasswordEmail(email)
         }
 
     suspend fun getUserRole(uid: Int): RoleReadingResult =
