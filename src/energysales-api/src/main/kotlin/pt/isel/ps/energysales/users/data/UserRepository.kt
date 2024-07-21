@@ -14,6 +14,8 @@ interface UserRepository {
 
     suspend fun getUserById(uid: Int): User?
 
+    suspend fun getUserByEmail(email: String): User?
+
     suspend fun getUserCredentialsByUsername(username: String): UserCredentials?
 
     suspend fun getUserCredentialsById(uid: String): UserCredentials?

@@ -3,8 +3,7 @@ export namespace ApiUris {
 
     // Auth
     export const login = `${API_BASE_URL}/auth/login`;
-    export const register = `${API_BASE_URL}/auth/register`;
-    export const logout = `${API_BASE_URL}/auth/logout`;
+    export const resetPassword = `${API_BASE_URL}/auth/reset-password`;
 
     // Teams
     export const getTeams = (lastKeySeen: string) => `${API_BASE_URL}/teams?lastKeySeen=${lastKeySeen}`;

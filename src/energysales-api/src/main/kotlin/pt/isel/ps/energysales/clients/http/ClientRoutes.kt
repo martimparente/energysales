@@ -96,8 +96,9 @@ fun Route.clientRoutes(clientService: ClientService) {
     }
 
     put<ClientResource.Id> { pathParams ->
-        val userId = call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
-            ?: call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
+        val userId =
+            call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
+                ?: call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
         val body = call.receive<UpdateClientRequest>()
         val input =
             UpdateClientInput(

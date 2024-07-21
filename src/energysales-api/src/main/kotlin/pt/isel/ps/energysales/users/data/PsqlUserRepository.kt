@@ -41,6 +41,11 @@ class PsqlUserRepository : UserRepository {
             UserEntity.findById(uid)?.toUser()
         }
 
+    override suspend fun getUserByEmail(email: String): User? =
+        dbQuery {
+            UserEntity.find { UserTable.email eq email }.singleOrNull()?.toUser()
+        }
+
     override suspend fun getUserCredentialsByUsername(username: String): UserCredentials? =
         dbQuery {
             UserCredentialsEntity

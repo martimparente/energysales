@@ -23,3 +23,21 @@ export const loginAPI = async (username: string, password: string): Promise<Logi
         toast('Something went wrong');
     }
 };
+
+export const resetPasswordAPI = async (email: string): Promise<void> => {
+    try {
+        const response = await fetch(ApiUris.resetPassword, {
+            method: "POST",
+            body: JSON.stringify({email}),
+            headers: {"Content-Type": "application/json"},
+        });
+
+        if (!(response.status >= 200 && response.status < 300)) {
+            const data = await response.json();
+            console.log("fetch failed")
+            toast.warning(data.title || 'Something went wrong');
+        }
+    } catch (error) {
+        toast.error("Something went wrong")
+    }
+}
