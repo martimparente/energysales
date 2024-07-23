@@ -13,6 +13,7 @@ object Uris {
     const val AUTH = "/auth"
     const val AUTH_LOGIN = "$AUTH/login"
     const val AUTH_RESET_PASSWORD = "$AUTH/reset-password"
+    const val AUTH_CHANGE_PASSWORD = "$AUTH/change-password"
 
     // User routes
     const val USERS = "/users"

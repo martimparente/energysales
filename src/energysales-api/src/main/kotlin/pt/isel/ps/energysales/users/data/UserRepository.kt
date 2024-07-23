@@ -10,7 +10,7 @@ interface UserRepository {
         userCredentials: UserCredentials,
     ): String
 
-    suspend fun updateUser(user: User): Boolean
+    suspend fun updateUser(user: User): User?
 
     suspend fun getUserById(uid: Int): User?
 
@@ -39,4 +39,6 @@ interface UserRepository {
         pageSize: Int,
         lastKeySeen: Int? = null,
     ): List<User>
+
+    suspend fun deleteUser(uid: Int): Boolean
 }

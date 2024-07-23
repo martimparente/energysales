@@ -1,47 +1,49 @@
-import {useUsersPage} from './useUsersPage.tsx';
-import {Button, Table} from "@mantine/core";
-import {User} from "../../services/models/UserModel.tsx";
-import {IconTrash} from "@tabler/icons-react";
+import {AgGridReact} from 'ag-grid-react'; // React Data Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
+import {useUsersPage} from "./useUsersPage.tsx";
+import {Button, Group, useMantineColorScheme} from "@mantine/core";
+import {IconPlus} from "@tabler/icons-react";
 
 export function UsersPage() {
+
+    const {colorScheme, toggleColorScheme} = useMantineColorScheme({
+        keepTransitions: true,
+    });
+
     const {
-        columns,
-        Users,
-        onShowUserButtonClick,
-        onCreateUserButtonClick,
-        onDeleteUserButtonClick
+        users,
+        columnDefs,
+        defaultColDef,
+        gridRef,
+        onAddUserButtonClick,
+        onCellEditRequest,
     } = useUsersPage();
 
     return (
         <div>
-            <h1>Users</h1>
-            <Button onClick={() => onCreateUserButtonClick()} color={"green"}>Create User</Button>
-            <Table>
-                <Table.Thead>
-                    <Table.Tr>
-                        {columns.map(column => (
-                            <Table.Th key={column.header}>{column.header}</Table.Th>
-                        ))}
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                    {Users?.map((User: User) => (
-                        <Table.Tr key={User.id}>
-                            <Table.Td>{User.name}</Table.Td>
-                            <Table.Td>{User.surname}</Table.Td>
-                            <Table.Td>{User.email}</Table.Td>
-                            <Table.Td>{User.role}</Table.Td>
-                            <Table.Td>
-                                <Button onClick={() => onShowUserButtonClick(User)} color={"orange"}>Show</Button>
-                                <Button color={"green"}>Edit</Button>
-                                <Button onClick={() => onDeleteUserButtonClick(User)} color={"red"}><IconTrash
-                                    stroke={2}/></Button>
-                            </Table.Td>
-                        </Table.Tr>
-                    ))}
-                </Table.Tbody>
-            </Table>
+            <Group position="apart" mb="lg" justify="space-between">
+                <h1>Users</h1>
+                <Button onClick={onAddUserButtonClick} color="blue" leftIcon={<IconPlus size={16}/>}>+</Button>
+
+            </Group>
+
+            <div className={colorScheme === 'dark' ? "ag-theme-quartz-dark" : "ag-theme-quartz"} style={{height: 500}}>
+                <AgGridReact
+                    rowData={users}
+                    columnDefs={columnDefs}
+                    ref={gridRef}
+                    defaultColDef={defaultColDef}
+                    rowSelection="multiple"
+                    suppressRowClickSelection={true}
+                    readOnlyEdit={true}
+                    undoRedoCellEditing={true}
+                    pagination={true}
+                    paginationPageSize={10}
+                    paginationPageSizeSelector={[10, 25, 50]}
+                    onCellEditRequest={onCellEditRequest}
+                />
+            </div>
         </div>
     )
-
 }

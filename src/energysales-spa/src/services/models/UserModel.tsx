@@ -40,10 +40,10 @@ export interface CreateUserInputModel {
     role: string;
 }
 
-export interface UpdateUserInputModel {
+export interface PatchUserInputModel {
     id: string,
-    name: string,
-    surname: string,
-    email: string,
-    team: string
+    name: string | null,
+    surname: string | null,
+    email: string | null,
+    team: string | null,
 }

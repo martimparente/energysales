@@ -10,7 +10,9 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
+import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
@@ -21,11 +23,13 @@ import pt.isel.ps.energysales.users.application.ResetPasswordError
 import pt.isel.ps.energysales.users.application.RoleReadingError
 import pt.isel.ps.energysales.users.application.UserCreationError
 import pt.isel.ps.energysales.users.application.UserService
+import pt.isel.ps.energysales.users.application.UserUpdatingError
 import pt.isel.ps.energysales.users.application.dto.CreateUserInput
 import pt.isel.ps.energysales.users.http.model.ChangePasswordRequest
 import pt.isel.ps.energysales.users.http.model.CreateUserRequest
 import pt.isel.ps.energysales.users.http.model.LoginRequest
 import pt.isel.ps.energysales.users.http.model.LoginResponse
+import pt.isel.ps.energysales.users.http.model.PatchUserRequest
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.ResetPasswordRequest
 import pt.isel.ps.energysales.users.http.model.RoleRequest
@@ -77,6 +81,40 @@ fun Route.authRoutes(userService: UserService) {
                     ResetPasswordError.EmailNotFound -> TODO()
                     ResetPasswordError.ResetEmailSendingError -> TODO()
                 }
+        }
+    }
+
+    route(Uris.AUTH_CHANGE_PASSWORD) {
+        post {
+            val uid =
+                call.parameters["id"]?.toIntOrNull()
+                    ?: return@post call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
+            val body = call.receive<ChangePasswordRequest>()
+            val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
+
+            when (res) {
+                is Right -> call.respond(HttpStatusCode.OK)
+                is Left ->
+                    when (res.value) {
+                        ChangeUserPasswordError.InsecurePassword ->
+                            call.respondProblem(
+                                Problem.insecurePassword,
+                                HttpStatusCode.BadRequest,
+                            )
+
+                        ChangeUserPasswordError.PasswordMismatch ->
+                            call.respondProblem(
+                                Problem.passwordMismatch,
+                                HttpStatusCode.BadRequest,
+                            )
+
+                        ChangeUserPasswordError.UserOrPasswordAreInvalid ->
+                            call.respondProblem(
+                                Problem.userOrPasswordAreInvalid,
+                                HttpStatusCode.Forbidden,
+                            )
+                    }
+            }
         }
     }
 }
@@ -146,7 +184,6 @@ fun Route.userRoutes(userService: UserService) {
                 }
             }
 
-            // Get user by id
             get(Uris.USERS_BY_ID) {
                 val uid =
                     call.parameters["userId"]?.toIntOrNull()
@@ -156,6 +193,40 @@ fun Route.userRoutes(userService: UserService) {
 
                 when (res) {
                     is Right -> call.respond(UserJSON.fromUser(res.value))
+                    is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
+                }
+            }
+
+            patch(Uris.USERS_BY_ID) {
+                val input = call.receive<PatchUserRequest>()
+                val res = userService.updateUser(input)
+
+                when (res) {
+                    is Right -> {
+                        call.response.header("Location", "${Uris.USERS}/${res.value}")
+                        call.response.status(HttpStatusCode.OK)
+                    }
+
+                    is Left ->
+                        when (res.value) {
+                            UserUpdatingError.UserNotFound ->
+                                call.respondProblem(
+                                    Problem.userIsInvalid,
+                                    HttpStatusCode.BadRequest,
+                                )
+                        }
+                }
+            }
+
+            delete(Uris.USERS_BY_ID) {
+                val uid =
+                    call.parameters["userId"]?.toIntOrNull()
+                        ?: return@delete call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
+
+                val res = userService.deleteUser(uid)
+
+                when (res) {
+                    is Right -> call.response.status(HttpStatusCode.NoContent)
                     is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
                 }
             }

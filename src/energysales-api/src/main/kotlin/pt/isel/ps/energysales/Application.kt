@@ -85,10 +85,10 @@ fun Application.module() {
             tokenService = JwtTokenService(jwtConfig),
             hashingService = SHA256HashingService(),
             emailService =
-            SimpleJavaEmailService(
-                mailer = mailer,
-                config = emailConfig,
-            ),
+                SimpleJavaEmailService(
+                    mailer = mailer,
+                    config = emailConfig,
+                ),
         )
     }
     val teamService by lazy {

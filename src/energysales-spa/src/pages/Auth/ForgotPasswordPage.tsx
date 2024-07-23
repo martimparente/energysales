@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import classes from './ForgotPassword.module.css';
 import {resetPasswordAPI} from "../../services/AuthService.tsx";
 
-export function ForgotPassword() {
+export function ForgotPasswordPage() {
     const [loading, setLoading] = useState(false);
     const form = useForm({
         initialValues: {

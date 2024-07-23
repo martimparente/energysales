@@ -32,9 +32,29 @@ export const resetPasswordAPI = async (email: string): Promise<void> => {
             headers: {"Content-Type": "application/json"},
         });
 
-        if (response.status == 200)
+        if (response.status == 200) {
             toast.success("Verify your e-mail inbox for the password reset link")
-        else {
+        } else {
+            const data = await response.json();
+            console.log("fetch failed")
+            toast.error(data.title || 'Something went wrong');
+        }
+    } catch (error) {
+        toast.error("Something went wrong")
+    }
+}
+
+export const changePasswordAPI = async (password: string): Promise<void> => {
+    try {
+        const response = await fetch(ApiUris.changePassword, {
+            method: "POST",
+            body: JSON.stringify({password}),
+            headers: {"Content-Type": "application/json"},
+        });
+
+        if (response.status == 200) {
+            toast.success("Password changed successfully")
+        } else {
             const data = await response.json();
             console.log("fetch failed")
             toast.error(data.title || 'Something went wrong');

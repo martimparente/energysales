@@ -1,7 +1,7 @@
 import {useTeamsPage} from './useTeamsPage.tsx';
 import {Team} from '../../services/models/TeamModel';
-import {Button, Table} from "@mantine/core";
-import {IconTrash} from '@tabler/icons-react';
+import {Box, Button, Card, Grid, Group, Stack, Text, Title} from "@mantine/core";
+import {IconEdit, IconEye, IconPlus, IconTrash} from '@tabler/icons-react';
 
 export function TeamsPage() {
     const {
@@ -18,42 +18,43 @@ export function TeamsPage() {
         error,
     } = useTeamsPage();
 
-
     // Function to get the email of the manager based on the full name
     const getEmailByManagerName = (name: string) => {
         const manager = managersCandidates?.find((manager) => `${manager.name} ${manager.surname}` === name);
         return manager ? manager.email : '';
     };
 
-
     return (
-        <div>
-            <h1>Teams</h1>
-            <Button onClick={() => onCreateTeamButtonClick()} color={"green"}>Create Team</Button>
+        <Box p="md">
+            <Group position="apart" mb="lg" justify="space-between">
+                <Title order={1}>Teams</Title>
+                <Button onClick={() => onCreateTeamButtonClick()} color="green"
+                        leftIcon={<IconPlus size={16}/>}>+</Button>
+            </Group>
 
-            <Table>
-                <Table.Thead>
-                    <Table.Tr>
-                        {columns.map(column => (
-                            <Table.Th key={column.header}>{column.header}</Table.Th>
-                        ))}
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                    {teams?.map((team: Team) => (
-                        <Table.Tr key={team.id}>
-                            <Table.Td>{team.name}</Table.Td>
-                            <Table.Td>{team.location.district}</Table.Td>
-                            <Table.Td>{team.manager}</Table.Td>
-                            <Table.Td>
-                                <Button onClick={() => onShowClickHandler(team)} color={"green"}>Show</Button>
-                                <Button onClick={console.log} color={"orange"}>Edit</Button>
-                                <Button onClick={() => deleteTeam(team)} color={"red"}><IconTrash stroke={2}/></Button>
-                            </Table.Td>
-                        </Table.Tr>
-                    ))}
-                </Table.Tbody>
-            </Table>
-        </div>
+            <Grid>
+                {teams?.map((team: Team) => (
+                    <Grid.Col xs={12} sm={6} md={4} lg={3} key={team.id}>
+                        <Card shadow="sm" padding="md">
+                            <Group position="apart" align="flex-start" justify="space-between">
+                                <Stack spacing="xs">
+                                    <Title order={4}>{team.name}</Title>
+                                    <Text color="dimmed">{team.location.district}</Text>
+                                    <Text>{team.manager}</Text>
+                                </Stack>
+                                <Group direction="column" spacing="xs">
+                                    <Button size="xs" onClick={() => onShowClickHandler(team)} color="blue"
+                                            leftIcon={<IconEye size={16}/>}>Show</Button>
+                                    <Button size="xs" onClick={console.log} color="orange"
+                                            leftIcon={<IconEdit size={16}/>}>Edit</Button>
+                                    <Button size="xs" onClick={() => deleteTeam(team)} color="red"
+                                            leftIcon={<IconTrash size={16}/>}>Delete</Button>
+                                </Group>
+                            </Group>
+                        </Card>
+                    </Grid.Col>
+                ))}
+            </Grid>
+        </Box>
     );
 }

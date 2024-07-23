@@ -7,7 +7,7 @@ import {UserPage} from '../pages/Users/User/UserPage.tsx';
 import {ServicesPage} from '../pages/Services/ServicesPage.tsx';
 import {ServicePage} from '../pages/Services/Service/ServicePage.tsx';
 import {LoginPage} from '../pages/Auth/LoginPage.tsx';
-import {ForgotPassword} from '../pages/Auth/ForgotPasswordPage.tsx';
+import {ForgotPasswordPage} from '../pages/Auth/ForgotPasswordPage.tsx';
 import {ClientPage} from "../pages/Clients/Client/ClientPage.tsx";
 import {ClientsPage} from "../pages/Clients/ClientsPage.tsx";
 import {SettingsPage} from "../pages/Settings/SettingsPage.tsx";
@@ -17,13 +17,16 @@ import {CreateTeamPage} from "../pages/Teams/CreateTeam/CreateTeamPage.tsx";
 import {CreateClientPage} from "../pages/Clients/CreateClient/CreateClientPage.tsx";
 import {ProtectedRoute} from "./ProtectedRoute.tsx";
 import App from "../App.tsx";
+import {ChangePasswordPage} from "../pages/Auth/ChangePasswordPage.tsx";
+
 
 export const router = createBrowserRouter([
     {
         element: <App/>,
         children: [
             {path: "/login", element: <LoginPage/>},
-            {path: "/forgot-password", element: <ForgotPassword/>},
+            {path: "/forgot-password", element: <ForgotPasswordPage/>},
+            {path: "/change-password", element: <ChangePasswordPage/>},
             {
                 element: <ProtectedRoute/>,
                 children: [

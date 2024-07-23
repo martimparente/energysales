@@ -1,5 +1,5 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {CreateUserInputModel, UpdateUserInputModel, User} from "./models/UserModel.tsx";
+import {CreateUserInputModel, PatchUserInputModel, User} from "./models/UserModel.tsx";
 import {ApiUris} from "./ApiUris";
 import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
 
@@ -26,8 +26,8 @@ export function useGetUser(id: string) {
 
 export function useUpdateUser() {
     return useMutation({
-        mutationFn: (newUserInfo: UpdateUserInputModel) =>
-            mutateData(ApiUris.updateUser(newUserInfo.id), "PUT", newUserInfo),
+        mutationFn: (newUserInfo: PatchUserInputModel) =>
+            mutateData(ApiUris.updateUser(newUserInfo.id), "PATCH", newUserInfo),
     });
 }
 

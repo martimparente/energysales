@@ -78,14 +78,15 @@ class PsqlUserRepository : UserRepository {
             } ?: false
         }
 
-    override suspend fun updateUser(user: User): Boolean =
+    override suspend fun updateUser(user: User): User? =
         dbQuery {
             UserEntity.findById(user.id)?.let { userEntity ->
                 userEntity.name = user.name
                 userEntity.surname = user.surname
                 userEntity.email = user.email
-                true
-            } ?: false
+                userEntity.role = RoleEntity.find { RoleTable.name eq user.role.name }.single()
+                userEntity.toUser()
+            }
         }
 
     override suspend fun changeUserRole(
@@ -126,5 +127,12 @@ class PsqlUserRepository : UserRepository {
                 .limit(pageSize)
                 .map { it.toUser() }
                 .toList()
+        }
+
+    override suspend fun deleteUser(uid: Int): Boolean =
+        dbQuery {
+            UserCredentialsEntity.findById(uid)?.delete() ?: false
+            UserEntity.findById(uid)?.delete() ?: false
+            true
         }
 }

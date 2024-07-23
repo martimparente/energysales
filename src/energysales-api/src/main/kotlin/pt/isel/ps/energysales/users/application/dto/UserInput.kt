@@ -9,3 +9,10 @@ data class CreateUserInput(
     val email: String,
     val role: String,
 )
+
+data class PatchUserInput(
+    val name: String?,
+    val surname: String?,
+    val email: String?,
+    val role: String?,
+)

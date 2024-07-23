@@ -13,6 +13,7 @@ import pt.isel.ps.energysales.users.domain.User
 import pt.isel.ps.energysales.users.domain.UserCredentials
 import pt.isel.ps.energysales.users.domain.toRole
 import pt.isel.ps.energysales.users.http.UserQueryParams
+import pt.isel.ps.energysales.users.http.model.PatchUserRequest
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -135,8 +136,32 @@ class UserService(
             val user = userRepository.getUserById(uid)
             ensureNotNull(user) { UserReadingError.WrongQueryParams }
         }
+
+    suspend fun updateUser(input: PatchUserRequest): Either<UserUpdatingError, User> =
+        either {
+            val user = userRepository.getUserById(input.id.toInt())
+            ensureNotNull(user) { UserUpdatingError.UserNotFound }
+            val patchedUser =
+                user.copy(
+                    name = input.name ?: user.name,
+                    surname = input.surname ?: user.surname,
+                    email = input.email ?: user.email,
+                    role = input.role?.toRole() ?: user.role,
+                )
+
+            val updatedUser = userRepository.updateUser(patchedUser)
+            ensureNotNull(updatedUser) { UserUpdatingError.UserNotFound }
+        }
+
+    suspend fun deleteUser(uid: Int): DeleteUserResult =
+        either {
+            val user = userRepository.getUserById(uid)
+            ensureNotNull(user) { UserDeletingError.UserNotFound }
+            userRepository.deleteUser(user.id)
+        }
 }
 
+typealias DeleteUserResult = Either<UserDeletingError, Unit>
 typealias UserCreationResult = Either<UserCreationError, Int>
 typealias TokenCreationResult = Either<TokenCreationError, String>
 typealias ChangeUserPasswordResult = Either<ChangeUserPasswordError, Boolean>
@@ -165,6 +190,14 @@ sealed interface UserCreationError {
     data object UserSurnameIsInvalid : UserCreationError
 
     data object UserEmailIsInvalid : UserCreationError
+}
+
+sealed interface UserUpdatingError {
+    data object UserNotFound : UserUpdatingError
+}
+
+sealed interface UserDeletingError {
+    data object UserNotFound : UserDeletingError
 }
 
 sealed interface UserReadingError {
