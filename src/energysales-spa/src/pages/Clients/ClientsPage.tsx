@@ -1,47 +1,52 @@
+import {AgGridReact} from 'ag-grid-react'; // React Data Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import {useClientsPage} from './useClientsPage.tsx';
-import {Client} from '../../services/models/ClientModel';
-import {Button, Table} from '@mantine/core'
-import {IconTrash} from "@tabler/icons-react";
+import {Button, Group} from '@mantine/core';
+import {IconPlus} from "@tabler/icons-react";
+import {useMemo} from "react";
+import {SizeColumnsToFitGridStrategy} from "ag-grid-community";
 
 export function ClientsPage() {
     const {
-        columns,
-        data: clients,
-        deleteClient,
-        onShowClickHandler,
-        onCreateClientButtonClick
+        clients,
+        columnDefs,
+        defaultColDef,
+        gridRef,
+        onCreateClientButtonClick,
+        colorScheme
     } = useClientsPage();
+
+    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(
+        () => ({
+            type: "fitGridWidth",
+        }),
+        []
+    );
 
     return (
         <div>
-            <h1>Clients</h1>
-            <Button onClick={() => onCreateClientButtonClick()} color={"green"}>Create Client</Button>
+            <Group mb="lg" justify="space-between">
+                <h1>Clients</h1>
+                <Button onClick={onCreateClientButtonClick} color="blue"><IconPlus size={16}/></Button>
+            </Group>
 
-            <Table>
-                <Table.Thead>
-                    <Table.Tr>
-                        {columns.map(column => (
-                            <Table.Th key={column.header}>{column.header}</Table.Th>
-                        ))}
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                    {clients?.map((client: Client) => (
-                        <Table.Tr key={client.id}>
-                            <Table.Td>{client.name}</Table.Td>
-                            <Table.Td>{client.nif}</Table.Td>
-                            <Table.Td>{client.phone}</Table.Td>
-                            <Table.Td>{client.location.district}</Table.Td>
-                            <Table.Td>
-                                <Button onClick={() => onShowClickHandler(client)} color={"orange"}>Show</Button>
-                                <Button color={"green"}>Edit</Button>
-                                <Button onClick={() => deleteClient(client)} color={"red"}><IconTrash
-                                    stroke={2}/></Button>
-                            </Table.Td>
-                        </Table.Tr>
-                    ))}
-                </Table.Tbody>
-            </Table>
+            <div className={colorScheme === 'dark' ? "ag-theme-quartz-dark" : "ag-theme-quartz"} style={{height: 500}}>
+                <AgGridReact
+                    rowData={clients}
+                    columnDefs={columnDefs}
+                    ref={gridRef}
+                    defaultColDef={defaultColDef}
+                    rowSelection="multiple"
+                    suppressRowClickSelection={true}
+                    autoSizeStrategy={autoSizeStrategy}
+                    readOnlyEdit={true}
+                    undoRedoCellEditing={true}
+                    pagination={true}
+                    paginationPageSize={10}
+                    paginationPageSizeSelector={[10, 25, 50]}
+                />
+            </div>
         </div>
     );
 }

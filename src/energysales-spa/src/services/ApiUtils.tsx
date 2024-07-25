@@ -15,7 +15,7 @@ export async function fetchData<T>(url: string): Promise<T> {
     return data
 }
 
-export async function mutateData<T>(url: string, method: string, body?: any): Promise<T | undefined> {
+export async function mutateData<T>(url: string, method: string, body?: any): Promise<T> {
     const response = await fetch(url, {
         method,
         headers: AUTHORIZATION_HEADER,

@@ -14,7 +14,9 @@ import io.ktor.server.routing.routing
 import org.simplejavamail.mailer.MailerBuilder
 import org.slf4j.event.Level
 import pt.isel.ps.energysales.clients.application.ClientService
+import pt.isel.ps.energysales.clients.application.OfferService
 import pt.isel.ps.energysales.clients.data.PsqlClientRepository
+import pt.isel.ps.energysales.clients.data.PsqlOfferRepository
 import pt.isel.ps.energysales.clients.http.clientRoutes
 import pt.isel.ps.energysales.email.SimpleJavaEmailService
 import pt.isel.ps.energysales.email.model.EmailConfig
@@ -91,15 +93,28 @@ fun Application.module() {
                 ),
         )
     }
+
     val teamService by lazy {
         TeamService(
             teamRepository = PsqlTeamRepository(),
             sellerRepository = PsqlSellerRepository(),
         )
     }
+
     val sellerService by lazy { SellerService(sellerRepository = PsqlSellerRepository()) }
+
     val productService by lazy { ServiceService(serviceRepository = PsqlServiceRepository()) }
+
     val clientService by lazy { ClientService(clientRepository = PsqlClientRepository()) }
+
+    val offerService by lazy {
+        OfferService(
+            offerRepository = PsqlOfferRepository(),
+            sellerRepository = PsqlSellerRepository(),
+            clientRepository = PsqlClientRepository(),
+            serviceRepository = PsqlServiceRepository(),
+        )
+    }
 
     /**
      * Plugins
@@ -127,13 +142,15 @@ fun Application.module() {
             authRoutes(userService)
             userRoutes(userService)
             authenticate {
+                authorize("SELLER") {
+                    clientRoutes(clientService, offerService)
+                    serviceRoutes(productService)
+                }
                 authorize("ADMIN") {
                     teamRoutes(teamService)
                     sellerRoutes(sellerService)
                     serviceRoutes(productService)
-                    clientRoutes(clientService)
-                }
-                authorize("SELLER") {
+                    // clientRoutes(clientService)
                 }
             }
         }

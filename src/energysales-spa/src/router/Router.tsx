@@ -18,6 +18,7 @@ import {CreateClientPage} from "../pages/Clients/CreateClient/CreateClientPage.t
 import {ProtectedRoute} from "./ProtectedRoute.tsx";
 import App from "../App.tsx";
 import {ChangePasswordPage} from "../pages/Auth/ChangePasswordPage.tsx";
+import {MakeOfferPage} from "../pages/Clients/MakeOffer/MakeOfferPage.tsx";
 
 
 export const router = createBrowserRouter([
@@ -45,7 +46,10 @@ export const router = createBrowserRouter([
                     {path: "/users/create", element: <CreateUserPage/>},
                     {path: "/services", element: <ServicesPage/>},
                     {path: "/services/:id", element: <ServicePage/>},
-                    {path: "/services/create", element: <CreateServicePage/>}
+                    {path: "/services/create", element: <CreateServicePage/>},
+                   /* {path: "/clients", element: <ClientsPage/>},
+                    {path: "/clients/:id", element: <ClientPage/>},
+                    {path: "/clients/create", element: <MakeOfferPage/>},*/
                 ]
             },
             {
@@ -54,6 +58,7 @@ export const router = createBrowserRouter([
                     {path: "/clients", element: <ClientsPage/>},
                     {path: "/clients/:id", element: <ClientPage/>},
                     {path: "/clients/create", element: <CreateClientPage/>},
+                    {path: "/clients/:id/make-offer", element: <MakeOfferPage/>},
                 ]
             }]
     }])

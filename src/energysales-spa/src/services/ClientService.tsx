@@ -1,6 +1,6 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {ApiUris} from "./ApiUris";
-import {Client, CreateClientInputModel, UpdateClientInputModel} from "./models/ClientModel";
+import {Client, CreateClientInputModel, MakeOfferInputModel, UpdateClientInputModel} from "./models/ClientModel";
 import {fetchData, mutateData} from "./ApiUtils.tsx";
 
 export function useCreateClient() {
@@ -24,10 +24,10 @@ export function useGetClient(id: string) {
     });
 }
 
-export function useUpdateClient(id: string) {
+export function useUpdateClient() {
     return useMutation({
         mutationFn: (newClientInfo: UpdateClientInputModel) =>
-            mutateData(ApiUris.updateClient(id), "PUT", newClientInfo),
+            mutateData(ApiUris.updateClient(newClientInfo.id), "PUT", newClientInfo),
     });
 }
 
@@ -39,5 +39,12 @@ export function useDeleteClient() {
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['clients']});
         },
+    });
+}
+
+export function useMakeOffer() {
+    return useMutation({
+        mutationFn: (input: MakeOfferInputModel) =>
+            mutateData(ApiUris.makeOffer(input.clientId), "POST", input),
     });
 }

@@ -2,13 +2,15 @@ import {useCreateUser, useDeleteUser, useGetUsers, useUpdateUser} from '../../se
 import {useNavigate} from "react-router-dom"
 import {PatchUserInputModel, User} from "../../services/models/UserModel.tsx";
 import {useMemo, useRef, useState} from "react";
-import {CellEditRequestEvent, ColDef} from "@ag-grid-community/core";
-import {AgGridReact} from "ag-grid-react";
+import {CellEditRequestEvent, ColDef, SizeColumnsToFitGridStrategy} from "ag-grid-community";
+import {AgGridReact, } from "ag-grid-react";
 import {toast} from "react-toastify";
 import {UserActionsCellRenderer} from "../../components/tableCells/UserActionsCell.tsx";
+import {useMantineColorScheme} from "@mantine/core";
 
 export function useUsersPage() {
     const navigate = useNavigate();
+    const {colorScheme} = useMantineColorScheme({keepTransitions: true});
     const gridRef = useRef<AgGridReact>(null);
     const {data: users, error: fetchError, isFetching} = useGetUsers();
     const {mutateAsync: createUser} = useCreateUser();
@@ -31,7 +33,7 @@ export function useUsersPage() {
             field: "actions",
             cellRenderer: UserActionsCellRenderer,
             cellRendererParams: {
-                onDeleteUserButtonClick: async (user: User) => await deleteUser(user.id).catch(e => setError(e))
+                onDeleteButtonClick: async (user: User) => await deleteUser(user.id).catch(e => setError(e))
             },
             minWidth: 10
         }
@@ -45,6 +47,13 @@ export function useUsersPage() {
             enableCellChangeFlash: true,
         };
     }, []);
+
+    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(
+        () => ({
+            type: "fitGridWidth",
+        }),
+        []
+    );
 
     const onCellEditRequest = async (event: CellEditRequestEvent<User[]>) => {
         // optimistic update
@@ -77,9 +86,11 @@ export function useUsersPage() {
         columnDefs,
         defaultColDef,
         gridRef,
+        autoSizeStrategy,
         onCellEditRequest,
         onAddUserButtonClick: () => navigate('/users/create'),
         onShowUserButtonClick: (User: User) => navigate(`/users/${User.id}`),
+        colorScheme,
         isFetching,
         error,
     }

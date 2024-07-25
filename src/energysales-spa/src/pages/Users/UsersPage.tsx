@@ -2,14 +2,10 @@ import {AgGridReact} from 'ag-grid-react'; // React Data Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import {useUsersPage} from "./useUsersPage.tsx";
-import {Button, Group, useMantineColorScheme} from "@mantine/core";
+import {Button, Group,} from "@mantine/core";
 import {IconPlus} from "@tabler/icons-react";
 
 export function UsersPage() {
-
-    const {colorScheme, toggleColorScheme} = useMantineColorScheme({
-        keepTransitions: true,
-    });
 
     const {
         users,
@@ -18,13 +14,15 @@ export function UsersPage() {
         gridRef,
         onAddUserButtonClick,
         onCellEditRequest,
+        colorScheme,
+        autoSizeStrategy
     } = useUsersPage();
 
     return (
         <div>
-            <Group position="apart" mb="lg" justify="space-between">
+            <Group mb="lg" justify="space-between">
                 <h1>Users</h1>
-                <Button onClick={onAddUserButtonClick} color="blue" leftIcon={<IconPlus size={16}/>}>+</Button>
+                <Button onClick={onAddUserButtonClick} color="blue"><IconPlus size={16}/></Button>
 
             </Group>
 
@@ -38,6 +36,7 @@ export function UsersPage() {
                     suppressRowClickSelection={true}
                     readOnlyEdit={true}
                     undoRedoCellEditing={true}
+                    autoSizeStrategy={autoSizeStrategy}
                     pagination={true}
                     paginationPageSize={10}
                     paginationPageSizeSelector={[10, 25, 50]}

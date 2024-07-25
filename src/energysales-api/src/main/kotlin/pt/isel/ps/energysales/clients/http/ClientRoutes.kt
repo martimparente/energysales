@@ -20,10 +20,15 @@ import pt.isel.ps.energysales.clients.application.ClientCreationError
 import pt.isel.ps.energysales.clients.application.ClientDeletingError
 import pt.isel.ps.energysales.clients.application.ClientService
 import pt.isel.ps.energysales.clients.application.ClientUpdatingError
+import pt.isel.ps.energysales.clients.application.OfferCreationError
+import pt.isel.ps.energysales.clients.application.OfferService
 import pt.isel.ps.energysales.clients.application.dto.CreateClientInput
+import pt.isel.ps.energysales.clients.application.dto.CreateOfferInput
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
+import pt.isel.ps.energysales.clients.http.model.CreateOfferRequest
+import pt.isel.ps.energysales.clients.http.model.OfferLinkJSON
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.respondProblem
@@ -36,10 +41,18 @@ class ClientResource(
     class Id(
         val parent: ClientResource = ClientResource(),
         val id: Int,
-    )
+    ) {
+        @Resource(Uris.OFFERS)
+        class OfferResource(
+            val parent: Id,
+        )
+    }
 }
 
-fun Route.clientRoutes(clientService: ClientService) {
+fun Route.clientRoutes(
+    clientService: ClientService,
+    offerService: OfferService,
+) {
     get<ClientResource> { queryParams ->
         val clients = clientService.getAllClientsPaging(10, queryParams.lastKeySeen)
         val clientsResponse = clients.map { client -> ClientJSON.fromClient(client) }
@@ -146,6 +159,44 @@ fun Route.clientRoutes(clientService: ClientService) {
                             Problem.clientInfoIsInvalid,
                             HttpStatusCode.BadRequest,
                         )
+                }
+        }
+    }
+
+    get<ClientResource.Id.OfferResource> { pathParams ->
+        /* val offers = clientService.getClientOffers(pathParams.parent.id)
+         val offersResponse = offers.map { offer -> OfferJSON.fromOffer(offer) }
+         call.respond(offersResponse)*/
+    }
+
+    post<ClientResource.Id.OfferResource> { pathParams ->
+        val userId =
+            call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
+                ?: return@post call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+        val body = call.receive<CreateOfferRequest>()
+        val input =
+            CreateOfferInput(
+                body.clientId,
+                body.serviceId,
+                body.dueInDays,
+                userId,
+            )
+
+        val res = offerService.createOffer(input)
+        when (res) {
+            is Right -> {
+                call.response.status(HttpStatusCode.Created)
+                val offerLinkJson = OfferLinkJSON(res.value.url, res.value.dueDate)
+                call.respond(offerLinkJson)
+            }
+
+            is Left ->
+                when (res.value) {
+                    OfferCreationError.OfferAlreadyExists -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+                    OfferCreationError.OfferEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+                    OfferCreationError.OfferInfoIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+                    OfferCreationError.OfferNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+                    OfferCreationError.OfferSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
                 }
         }
     }

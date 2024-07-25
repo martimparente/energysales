@@ -26,17 +26,16 @@ export function TeamsPage() {
 
     return (
         <Box p="md">
-            <Group position="apart" mb="lg" justify="space-between">
+            <Group mb="lg" justify="space-between">
                 <Title order={1}>Teams</Title>
-                <Button onClick={() => onCreateTeamButtonClick()} color="green"
-                        leftIcon={<IconPlus size={16}/>}>+</Button>
+                <Button onClick={() => onCreateTeamButtonClick()} color="green"><IconPlus size={16}/></Button>
             </Group>
 
             <Grid>
                 {teams?.map((team: Team) => (
                     <Grid.Col xs={12} sm={6} md={4} lg={3} key={team.id}>
                         <Card shadow="sm" padding="md">
-                            <Group position="apart" align="flex-start" justify="space-between">
+                            <Group align="flex-start" justify="space-between">
                                 <Stack spacing="xs">
                                     <Title order={4}>{team.name}</Title>
                                     <Text color="dimmed">{team.location.district}</Text>

@@ -22,7 +22,6 @@ export namespace ApiUris {
     export const addServiceToTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/services`;
     export const deleteServiceFromTeam = (teamId: string, serviceId: string) => `${API_BASE_URL}/teams/${teamId}/services/${serviceId}`;
 
-
     // Managers
     export const getManagerCandidates = () => `${API_BASE_URL}/users?role=MANAGER&available=true`;
 
@@ -46,4 +45,5 @@ export namespace ApiUris {
     export const createClient = `${API_BASE_URL}/clients`;
     export const updateClient = (clientId: string) => `${API_BASE_URL}/clients/${clientId}`;
     export const deleteClient = (clientId: string) => `${API_BASE_URL}/clients/${clientId}`;
+    export const makeOffer = (clientId: string) => `${API_BASE_URL}/clients/${clientId}/offers`;
 }

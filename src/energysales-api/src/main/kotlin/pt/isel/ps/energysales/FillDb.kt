@@ -3,6 +3,8 @@ package pt.isel.ps.energysales
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import pt.isel.ps.energysales.clients.data.table.ClientTable
+import pt.isel.ps.energysales.clients.data.table.OfferLinkTable
+import pt.isel.ps.energysales.clients.data.table.OfferTable
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.services.data.table.PriceTable
 import pt.isel.ps.energysales.services.data.table.ServiceTable
@@ -16,19 +18,8 @@ import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
 import pt.isel.ps.energysales.users.data.table.UserTable
 
 fun fillDb() {
-    SchemaUtils.drop(
-        SellerTable,
-        TeamTable,
-        UserCredentialsTable,
-        UserRolesTable,
-        RoleTable,
-        UserTable,
-        ServiceTable,
-        LocationTable,
-        TeamClients,
-        TeamServices,
-        ClientTable,
-    )
+    dropDb()
+
     SchemaUtils
         .create(
             UserTable,
@@ -42,6 +33,8 @@ fun fillDb() {
             TeamClients,
             TeamServices,
             ClientTable,
+            OfferLinkTable,
+            OfferTable,
         )
 
     RoleTable.insert {
@@ -74,9 +67,11 @@ fun fillDb() {
             it[salt] = "c3f842f3630ebb3d96543709bc316402"
         }
 
-        SellerTable.insert {
-            it[id] = i
-            it[totalSales] = 0.0f
+        if (i / 2 == 0) {
+            SellerTable.insert {
+                it[id] = i
+                it[totalSales] = 0.0f
+            }
         }
 
         LocationTable.insert {
@@ -88,13 +83,15 @@ fun fillDb() {
             it[location] = i
         }
 
-        ClientTable.insert {
-            it[name] = "Client $i"
-            // random number of exactly 9 digits
-            it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
-            it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
-            it[location] = i
-            it[seller] = i
+        if (i / 2 == 0) {
+            ClientTable.insert {
+                it[name] = "Client $i"
+                // random number of exactly 9 digits
+                it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
+                it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
+                it[location] = i
+                it[seller] = i
+            }
         }
         PriceTable.insert {
             it[ponta] = i.toFloat()
@@ -123,11 +120,16 @@ fun fillDb() {
         it[email] = "11@mail.com"
         it[role] = "ADMIN"
     }
+
     UserTable.insert {
         it[name] = "Name 12"
         it[surname] = "Surname 12"
         it[email] = "12@mail.com"
         it[role] = "SELLER"
+    }
+    SellerTable.insert {
+        it[id] = 12
+        it[totalSales] = 0.0f
     }
 
     UserCredentialsTable.insert {
@@ -197,5 +199,7 @@ fun dropDb() {
         TeamServices,
         TeamClients,
         ClientTable,
+        OfferLinkTable,
+        OfferTable,
     )
 }

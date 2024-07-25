@@ -11,7 +11,7 @@ const navLinks = [
     {link: '/teams', label: 'Teams', icon: IconBrandAsana, roles: ['ADMIN']},
     {link: '/users', label: 'Users', icon: IconUsersGroup, roles: ['ADMIN']},
     {link: '/services', label: 'Services', icon: IconBulb, roles: ['ADMIN']},
-    {link: '/clients', label: 'Clients', icon: IconBuilding, roles: ['SELLER']},
+    {link: '/clients', label: 'Clients', icon: IconBuilding, roles: ['ADMIN', 'SELLER']},
     {link: '/settings', label: 'Settings', icon: IconSettings, roles: ['ADMIN', 'SELLER']},
 ];
 
