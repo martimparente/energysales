@@ -1,5 +1,3 @@
-package pt.isel.ps.energysales.users.http.model
-
 import kotlinx.serialization.Serializable
 import pt.isel.ps.energysales.users.domain.User
 import java.util.Locale
