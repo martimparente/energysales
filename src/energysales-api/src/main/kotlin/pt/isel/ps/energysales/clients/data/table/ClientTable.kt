@@ -9,6 +9,7 @@ object ClientTable : IntIdTable() {
     val name = varchar("name", 50)
     val nif = varchar("nif", 9).uniqueIndex()
     val phone = varchar("phone", 9).uniqueIndex()
+    val email = varchar("email", 254).uniqueIndex()
     val location = reference("location", LocationTable)
     val seller = reference("seller", SellerTable, onDelete = ReferenceOption.CASCADE).nullable()
 }

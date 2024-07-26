@@ -8,7 +8,7 @@ data class EmailData(
     val message: String,
 )
 
-data class EmailConfig(
+data class MailConfig(
     val fromUsername: String,
     val fromEmail: String,
     val resetLinkBaseUrl: String,

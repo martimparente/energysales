@@ -13,7 +13,7 @@ export function MakeOfferPage() {
         expandedService,
         setExpandedService,
         handlerMakeOffer,
-        sendOfferLinkByEmail,
+        handleSendOfferEmail,
         dueInDays,
         setDueInDays,
         offerResponse
@@ -53,9 +53,8 @@ export function MakeOfferPage() {
                 <Group>
                     <Card shadow="sm" padding="lg" style={{maxWidth: 300}}>
                         <Group style={{marginBottom: 5}}>
-                            <Text>{client.name}</Text>
                             <Badge color="blue" variant="light">
-                                ID: {client.id}
+                                {client.name}
                             </Badge>
                         </Group>
 
@@ -63,11 +62,15 @@ export function MakeOfferPage() {
                             <strong>Location: </strong>{client.location.district}
                         </Text>
                         <Text size="sm" style={{color: theme.colors.gray[7], lineHeight: 1.5}}>
-                            <strong>NIF: </strong>{client.nif}
+                            <strong>E-mail: </strong>{client.email}
                         </Text>
                         <Text size="sm" style={{color: theme.colors.gray[7], lineHeight: 1.5}}>
                             <strong>Phone: </strong>{client.phone}
                         </Text>
+                        <Text size="sm" style={{color: theme.colors.gray[7], lineHeight: 1.5}}>
+                            <strong>Nif: </strong>{client.nif}
+                        </Text>
+
                     </Card>
                 </Group>
             </Group>
@@ -137,22 +140,27 @@ export function MakeOfferPage() {
             )}
 
             {offerResponse ? (
-                <Group mt="md">
-                    <Button component="a" href={offerResponse.url} target="_blank">
-                        Go to Offer Link
-                    </Button>
-                    <Button onClick={() => handleCopyToClipboard(offerResponse.url)}>
-                        Copy Offer Link
-                    </Button>
-                </Group>
+                <div>
+                    <h3>Offer Link</h3>
+                    <p>{offerResponse.url}</p>
+                    <Group mt="md">
+                        <Button onClick={() => handleCopyToClipboard(offerResponse.url)}>
+                            Copy to Clipboard
+                        </Button>
+                        <Button onClick={handleSendOfferEmail} disabled={!selectedService}>
+                            Send to Client
+                        </Button>
+                        <Button component="a" href={offerResponse.url} target="_blank">
+                            Open Link
+                        </Button>
+                    </Group>
+                </div>
             ) : (
                 <Group mt="md">
                     <Button onClick={handlerMakeOffer} disabled={!selectedService}>
                         Generate Offer Link
                     </Button>
-                    <Button onClick={sendOfferLinkByEmail} disabled={!selectedService}>
-                        Send Offer Link by Email
-                    </Button>
+
                 </Group>
             )}
 

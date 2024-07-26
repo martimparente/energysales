@@ -34,6 +34,7 @@ class PsqlClientRepository : ClientRepository {
                     name = client.name
                     nif = client.nif
                     phone = client.phone
+                    email = client.email
                     location = LocationEntity.find { LocationTable.district eq client.location.district }.first()
                     seller = client.sellerId?.let { SellerEntity.findById(it) }
                 }.id

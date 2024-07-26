@@ -3,6 +3,7 @@ package pt.isel.ps.energysales.clients.data
 import pt.isel.ps.energysales.clients.data.entity.ClientEntity
 import pt.isel.ps.energysales.clients.data.entity.OfferEntity
 import pt.isel.ps.energysales.clients.data.entity.OfferLinkEntity
+import pt.isel.ps.energysales.clients.data.table.OfferTable
 import pt.isel.ps.energysales.clients.domain.Offer
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
@@ -12,6 +13,15 @@ class PsqlOfferRepository : OfferRepository {
     override suspend fun getById(id: Int): Offer? =
         dbQuery {
             OfferEntity.findById(id)?.toOffer()
+        }
+
+    override suspend fun getByClient(clientId: Int): Offer? =
+        dbQuery {
+            OfferEntity
+                .find {
+                    OfferTable.client eq clientId
+                }.firstOrNull()
+                ?.toOffer()
         }
 
     override suspend fun create(offer: Offer): Int =

@@ -6,6 +6,7 @@ data class CreateClientInput(
     val name: String,
     val nif: String,
     val phone: String,
+    val email: String,
     val location: Location,
     val sellerId: String,
 )
@@ -15,6 +16,7 @@ data class UpdateClientInput(
     val name: String,
     val nif: String,
     val phone: String,
+    val email: String,
     val location: Location,
     val sellerId: String,
 )

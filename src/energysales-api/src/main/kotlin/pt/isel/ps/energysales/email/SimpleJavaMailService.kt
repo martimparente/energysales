@@ -6,13 +6,13 @@ import arrow.core.raise.ensure
 import kotlinx.coroutines.future.await
 import org.simplejavamail.api.mailer.Mailer
 import org.simplejavamail.email.EmailBuilder
-import pt.isel.ps.energysales.email.model.EmailConfig
 import pt.isel.ps.energysales.email.model.EmailData
+import pt.isel.ps.energysales.email.model.MailConfig
 
-class SimpleJavaEmailService(
+class SimpleJavaMailService(
     private val mailer: Mailer,
-    private val config: EmailConfig,
-) : EmailService {
+    private val config: MailConfig,
+) : MailService {
     override suspend fun sendEmail(data: EmailData): SendEmailResult =
         either {
             println("Sending email to ${data.toEmail} with subject ${data.subject} and message ${data.message}")
@@ -36,7 +36,10 @@ class SimpleJavaEmailService(
             }
         }
 
-    override suspend fun sendResetPasswordEmail(toEmail: String): SendResetPasswordResult =
+    override suspend fun sendResetPasswordEmail(
+        toEmail: String,
+        username: String,
+    ): SendResetPasswordResult =
         either {
             val subject = "Your Password Reset Link - EnergySales"
 
@@ -47,7 +50,7 @@ class SimpleJavaEmailService(
                     .randomUUID()
                     .toString()
             val resetLink = "${config.resetLinkBaseUrl}?token=$token"
-            val message = "Click the following link to reset your password: $resetLink"
+            val message = "Hi $username Click the following link to reset your password: $resetLink"
 
             println("Sending password reset email to $toEmail with link $resetLink")
 
@@ -62,6 +65,40 @@ class SimpleJavaEmailService(
             val res = sendEmail(emailData)
             when (res) {
                 is Either.Left -> raise(SendResetPasswordError.EmailNotSent)
+                is Either.Right -> Unit
+            }
+        }
+
+    override suspend fun sendOfferEmail(
+        toEmail: String,
+        clientName: String,
+        offerURL: String,
+    ): SendOfferLinkResult =
+        either {
+            val subject = "Your Energy Offer - EnergySales"
+
+            val token =
+                java
+                    .util
+                    .UUID
+                    .randomUUID()
+                    .toString()
+
+            val message = "Hi $clientName Here's your Energy Offer $offerURL"
+
+            println("Sending offer to $toEmail with link $offerURL")
+
+            val emailData =
+                EmailData(
+                    fromEmail = config.fromEmail,
+                    toEmail = toEmail,
+                    username = config.fromUsername,
+                    subject = subject,
+                    message = message,
+                )
+            val res = sendEmail(emailData)
+            when (res) {
+                is Either.Left -> raise(SendOfferLinkError.EmailNotSent)
                 is Either.Right -> Unit
             }
         }

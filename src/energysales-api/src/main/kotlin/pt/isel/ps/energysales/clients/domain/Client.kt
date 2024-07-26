@@ -7,6 +7,7 @@ data class Client(
     val name: String,
     val nif: String,
     val phone: String,
+    val email: String,
     val location: Location,
     val sellerId: Int?,
 )

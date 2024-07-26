@@ -46,4 +46,5 @@ export namespace ApiUris {
     export const updateClient = (clientId: string) => `${API_BASE_URL}/clients/${clientId}`;
     export const deleteClient = (clientId: string) => `${API_BASE_URL}/clients/${clientId}`;
     export const makeOffer = (clientId: string) => `${API_BASE_URL}/clients/${clientId}/offers`;
+    export const sendOfferEmail = (clientId: string) => `${API_BASE_URL}/clients/${clientId}/offers/email`;
 }

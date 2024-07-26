@@ -10,6 +10,7 @@ data class ClientJSON(
     val name: String,
     val nif: String,
     val phone: String,
+    val email: String,
     val location: LocationJSON,
 ) {
     companion object {
@@ -19,6 +20,7 @@ data class ClientJSON(
                 client.name,
                 client.nif,
                 client.phone,
+                client.email,
                 LocationJSON.fromLocation(client.location),
             )
     }
@@ -49,6 +51,7 @@ data class CreateClientRequest(
     val name: String,
     val nif: String,
     val phone: String,
+    val email: String,
     val location: LocationJSON,
 )
 
@@ -58,6 +61,7 @@ data class UpdateClientRequest(
     val name: String,
     val nif: String,
     val phone: String,
+    val email: String,
     val location: LocationJSON,
 )
 

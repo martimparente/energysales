@@ -89,6 +89,7 @@ fun fillDb() {
                 // random number of exactly 9 digits
                 it[nif] = (100000000 + (Math.random() * 900000000).toInt()).toString()
                 it[phone] = (100000000 + (Math.random() * 900000000).toInt()).toString()
+                it[email] = "email$i@email.com"
                 it[location] = i
                 it[seller] = i
             }

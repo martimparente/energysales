@@ -47,9 +47,9 @@ export const router = createBrowserRouter([
                     {path: "/services", element: <ServicesPage/>},
                     {path: "/services/:id", element: <ServicePage/>},
                     {path: "/services/create", element: <CreateServicePage/>},
-                   /* {path: "/clients", element: <ClientsPage/>},
-                    {path: "/clients/:id", element: <ClientPage/>},
-                    {path: "/clients/create", element: <MakeOfferPage/>},*/
+                    /* {path: "/clients", element: <ClientsPage/>},
+                     {path: "/clients/:id", element: <ClientPage/>},
+                     {path: "/clients/create", element: <MakeOfferPage/>},*/
                 ]
             },
             {

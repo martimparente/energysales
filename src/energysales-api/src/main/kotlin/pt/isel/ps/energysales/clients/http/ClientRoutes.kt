@@ -45,7 +45,12 @@ class ClientResource(
         @Resource(Uris.OFFERS)
         class OfferResource(
             val parent: Id,
-        )
+        ) {
+            @Resource("/email")
+            class EmailResource(
+                val parent: OfferResource,
+            )
+        }
     }
 }
 
@@ -67,6 +72,7 @@ fun Route.clientRoutes(
                 body.name,
                 body.nif,
                 body.phone,
+                body.email,
                 body.location.toLocation(),
                 userId,
             )
@@ -119,6 +125,7 @@ fun Route.clientRoutes(
                 body.name,
                 body.nif,
                 body.phone,
+                body.email,
                 body.location.toLocation(),
                 userId.toString(),
             )
@@ -169,7 +176,7 @@ fun Route.clientRoutes(
          call.respond(offersResponse)*/
     }
 
-    post<ClientResource.Id.OfferResource> { pathParams ->
+    post<ClientResource.Id.OfferResource> {
         val userId =
             call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
                 ?: return@post call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
@@ -198,6 +205,20 @@ fun Route.clientRoutes(
                     OfferCreationError.OfferNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
                     OfferCreationError.OfferSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
                 }
+        }
+    }
+    post<ClientResource.Id.OfferResource.EmailResource> { pathParams ->
+        // this route is to email the client with the offer
+        val userId =
+            call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
+                ?: return@post call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+        val clientId = pathParams.parent.parent.id
+
+        val res = offerService.sendOfferByEmail(clientId)
+
+        when (res) {
+            is Right -> call.respond(HttpStatusCode.OK)
+            is Left -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
         }
     }
 }

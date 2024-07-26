@@ -29,7 +29,7 @@ export function ServicesPage() {
         <div>
             <Group mb="lg" justify="space-between">
                 <h1>Services</h1>
-                <Button onClick={onCreateServiceButtonClick} color="blue" ><IconPlus size={16}/></Button>
+                <Button onClick={onCreateServiceButtonClick} color="blue"><IconPlus size={16}/></Button>
             </Group>
 
             <div className={colorScheme === 'dark' ? "ag-theme-quartz-dark" : "ag-theme-quartz"} style={{height: 500}}>

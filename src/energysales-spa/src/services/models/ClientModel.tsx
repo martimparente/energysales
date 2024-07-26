@@ -3,6 +3,7 @@ export interface Client {
     name: string;
     nif: string;
     phone: string;
+    email: string;
     location: Location;
 }
 
@@ -10,6 +11,7 @@ export interface CreateClientInputModel {
     name: string;
     nif: string;
     phone: string;
+    email: string;
     location: Location;
 }
 
@@ -18,6 +20,7 @@ export interface UpdateClientInputModel {
     name: string;
     nif: string;
     phone: string;
+    email: string;
     location: Location;
 }
 
@@ -32,6 +35,7 @@ export interface PatchClientInputModel {
     name: string | null,
     nif: string | null,
     phone: string | null,
+    email: string;
     location: Location | null,
 }
 

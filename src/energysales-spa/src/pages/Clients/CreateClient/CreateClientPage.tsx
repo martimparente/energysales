@@ -20,8 +20,8 @@ export function CreateClientPage() {
                     control={control}
                     render={({field}) => (
                         <TextInput
-                            label="Client Name"
-                            placeholder="Enter Client name"
+                            label="Name"
+                            placeholder="Client name"
                             {...field}
                             required
                         />
@@ -29,12 +29,12 @@ export function CreateClientPage() {
                 />
 
                 <Controller
-                    name="nif"
+                    name="email"
                     control={control}
                     render={({field}) => (
                         <TextInput
-                            label="Client NIF"
-                            placeholder="Enter Client NIF"
+                            label="E-mail"
+                            placeholder="Client E-mail"
                             {...field}
                             required
                         />
@@ -46,14 +46,26 @@ export function CreateClientPage() {
                     control={control}
                     render={({field}) => (
                         <TextInput
-                            label="Client Phone Number"
-                            placeholder="Enter Client Phone Number"
+                            label="Phone Number"
+                            placeholder="Client Phone Number"
                             {...field}
                             required
                         />
                     )}
                 />
 
+                <Controller
+                    name="nif"
+                    control={control}
+                    render={({field}) => (
+                        <TextInput
+                            label="NIF"
+                            placeholder="Client NIF"
+                            {...field}
+                            required
+                        />
+                    )}
+                />
 
                 <Controller
                     name="location.district"
@@ -61,7 +73,7 @@ export function CreateClientPage() {
                     render={({field}) => (
                         <TextInput
                             label="District"
-                            placeholder="Enter district"
+                            placeholder="Client Location"
                             {...field}
                             required
                         />

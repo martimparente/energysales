@@ -18,8 +18,8 @@ import pt.isel.ps.energysales.clients.application.OfferService
 import pt.isel.ps.energysales.clients.data.PsqlClientRepository
 import pt.isel.ps.energysales.clients.data.PsqlOfferRepository
 import pt.isel.ps.energysales.clients.http.clientRoutes
-import pt.isel.ps.energysales.email.SimpleJavaEmailService
-import pt.isel.ps.energysales.email.model.EmailConfig
+import pt.isel.ps.energysales.email.SimpleJavaMailService
+import pt.isel.ps.energysales.email.model.MailConfig
 import pt.isel.ps.energysales.plugins.authorize
 import pt.isel.ps.energysales.plugins.configureDatabases
 import pt.isel.ps.energysales.plugins.configureHTTP
@@ -70,8 +70,8 @@ fun Application.module() {
                 configProperty("email.smtp.password"),
             ).buildMailer()
 
-    val emailConfig =
-        EmailConfig(
+    val mailConfig =
+        MailConfig(
             configProperty("email.fromUsername"),
             configProperty("email.fromEmail"),
             configProperty("email.resetLinkBaseUrl"),
@@ -80,17 +80,19 @@ fun Application.module() {
     /**
      * Services
      */
+    val mailService by lazy {
+        SimpleJavaMailService(
+            mailer = mailer,
+            config = mailConfig,
+        )
+    }
 
     val userService by lazy {
         UserService(
             userRepository = PsqlUserRepository(),
             tokenService = JwtTokenService(jwtConfig),
             hashingService = SHA256HashingService(),
-            emailService =
-                SimpleJavaEmailService(
-                    mailer = mailer,
-                    config = emailConfig,
-                ),
+            mailService = mailService,
         )
     }
 
@@ -113,6 +115,7 @@ fun Application.module() {
             sellerRepository = PsqlSellerRepository(),
             clientRepository = PsqlClientRepository(),
             serviceRepository = PsqlServiceRepository(),
+            mailService = mailService,
         )
     }
 

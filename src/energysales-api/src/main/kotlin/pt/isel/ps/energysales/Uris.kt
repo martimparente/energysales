@@ -50,6 +50,7 @@ object Uris {
     const val CLIENTS = "/clients"
     const val CLIENTS_BY_ID = "$CLIENTS/{id}"
     const val CLIENTS_OFFERS = "$CLIENTS/{id}/offers"
+    const val CLIENTS_OFFERS_SEND_EMAIL = "$CLIENTS/{id}/offers/email"
 
     // Offer routes
     const val OFFERS = "/offers"

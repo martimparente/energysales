@@ -10,7 +10,7 @@ import pt.isel.ps.energysales.services.data.table.ServiceTable
 object OfferTable : IntIdTable() {
     val createdAt = datetime("created_at")
     val createdBy = reference("created_by", SellerTable)
-    val client = reference("client", ClientTable)
+    val client = reference("client", ClientTable, onDelete = ReferenceOption.CASCADE)
     val service = reference("service", ServiceTable)
     val link = reference("link", OfferLinkTable, onDelete = ReferenceOption.CASCADE)
 }

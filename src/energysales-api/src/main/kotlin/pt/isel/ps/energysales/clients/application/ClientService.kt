@@ -22,7 +22,8 @@ class ClientService(
             ensure(input.location.district.length in 2..16) { ClientCreationError.ClientInfoIsInvalid }
             // ensure(!clientRepository.clientExistsByName(name)) { ClientCreationError.ClientAlreadyExists } //TODO SHOULD CHECK HERE OR LET SQL HANDLE IT?
 
-            val client = Client(-1, input.name, input.nif, input.phone, Location(input.location.district), input.sellerId.toInt())
+            val client =
+                Client(-1, input.name, input.nif, input.phone, input.email, Location(input.location.district), input.sellerId.toInt())
             clientRepository.create(client)
         }
 

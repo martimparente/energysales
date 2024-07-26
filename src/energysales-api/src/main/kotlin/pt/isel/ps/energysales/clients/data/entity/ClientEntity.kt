@@ -13,11 +13,12 @@ class ClientEntity(
 ) : IntEntity(id) {
     companion object : IntEntityClass<ClientEntity>(ClientTable)
 
-    fun toClient() = Client(id.value, name, nif, phone, location.toLocation(), seller?.id?.value)
+    fun toClient() = Client(id.value, name, nif, phone, email, location.toLocation(), seller?.id?.value)
 
     var name by ClientTable.name
     var nif by ClientTable.nif
     var phone by ClientTable.phone
+    var email by ClientTable.email
     var location by LocationEntity referencedOn ClientTable.location
     var seller by SellerEntity optionalReferencedOn ClientTable.seller
 }

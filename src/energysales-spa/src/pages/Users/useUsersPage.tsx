@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom"
 import {PatchUserInputModel, User} from "../../services/models/UserModel.tsx";
 import {useMemo, useRef, useState} from "react";
 import {CellEditRequestEvent, ColDef, SizeColumnsToFitGridStrategy} from "ag-grid-community";
-import {AgGridReact, } from "ag-grid-react";
+import {AgGridReact,} from "ag-grid-react";
 import {toast} from "react-toastify";
 import {UserActionsCellRenderer} from "../../components/tableCells/UserActionsCell.tsx";
 import {useMantineColorScheme} from "@mantine/core";

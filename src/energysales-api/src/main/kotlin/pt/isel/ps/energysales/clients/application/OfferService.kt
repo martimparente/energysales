@@ -17,6 +17,7 @@ import pt.isel.ps.energysales.clients.data.ClientRepository
 import pt.isel.ps.energysales.clients.data.OfferRepository
 import pt.isel.ps.energysales.clients.domain.Offer
 import pt.isel.ps.energysales.clients.domain.OfferLink
+import pt.isel.ps.energysales.email.MailService
 import pt.isel.ps.energysales.sellers.data.SellerRepository
 import pt.isel.ps.energysales.services.data.ServiceRepository
 import java.util.UUID
@@ -26,6 +27,7 @@ class OfferService(
     private val sellerRepository: SellerRepository,
     private val clientRepository: ClientRepository,
     private val serviceRepository: ServiceRepository,
+    private val mailService: MailService,
 ) {
     // Create
     suspend fun createOffer(input: CreateOfferInput): OfferCreationResult =
@@ -68,11 +70,26 @@ class OfferService(
             ensureNotNull(offer) { OfferDeletingError.OfferNotFound }
             offerRepository.delete(offer)
         }
+
+    suspend fun sendOfferByEmail(clientId: Int): SendOfferEmailResult =
+        either {
+            val client = clientRepository.getById(clientId)
+            ensureNotNull(client) { SendOfferEmailError.OfferNotFound }
+            val offer = offerRepository.getByClient(clientId)
+            ensureNotNull(offer) { SendOfferEmailError.OfferNotFound }
+
+            val res = mailService.sendOfferEmail(client.email, client.name, offer.link.url)
+            when (res) {
+                is Either.Left -> false
+                is Either.Right -> true
+            }
+        }
 }
 
 typealias OfferCreationResult = Either<OfferCreationError, CreateOfferOutput>
 typealias OfferReadingResult = Either<OfferReadingError, Offer>
 typealias OfferDeletingResult = Either<OfferDeletingError, Boolean>
+typealias SendOfferEmailResult = Either<SendOfferEmailError, Boolean>
 
 sealed interface OfferCreationError {
     data object OfferAlreadyExists : OfferCreationError
@@ -110,4 +127,8 @@ sealed interface OfferDeletingError {
     data object OfferNotFound : OfferDeletingError
 
     data object OfferInfoIsInvalid : OfferDeletingError
+}
+
+sealed interface SendOfferEmailError {
+    data object OfferNotFound : SendOfferEmailError
 }

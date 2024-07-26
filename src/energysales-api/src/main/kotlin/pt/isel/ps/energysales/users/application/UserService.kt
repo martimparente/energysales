@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
-import pt.isel.ps.energysales.email.EmailService
+import pt.isel.ps.energysales.email.MailService
 import pt.isel.ps.energysales.users.application.dto.CreateUserInput
 import pt.isel.ps.energysales.users.data.UserRepository
 import pt.isel.ps.energysales.users.domain.Role
@@ -21,7 +21,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val tokenService: TokenService,
     private val hashingService: HashingService,
-    private val emailService: EmailService,
+    private val mailService: MailService,
 ) {
     companion object {
         const val SALT_NUM_OF_BYTES = 16
@@ -101,7 +101,7 @@ class UserService(
             val user = userRepository.getUserByEmail(email)
             // ensureNotNull(user) { ResetPasswordError.EmailNotFound }
 
-            val res = emailService.sendResetPasswordEmail(email)
+            val res = mailService.sendResetPasswordEmail(email, user!!.name)
 
             when (res) {
                 is Either.Left -> raise(ResetPasswordError.ResetEmailSendingError)

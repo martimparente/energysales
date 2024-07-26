@@ -46,7 +46,7 @@ export function useServicesPage() {
         };
     }, []);
 
-    const onCellEditRequest = async (event: CellEditRequestEvent<Service[]> ) => {
+    const onCellEditRequest = async (event: CellEditRequestEvent<Service[]>) => {
         // optimistic update
         event.node.data[event.colDef.field] = event.newValue;
         event.api.refreshCells({rowNodes: [event.node], columns: [event.column.colId]});

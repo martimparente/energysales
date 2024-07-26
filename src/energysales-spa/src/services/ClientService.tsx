@@ -48,3 +48,10 @@ export function useMakeOffer() {
             mutateData(ApiUris.makeOffer(input.clientId), "POST", input),
     });
 }
+
+export function useSendOfferEmail() {
+    return useMutation({
+        mutationFn: (clientId: string) =>
+            mutateData(ApiUris.sendOfferEmail(clientId), "POST"),
+    });
+}
