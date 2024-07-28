@@ -27,7 +27,6 @@ export function LoginPage() {
                     Welcome back to EnergySales!
                 </Title>
 
-
                 <form onSubmit={form.onSubmit((values) => loginUser(values.username, values.password))}>
 
                     <TextInput

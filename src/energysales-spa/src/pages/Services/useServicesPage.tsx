@@ -29,7 +29,9 @@ export function useServicesPage() {
             cellRendererParams: {
                 onDeleteButtonClick: async (service: Service) => await deleteService(service.id).catch(e => setError(e))
             },
-            minWidth: 100
+            filter: false,
+            width: 100,
+            minWidth: 10
         }
     ]);
 

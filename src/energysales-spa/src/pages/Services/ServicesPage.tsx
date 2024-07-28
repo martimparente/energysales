@@ -43,9 +43,6 @@ export function ServicesPage() {
                     readOnlyEdit={true}
                     autoSizeStrategy={autoSizeStrategy}
                     undoRedoCellEditing={true}
-                    pagination={true}
-                    paginationPageSize={10}
-                    paginationPageSizeSelector={[10, 25, 50]}
                     onCellEditRequest={onCellEditRequest}
                 />
             </div>

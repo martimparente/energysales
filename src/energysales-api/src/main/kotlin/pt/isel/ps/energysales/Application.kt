@@ -5,6 +5,7 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.authenticate
 import io.ktor.server.http.content.react
 import io.ktor.server.http.content.singlePageApplication
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.request.path
@@ -137,19 +138,22 @@ fun Application.module() {
      * Routes
      */
     routing {
+        staticResources("/", "static") {
+            default("index.html")
+        }
         singlePageApplication {
             react("./app/energysales-spa/dist")
         }
 
+
         route(Uris.API) {
             authRoutes(userService)
-            userRoutes(userService)
             authenticate {
                 authorize("SELLER") {
                     clientRoutes(clientService, offerService)
-                    serviceRoutes(productService)
                 }
                 authorize("ADMIN") {
+                    userRoutes(userService)
                     teamRoutes(teamService)
                     sellerRoutes(sellerService)
                     serviceRoutes(productService)

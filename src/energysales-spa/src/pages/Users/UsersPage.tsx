@@ -37,9 +37,6 @@ export function UsersPage() {
                     readOnlyEdit={true}
                     undoRedoCellEditing={true}
                     autoSizeStrategy={autoSizeStrategy}
-                    pagination={true}
-                    paginationPageSize={10}
-                    paginationPageSizeSelector={[10, 25, 50]}
                     onCellEditRequest={onCellEditRequest}
                 />
             </div>

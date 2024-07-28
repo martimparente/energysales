@@ -1,9 +1,9 @@
-import {useCreateUser, useDeleteUser, useGetUsers, useUpdateUser} from '../../services/UsersService';
+import {useDeleteUser, useGetUsers, useUpdateUser} from '../../services/UsersService';
 import {useNavigate} from "react-router-dom"
 import {PatchUserInputModel, User} from "../../services/models/UserModel.tsx";
 import {useMemo, useRef, useState} from "react";
 import {CellEditRequestEvent, ColDef, SizeColumnsToFitGridStrategy} from "ag-grid-community";
-import {AgGridReact,} from "ag-grid-react";
+import {AgGridReact} from "ag-grid-react";
 import {toast} from "react-toastify";
 import {UserActionsCellRenderer} from "../../components/tableCells/UserActionsCell.tsx";
 import {useMantineColorScheme} from "@mantine/core";
@@ -13,7 +13,6 @@ export function useUsersPage() {
     const {colorScheme} = useMantineColorScheme({keepTransitions: true});
     const gridRef = useRef<AgGridReact>(null);
     const {data: users, error: fetchError, isFetching} = useGetUsers();
-    const {mutateAsync: createUser} = useCreateUser();
     const {mutateAsync: updateUser} = useUpdateUser();
     const {mutateAsync: deleteUser} = useDeleteUser();
     const [error, setError] = useState<string | null>(null)
@@ -24,7 +23,6 @@ export function useUsersPage() {
         {field: 'email'},
         {
             field: 'role',
-            cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: ['Seller', 'Manager', 'Admin'],
             },
@@ -35,6 +33,8 @@ export function useUsersPage() {
             cellRendererParams: {
                 onDeleteButtonClick: async (user: User) => await deleteUser(user.id).catch(e => setError(e))
             },
+            filter: false,
+            width: 100,
             minWidth: 10
         }
     ]);

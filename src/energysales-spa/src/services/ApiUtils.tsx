@@ -1,12 +1,12 @@
 import {toast} from "react-toastify";
 
-export const AUTHORIZATION_HEADER = {
+const getAuthorizationHeader = () => ({
     "Content-Type": "application/json",
-    "Authorization": "Bearer " + localStorage.getItem("token"),
-};
+    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+});
 
 export async function fetchData<T>(url: string): Promise<T> {
-    const response = await fetch(url, {headers: AUTHORIZATION_HEADER})
+    const response = await fetch(url, {headers: getAuthorizationHeader()})
     const data = await response.json()
     if (!response.ok) {
         toast.warning(data.title || 'Something went wrong')
@@ -18,7 +18,7 @@ export async function fetchData<T>(url: string): Promise<T> {
 export async function mutateData<T>(url: string, method: string, body?: any): Promise<T | undefined> {
     const response = await fetch(url, {
         method,
-        headers: AUTHORIZATION_HEADER,
+        headers: getAuthorizationHeader(),
         body: JSON.stringify(body),
     });
 

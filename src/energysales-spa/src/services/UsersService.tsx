@@ -1,7 +1,7 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {CreateUserInputModel, PatchUserInputModel, User} from "./models/UserModel.tsx";
 import {ApiUris} from "./ApiUris";
-import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
+import {fetchData, mutateData} from "./ApiUtils.tsx";
 
 
 export function useCreateUser() {
@@ -34,11 +34,7 @@ export function useUpdateUser() {
 export function useDeleteUser() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (userId: string) =>
-            fetch(ApiUris.deleteUser(userId), {
-                method: "DELETE",
-                headers: AUTHORIZATION_HEADER,
-            }),
+        mutationFn: (userId: string) => mutateData(ApiUris.deleteUser(userId), "DELETE"),
         onSuccess: () => {
             // Invalidate and refetch the users query to get the updated list
             queryClient.invalidateQueries({queryKey: ['users']});

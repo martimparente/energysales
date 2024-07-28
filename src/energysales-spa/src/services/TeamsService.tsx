@@ -11,19 +11,14 @@ import {
     UpdateTeamInputModel
 } from "./models/TeamModel";
 import {ManagerInfo, Seller} from "./models/UserModel.tsx";
-import {AUTHORIZATION_HEADER, fetchData, mutateData} from "./ApiUtils.tsx";
+import {fetchData, mutateData} from "./ApiUtils.tsx";
 
 
 export function useCreateTeam() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (input: CreateTeamInputModel) =>
-            fetch(ApiUris.createTeam, {
-                method: "POST",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(input),
-            }),
+        mutationFn: async (input: CreateTeamInputModel) => mutateData(ApiUris.createTeam, "POST", input),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teams']});
@@ -62,11 +57,7 @@ export function useUpdateTeam() {
 export function useDeleteTeam() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (teamId: string) =>
-            fetch(ApiUris.deleteTeam(teamId), {
-                method: "DELETE",
-                headers: AUTHORIZATION_HEADER,
-            }),
+        mutationFn: (teamId: string) => mutateData(ApiUris.deleteTeam(teamId), "DELETE"),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teams']});
@@ -92,12 +83,7 @@ export function useGetManagerCandidates() {
 export function useAddTeamSeller() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (input: AddTeamSellerInputModel) =>
-            fetch(ApiUris.addTeamSeller(input.teamId), {
-                method: "PUT",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(input),
-            }),
+        mutationFn: async (input: AddTeamSellerInputModel) => mutateData(ApiUris.addTeamSeller(input.teamId), "PUT", input),
         onSuccess: () => {
             // Invalidate and re-fetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
@@ -110,11 +96,7 @@ export function useAddTeamSeller() {
 export function useDeleteTeamSeller() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (input: DeleteTeamSellerInput) =>
-            fetch(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), {
-                method: "DELETE",
-                headers: AUTHORIZATION_HEADER,
-            }),
+        mutationFn: async (input: DeleteTeamSellerInput) => mutateData(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), "DELETE"),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
@@ -127,12 +109,7 @@ export function useDeleteTeamSeller() {
 export function useAddServiceToTeam() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (input: AddTeamServiceInputModel) =>
-            fetch(ApiUris.addServiceToTeam(input.teamId), {
-                method: "PUT",
-                headers: AUTHORIZATION_HEADER,
-                body: JSON.stringify(input),
-            }),
+        mutationFn: async (input: AddTeamServiceInputModel) => mutateData(ApiUris.addServiceToTeam(input.teamId), "PUT", input),
         onSuccess: () => {
             // Invalidate and re-fetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
@@ -145,11 +122,7 @@ export function useAddServiceToTeam() {
 export function useDeleteServiceFromTeam() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (input: DeleteTeamServiceInput) =>
-            fetch(ApiUris.deleteServiceFromTeam(input.teamId, input.serviceId), {
-                method: "DELETE",
-                headers: AUTHORIZATION_HEADER,
-            }),
+        mutationFn: async (input: DeleteTeamServiceInput) => mutateData(ApiUris.deleteServiceFromTeam(input.teamId, input.serviceId), "DELETE"),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ["teamDetails"]});
