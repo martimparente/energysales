@@ -8,6 +8,7 @@ object Uris {
     const val ABOUT = "/about"
     const val STATUS = "/status"
     const val VERSION = "/version"
+    const val AVATAR = "/avatar"
 
     // Auth routes
     const val AUTH = "/auth"

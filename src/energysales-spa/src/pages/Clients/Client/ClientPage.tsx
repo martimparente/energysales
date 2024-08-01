@@ -1,9 +1,9 @@
-import {useParams} from 'react-router-dom';
-import {useGetClient} from '../../../services/ClientService.tsx';
+import {useParams} from 'react-router-dom'
+import {useGetClient} from '../../../services/ClientService.tsx'
 
 export function ClientPage() {
-    const {id} = useParams<string>();
-    const {data, isPending, isError} = useGetClient(id || '');
+    const {id} = useParams<string>()
+    const {data, isPending, isError} = useGetClient(id || '')
 
     if (isError) return <p>error</p>
     if (isPending) return <p>loading</p>

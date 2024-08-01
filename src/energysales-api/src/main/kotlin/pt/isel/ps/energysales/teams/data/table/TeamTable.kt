@@ -10,6 +10,7 @@ object TeamTable : IntIdTable() {
     val name = varchar("name", 50).uniqueIndex()
     val location = reference("location", LocationTable)
     val manager = reference("manager", UserTable).nullable()
+    val avatarPath = varchar("avatar_path", 255).nullable() // New column for avatar URL
 }
 
 object TeamServices : Table() {

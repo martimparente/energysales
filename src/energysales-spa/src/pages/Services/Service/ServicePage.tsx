@@ -1,4 +1,4 @@
-import {useServicePage} from './useServicePage.tsx';
+import {useServicePage} from './useServicePage.tsx'
 
 export function ServicePage() {
     const {
@@ -10,10 +10,10 @@ export function ServicePage() {
         onEditServiceButtonClick,
         onUpdateServiceClick,
         onDeleteServiceClick
-    } = useServicePage();
+    } = useServicePage()
 
-    if (error) return <p>Error loading service</p>;
-    if (isLoadingService) return <p>Loading...</p>;
+    if (error) return <p>Error loading service</p>
+    if (isLoadingService) return <p>Loading...</p>
 
     return (
         <div>
@@ -23,63 +23,43 @@ export function ServicePage() {
                     <div>
                         <label>
                             Name:
-                            <input
-                                type="text"
-                                name="name"
-                                value={editableService.name}
-                                onChange={handleInputChange}
-                            />
+                            <input type='text' name='name' value={editableService.name} onChange={handleInputChange}/>
                         </label>
                     </div>
                     <div>
                         <label>
                             Description:
-                            <textarea
-                                name="description"
-                                value={editableService.description}
-                                onChange={handleInputChange}
-                            />
+                            <textarea name='description' value={editableService.description}
+                                      onChange={handleInputChange}/>
                         </label>
                     </div>
                     <div>
                         <label>
                             Cycle Name:
-                            <input
-                                type="text"
-                                name="cycleName"
-                                value={editableService.cycleName}
-                                onChange={handleInputChange}
-                            />
+                            <input type='text' name='cycleName' value={editableService.cycleName}
+                                   onChange={handleInputChange}/>
                         </label>
                     </div>
                     <div>
                         <label>
                             Cycle Type:
-                            <input
-                                type="text"
-                                name="cycleType"
-                                value={editableService.cycleType}
-                                onChange={handleInputChange}
-                            />
+                            <input type='text' name='cycleType' value={editableService.cycleType}
+                                   onChange={handleInputChange}/>
                         </label>
                     </div>
                     <div>
                         <label>
                             Period Name:
-                            <input
-                                type="text"
-                                name="periodName"
-                                value={editableService.periodName}
-                                onChange={handleInputChange}
-                            />
+                            <input type='text' name='periodName' value={editableService.periodName}
+                                   onChange={handleInputChange}/>
                         </label>
                     </div>
                     <div>
                         <label>
                             Period Num Periods:
                             <input
-                                type="number"
-                                name="periodNumPeriods"
+                                type='number'
+                                name='periodNumPeriods'
                                 value={editableService.periodNumPeriods}
                                 onChange={handleInputChange}
                             />
@@ -90,42 +70,30 @@ export function ServicePage() {
                         <div>
                             <label>
                                 Ponta:
-                                <input
-                                    type="number"
-                                    name="ponta"
-                                    value={editableService.price.ponta}
-                                    onChange={handleInputChange}
-                                />
+                                <input type='number' name='ponta' value={editableService.price.ponta}
+                                       onChange={handleInputChange}/>
                             </label>
                         </div>
                         <div>
                             <label>
                                 Cheia:
-                                <input
-                                    type="number"
-                                    name="cheia"
-                                    value={editableService.price.cheia}
-                                    onChange={handleInputChange}
-                                />
+                                <input type='number' name='cheia' value={editableService.price.cheia}
+                                       onChange={handleInputChange}/>
                             </label>
                         </div>
                         <div>
                             <label>
                                 Vazio:
-                                <input
-                                    type="number"
-                                    name="vazio"
-                                    value={editableService.price.vazio}
-                                    onChange={handleInputChange}
-                                />
+                                <input type='number' name='vazio' value={editableService.price.vazio}
+                                       onChange={handleInputChange}/>
                             </label>
                         </div>
                         <div>
                             <label>
                                 Super Vazio:
                                 <input
-                                    type="number"
-                                    name="superVazio"
+                                    type='number'
+                                    name='superVazio'
                                     value={editableService.price.superVazio}
                                     onChange={handleInputChange}
                                 />
@@ -135,8 +103,8 @@ export function ServicePage() {
                             <label>
                                 Operador Mercado:
                                 <input
-                                    type="number"
-                                    name="operadorMercado"
+                                    type='number'
+                                    name='operadorMercado'
                                     value={editableService.price.operadorMercado}
                                     onChange={handleInputChange}
                                 />
@@ -145,34 +113,22 @@ export function ServicePage() {
                         <div>
                             <label>
                                 GDO:
-                                <input
-                                    type="number"
-                                    name="gdo"
-                                    value={editableService.price.gdo}
-                                    onChange={handleInputChange}
-                                />
+                                <input type='number' name='gdo' value={editableService.price.gdo}
+                                       onChange={handleInputChange}/>
                             </label>
                         </div>
                         <div>
                             <label>
                                 OMIP:
-                                <input
-                                    type="number"
-                                    name="omip"
-                                    value={editableService.price.omip}
-                                    onChange={handleInputChange}
-                                />
+                                <input type='number' name='omip' value={editableService.price.omip}
+                                       onChange={handleInputChange}/>
                             </label>
                         </div>
                         <div>
                             <label>
                                 Margem:
-                                <input
-                                    type="number"
-                                    name="margem"
-                                    value={editableService.price.margem}
-                                    onChange={handleInputChange}
-                                />
+                                <input type='number' name='margem' value={editableService.price.margem}
+                                       onChange={handleInputChange}/>
                             </label>
                         </div>
                     </div>
@@ -204,5 +160,5 @@ export function ServicePage() {
                 )
             )}
         </div>
-    );
+    )
 }

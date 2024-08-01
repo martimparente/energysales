@@ -19,7 +19,6 @@ class ClientService(
             ensure(input.name.length in 2..16) { ClientCreationError.ClientNameIsInvalid }
             ensure(input.nif.length == 9) { ClientCreationError.ClientInfoIsInvalid }
             ensure(input.phone.length == 9) { ClientCreationError.ClientInfoIsInvalid }
-            ensure(input.location.district.length in 2..16) { ClientCreationError.ClientInfoIsInvalid }
             // ensure(!clientRepository.clientExistsByName(name)) { ClientCreationError.ClientAlreadyExists } //TODO SHOULD CHECK HERE OR LET SQL HANDLE IT?
 
             val client =
@@ -45,7 +44,7 @@ class ClientService(
             ensure(input.name.length in 2..16) { ClientUpdatingError.ClientNameIsInvalid }
             ensure(input.nif.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
             ensure(input.phone.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
-            ensure(input.location.district.length in 2..16) { ClientUpdatingError.ClientInfoIsInvalid }
+
             val client = clientRepository.getById(input.id)
             ensureNotNull(client) { ClientUpdatingError.ClientNotFound }
 

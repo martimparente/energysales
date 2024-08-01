@@ -1,52 +1,57 @@
-import {User} from "./UserModel.tsx";
-import {Service} from "./ServiceModel.tsx";
+import {User} from './UserModel.tsx'
+import {Service} from './ServiceModel.tsx'
 
 export interface Team {
-    id: string;
-    name: string;
-    manager: string;
-    location: Location;
+    id: string
+    name: string
+    manager: string
+    location: Location
+    avatarPath: string | null
 }
 
 interface Location {
-    district: string;
+    district: string
 }
 
 export interface TeamDetails {
-    team: Team;
-    members: User[];
-    services: Service[];
+    team: Team
+    members: User[]
+    services: Service[]
 }
 
 export interface CreateTeamInputModel {
-    name: string,
-    managerId: string,
+    name: string
+    managerId: string
     location: Location
 }
 
 export interface UpdateTeamInputModel {
-    id: string,
-    name: string,
-    managerId: string,
-    location: string
+    name: string
+    managerId: string
+    location: Location
 }
 
 export interface AddTeamSellerInputModel {
-    teamId: string,
+    teamId: string
     sellerId: string
 }
 
 export interface DeleteTeamSellerInput {
-    teamId: string;
-    sellerId: string;
+    teamId: string
+    sellerId: string
 }
 
 export interface AddTeamServiceInputModel {
-    teamId: string,
+    teamId: string
     serviceId: string
 }
 
 export interface DeleteTeamServiceInput {
-    teamId: string;
-    serviceId: string;
+    teamId: string
+    serviceId: string
+}
+
+export interface AddTeamAvatarInputModel {
+    teamId: string
+    avatarImg: File
 }

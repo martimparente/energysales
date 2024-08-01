@@ -12,6 +12,7 @@ import pt.isel.ps.energysales.teams.data.table.LocationTable
 import pt.isel.ps.energysales.teams.data.table.TeamClients
 import pt.isel.ps.energysales.teams.data.table.TeamServices
 import pt.isel.ps.energysales.teams.data.table.TeamTable
+import pt.isel.ps.energysales.teams.domain.District
 import pt.isel.ps.energysales.users.data.entity.UserRolesTable
 import pt.isel.ps.energysales.users.data.table.RoleTable
 import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
@@ -58,7 +59,7 @@ fun fillDb() {
             it[name] = "Name $i"
             it[surname] = "Surname $i"
             it[email] = "$i@mail.com"
-            it[role] = if (i / 2 == 0) "SELLER" else "MANAGER"
+            it[role] = "SELLER"
         }
 
         UserCredentialsTable.insert {
@@ -67,20 +68,23 @@ fun fillDb() {
             it[salt] = "c3f842f3630ebb3d96543709bc316402"
         }
 
-        if (i / 2 == 0) {
-            SellerTable.insert {
-                it[id] = i
-                it[totalSales] = 0.0f
-            }
+        SellerTable.insert {
+            it[id] = i
+            it[totalSales] = 0.0f
         }
 
         LocationTable.insert {
-            it[district] = "Location $i"
+            if (i / 2 == 0) {
+                it[district] = District.PORTO
+            } else {
+                it[district] = District.LISBOA
+            }
         }
 
         TeamTable.insert {
             it[name] = "Team $i"
             it[location] = i
+            it[manager] = i
         }
 
         if (i / 2 == 0) {

@@ -24,11 +24,13 @@ class TeamEntity(
             name,
             location.toLocation(),
             manager?.id?.value,
+            avatarPath,
         )
 
     var name by TeamTable.name
     var location by LocationEntity referencedOn TeamTable.location
     var manager by UserEntity optionalReferencedOn TeamTable.manager
+    var avatarPath by TeamTable.avatarPath
     val sellers by SellerEntity optionalReferrersOn SellerTable.team
     var services by ServiceEntity via TeamServices
     var clients by ClientEntity via TeamClients

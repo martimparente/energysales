@@ -5,7 +5,7 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.authenticate
 import io.ktor.server.http.content.react
 import io.ktor.server.http.content.singlePageApplication
-import io.ktor.server.http.content.staticResources
+import io.ktor.server.http.content.staticFiles
 import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.request.path
@@ -42,6 +42,7 @@ import pt.isel.ps.energysales.users.configureAuth
 import pt.isel.ps.energysales.users.data.PsqlUserRepository
 import pt.isel.ps.energysales.users.http.authRoutes
 import pt.isel.ps.energysales.users.http.userRoutes
+import java.io.File
 
 fun main(args: Array<String>) = EngineMain.main(args)
 
@@ -138,19 +139,17 @@ fun Application.module() {
      * Routes
      */
     routing {
-        staticResources("/", "static") {
-            default("index.html")
-        }
+        // Static resources for the avatar images
+        staticFiles("/", File("files"))
+
         singlePageApplication {
             react("./app/energysales-spa/dist")
         }
-
 
         route(Uris.API) {
             authRoutes(userService)
             authenticate {
                 authorize("SELLER") {
-                    clientRoutes(clientService, offerService)
                 }
                 authorize("ADMIN") {
                     userRoutes(userService)
@@ -158,6 +157,7 @@ fun Application.module() {
                     sellerRoutes(sellerService)
                     serviceRoutes(productService)
                     // clientRoutes(clientService)
+                    clientRoutes(clientService, offerService)
                 }
             }
         }

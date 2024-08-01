@@ -8,6 +8,7 @@ data class Team(
     val name: String,
     val location: Location,
     val managerId: Int?,
+    val avatarPath: String? = null,
 )
 
 data class TeamDetails(

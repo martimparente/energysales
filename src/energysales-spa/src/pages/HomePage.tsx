@@ -1,13 +1,11 @@
-import logoName from '../assets/logo+name.svg';
+import logoName from '../assets/logo+name.svg'
+import {Box, Title} from '@mantine/core'
 
 export function HomePage() {
-    console.log("HomePage   started");
-
-
     return (
-        <div>
-            <h1>Home</h1>
+        <Box p='md'>
+            <Title>Home</Title>
             <img src={logoName}/>
-        </div>
+        </Box>
     )
 }
