@@ -1,8 +1,8 @@
-import {Button, Group, Text, TextInput} from '@mantine/core';
-import {Controller} from 'react-hook-form';
-import {useCreateTeamPage} from './useCreateTeamPage.tsx';
-import {Seller} from "../../../services/models/UserModel.tsx";
-import {ReactSearchAutocomplete} from "react-search-autocomplete";
+import {Button, Group, Text, TextInput} from '@mantine/core'
+import {Controller} from 'react-hook-form'
+import {useCreateTeamPage} from './useCreateTeamPage.tsx'
+import {Seller} from '../../../services/models/UserModel.tsx'
+import {ReactSearchAutocomplete} from 'react-search-autocomplete'
 
 export function CreateTeamPage() {
     const {
@@ -13,16 +13,19 @@ export function CreateTeamPage() {
         handleSubmit,
         createTeam,
         isPending,
-        error,
-    } = useCreateTeamPage();
+        error
+    } =
+        useCreateTeamPage()
 
     const formatResult = (item: Seller) => {
         return (
-            <Group gap="sm">
+            <Group gap='sm'>
                 {/*<Avatar src={item.image} size={36} radius="xl" />*/}
                 <div>
-                    <Text size="sm">{item.name}</Text>
-                    <Text size="xs" opacity={0.5}>{item.email}</Text>
+                    <Text size='sm'>{item.name}</Text>
+                    <Text size='xs' opacity={0.5}>
+                        {item.email}
+                    </Text>
                 </div>
             </Group>
         )
@@ -33,28 +36,15 @@ export function CreateTeamPage() {
             <h1>Create Team</h1>
             <form onSubmit={handleSubmit(createTeam)}>
                 <Controller
-                    name="name"
+                    name='name'
                     control={control}
-                    render={({field}) => (
-                        <TextInput
-                            label="Team Name"
-                            placeholder="Enter team name"
-                            {...field}
-                            required
-                        />
-                    )}
+                    render={({field}) => <TextInput label='Team Name' placeholder='Enter team name' {...field}
+                                                    required/>}
                 />
                 <Controller
-                    name="location.district"
+                    name='location.district'
                     control={control}
-                    render={({field}) => (
-                        <TextInput
-                            label="District"
-                            placeholder="Enter district"
-                            {...field}
-                            required
-                        />
-                    )}
+                    render={({field}) => <TextInput label='District' placeholder='Enter district' {...field} required/>}
                 />
 
                 <ReactSearchAutocomplete<Seller>
@@ -64,13 +54,13 @@ export function CreateTeamPage() {
                     formatResult={formatResult}
                 />
 
-                <Group mt="md">
-                    <Button type="submit">Create</Button>
+                <Group mt='md'>
+                    <Button type='submit'>Create</Button>
                 </Group>
             </form>
 
             {isPending && <p>Loading...</p>}
             {error && <p>{error}</p>}
         </div>
-    );
+    )
 }

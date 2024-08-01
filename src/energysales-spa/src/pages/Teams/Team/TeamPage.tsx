@@ -1,204 +1,216 @@
+import React, {useState} from 'react'
 import {useTeamPage} from './useTeamPage'
-import {Seller, User} from '../../../services/models/UserModel.tsx'
-import {Box, Button, Group, LoadingOverlay, Table, Text, TextInput} from '@mantine/core'
-import {ReactSearchAutocomplete} from 'react-search-autocomplete'
-import {Controller, useForm} from 'react-hook-form'
-import {Simulate} from "react-dom/test-utils";
-import {useState} from "react";
-import {Service} from "../../../services/models/ServiceModel.tsx";
-import {IconTrash} from "@tabler/icons-react";
-import {Column} from "../../../components/GenericTable.tsx";
-import reset = Simulate.reset;
+import {
+    Avatar,
+    Box,
+    Button,
+    Card,
+    Group,
+    LoadingOverlay,
+    Space,
+    Stack,
+    Table,
+    Text,
+    Title,
+    Tooltip
+} from '@mantine/core'
+import {IconMapPin, IconPlus, IconTrash, IconUser} from '@tabler/icons-react'
+import {ApiUris} from '../../../services/ApiUris.tsx'
+import {Link} from 'react-router-dom'
+import {EditTeamDrawer} from '../../../components/Drawers/EditTeamDrawer.tsx'
 
 export function TeamPage() {
+    const [drawerOpened, setDrawerOpened] = useState(false)
+
     const {
         teamDetails,
-        availableSellers,
-        availableServices,
-        handleOnDeleteTeam,
-        handleOnSellerSearch,
-        handleOnSellerSelect,
-        handleOnAddSellerToTeam,
         handleOnDeleteSellerFromTeam,
-        handleUpdateTeam,
         handleOnShowService,
-        handleOnAddServiceToTeam,
         handleOnDeleteServiceFromTeam,
-        handleOnServiceSelect,
-        isPending,
-        error,
+        isFetching,
+        avatarUploadModal,
+        addTeamSellerModal,
+        addTeamServiceModal,
+        handleUpdateTeam,
+        confirmDeleteModal
     } = useTeamPage()
 
-    const {control, handleSubmit} = useForm({
-        defaultValues: {
-            name: teamDetails?.team.name || '',
-            location: teamDetails?.team.location?.district || '',
-            manager: teamDetails?.team.manager?.toString() || ''
-        }
-    });
-
-    const columns: Column[] = [
+    const columns = [
         {accessor: 'name', header: 'Name', sortable: true},
         {accessor: 'cycleName', header: 'Cycle Name', sortable: true},
         {accessor: 'cycleType', header: 'Cycle Type', sortable: true},
         {accessor: 'description', header: 'Description', sortable: true},
-        {accessor: 'actions', header: 'Action', sortable: false},
-    ];
-
-    const [isEditing, setIsEditing] = useState(false);
-
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleCancelClick = () => {
-        setIsEditing(false);
-        reset(); // Reset form to initial values
-    };
-
-    const formatResult = (item: Seller) => {
-        return (
-            <Group gap="sm">
-                {/*<Avatar src={item.image} size={36} radius="xl" />*/}
-                <div>
-                    <Text size="sm">{item.name}</Text>
-                    <Text size="xs" opacity={0.5}>{item.email}</Text>
-                </div>
-            </Group>
-        )
-    }
+        {accessor: 'actions', header: 'Action', sortable: false}
+    ]
 
     return (
-        <Box pos="relative">
-            <LoadingOverlay visible={isPending}/>
-            <LoadingOverlay visible={isPending}/>
-            <h1>{isEditing ? 'Edit Team Details' : 'Team Details'}</h1>
-
-            {isEditing ? (
-                <form onSubmit={handleSubmit(handleUpdateTeam)}>
-                    <Controller
-                        name="name"
-                        control={control}
-                        render={({field}) => (
-                            <TextInput
-                                label="Name"
-                                placeholder="Enter team name"
-                                {...field}
-                                required
-                            />
-                        )}
-                    />
-                    <Controller
-                        name="location"
-                        control={control}
-                        render={({field}) => (
-                            <TextInput
-                                label="Location"
-                                placeholder="Enter team location"
-                                {...field}
-                                required
-                            />
-                        )}
-                    />
-                    <Controller
-                        name="manager"
-                        control={control}
-                        render={({field}) => (
-                            <TextInput
-                                label="Manager"
-                                placeholder="Enter manager name"
-                                {...field}
-                                required
-                            />
-                        )}
-                    />
-                    <Group mt="md">
-                        <Button type="submit">Update Team</Button>
-                        <Button variant="outline" onClick={handleCancelClick}>Cancel</Button>
-                    </Group>
-                </form>
-            ) : (
-                <div>
-                    <p>Name = {teamDetails?.team.name}</p>
-                    <p>Location = {teamDetails?.team.location?.district}</p>
-                    <p>Manager = {teamDetails?.team.manager?.toString()}</p>
-                    <Button onClick={handleEditClick} mb="md">Edit</Button>
-                    <Button onClick={handleOnDeleteTeam} color="red" mb="md">Delete Team</Button>
-                </div>
-            )}
-
-            {error && <p>{error}</p>}
-
-            <Button onClick={handleOnAddSellerToTeam} color="orange" mb="md">Add Seller to Team</Button>
-
-            <ReactSearchAutocomplete<Seller>
-                items={availableSellers!}
-                onSearch={handleOnSellerSearch}
-                onSelect={handleOnSellerSelect}
-                formatResult={formatResult}
+        <Stack pos='relative'>
+            <LoadingOverlay
+                visible={isFetching || !teamDetails}
+                zIndex={1000}
+                overlayProps={{radius: 'sm', blur: 100}}
+                loaderProps={{color: 'green', size: 40}}
             />
 
+            <Card shadow='sm' padding='lg' radius='md' withBorder>
+                <Group gap='xl'>
+                    <Tooltip label='Edit Avatar' withArrow>
+                        <Avatar
+                            src={ApiUris.STATIC_RESOURCES_URL + teamDetails?.team.avatarPath}
+                            size={120}
+                            onClick={avatarUploadModal}
+                            style={{cursor: 'pointer'}}
+                            color='yellow'
+                        />
+                    </Tooltip>
+                    <div>
+                        <Title order={2} style={{marginBottom: '8px'}}>
+                            {teamDetails?.team.name}
+                        </Title>
+                        <Group align='center' style={{marginBottom: '8px'}}>
+                            <IconMapPin size={20}/>
+                            <Text size='md' c='dimmed'>
+                                {teamDetails?.team.location?.district}
+                            </Text>
+                        </Group>
+                        <Group align='center'>
+                            <IconUser size={20}/>
+                            <Text size='md' c='dimmed'>
+                                {teamDetails?.team.manager != null ? (
+                                    <Link
+                                        to={`/manager/${teamDetails?.team.manager}`}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: '#1c7ed6'
+                                        }}
+                                    >
+                                        {teamDetails?.team.manager}
+                                    </Link>
+                                ) : (
+                                    'No Manager'
+                                )}
+                            </Text>
+                        </Group>
+                    </div>
+                </Group>
+            </Card>
 
-            <h1>Sellers</h1>
-            <Table>
-                <Table.Thead>
-                    <Table.Tr>
-                        <Table.Th>Name</Table.Th>
-                        <Table.Th>Surname</Table.Th>
-                        <Table.Th>Email</Table.Th>
-                        <Table.Th>Total Sales</Table.Th>
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                    {teamDetails?.members?.map((member: User) => (
-                        <Table.Tr key={member.id.toString()}>
-                            <Table.Td>{member.name}</Table.Td>
-                            <Table.Td>{member.surname}</Table.Td>
-                            <Table.Td>{member.email}</Table.Td>
-                            <Table.Td>
-                                <Button onClick={() => handleOnDeleteSellerFromTeam(member.id)} color={"red"}>
-                                    Remove from Team
-                                </Button>
-                            </Table.Td>
-                        </Table.Tr>
-                    ))}
-                </Table.Tbody>
-            </Table>
+            <Card shadow='sm' padding='lg' radius='md' withBorder>
+                <Group mb='lg' justify='space-between'>
+                    <Title order={2}>Sellers</Title>
+                    <Button onClick={addTeamSellerModal} color='blue'>
+                        <IconPlus size={16}/>
+                    </Button>
+                </Group>
 
-            <h1>Services</h1>
+                {teamDetails?.members?.length > 0 ? (
+                    <Table>
+                        <Table.Thead>
+                            <Table.Tr>
+                                <Table.Th>Name</Table.Th>
+                                <Table.Th>Surname</Table.Th>
+                                <Table.Th>Email</Table.Th>
+                                <Table.Th>Total Sales</Table.Th>
+                            </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                            {teamDetails?.members?.map((member) => (
+                                <Table.Tr key={member.id.toString()}>
+                                    <Table.Td>{member.name}</Table.Td>
+                                    <Table.Td>{member.surname}</Table.Td>
+                                    <Table.Td>{member.email}</Table.Td>
+                                    <Table.Td>
+                                        <Button onClick={() => handleOnDeleteSellerFromTeam(member.id)} color={'red'}>
+                                            Remove from Team
+                                        </Button>
+                                    </Table.Td>
+                                </Table.Tr>
+                            ))}
+                        </Table.Tbody>
+                    </Table>
+                ) : (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%'
+                        }}
+                    >
+                        <Text c='dimmed'>No sellers</Text>
+                    </Box>
+                )}
+            </Card>
 
-            <Button onClick={handleOnAddServiceToTeam} color="orange" mb="md">Add Service to Team</Button>
+            <Card shadow='sm' padding='lg' radius='md' withBorder>
+                <Group mb='lg' justify='space-between'>
+                    <Title order={2}>Services</Title>
+                    <Button onClick={addTeamServiceModal} color='blue'>
+                        <IconPlus size={16}/>
+                    </Button>
+                </Group>
+                {teamDetails?.services?.length > 0 ? (
+                    <Table>
+                        <Table.Thead>
+                            <Table.Tr>
+                                {columns.map((column) => (
+                                    <Table.Th key={column.header}>{column.header}</Table.Th>
+                                ))}
+                            </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                            {teamDetails?.services.map((service) => (
+                                <Table.Tr key={service.id}>
+                                    <Table.Td>{service.name}</Table.Td>
+                                    <Table.Td>{service.cycleName}</Table.Td>
+                                    <Table.Td>{service.cycleType}</Table.Td>
+                                    <Table.Td>{service.description}</Table.Td>
+                                    <Table.Td>
+                                        <Button onClick={() => handleOnShowService(service.id)} color={'orange'}>
+                                            Show
+                                        </Button>
+                                        <Button onClick={() => handleOnDeleteServiceFromTeam(service.id)} color={'red'}>
+                                            <IconTrash stroke={2}/>
+                                        </Button>
+                                    </Table.Td>
+                                </Table.Tr>
+                            ))}
+                        </Table.Tbody>
+                    </Table>
+                ) : (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%'
+                        }}
+                    >
+                        <Text c='dimmed'>No services</Text>
+                    </Box>
+                )}
+            </Card>
 
-            <ReactSearchAutocomplete<Service>
-                items={availableServices!}
-                onSelect={handleOnServiceSelect}
-                formatResult={formatResult}
+            <Box mt='md' style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                <Button onClick={() => setDrawerOpened(true)} color='blue' mb='md'>
+                    Edit Team
+                </Button>
+                <Space w='md'/>
+                <Button onClick={confirmDeleteModal} color='red' mb='md'>
+                    Delete Team
+                </Button>
+            </Box>
+
+            <EditTeamDrawer
+                opened={drawerOpened}
+                onClose={() => setDrawerOpened(false)}
+                onSubmit={handleUpdateTeam}
+                initialData={{
+                    name: teamDetails?.team.name,
+                    location: teamDetails?.team.location,
+                    managerId: 2
+                }}
             />
-
-            <Table>
-                <Table.Thead>
-                    <Table.Tr>
-                        {columns.map(column => (
-                            <Table.Th key={column.header}>{column.header}</Table.Th>
-                        ))}
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                    {teamDetails?.services.map((service: Service) => (
-                        <Table.Tr key={service.id}>
-                            <Table.Td>{service.name}</Table.Td>
-                            <Table.Td>{service.cycleName}</Table.Td>
-                            <Table.Td>{service.cycleType}</Table.Td>
-                            <Table.Td>{service.description}</Table.Td>
-                            <Table.Td>
-                                <Button onClick={() => handleOnShowService(service.id)} color={"orange"}>Show</Button>
-                                <Button onClick={() => handleOnDeleteServiceFromTeam(service.id)}
-                                        color={"red"}><IconTrash stroke={2}/></Button>
-                            </Table.Td>
-                        </Table.Tr>
-                    ))}
-                </Table.Tbody>
-            </Table>
-        </Box>
+        </Stack>
     )
 }

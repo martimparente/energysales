@@ -1,11 +1,11 @@
-import {AgGridReact} from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
-import {useServicesPage} from "./useServicesPage";
-import {Button, Group} from "@mantine/core";
-import {IconPlus} from "@tabler/icons-react";
-import {useMemo} from "react";
-import {SizeColumnsToFitGridStrategy} from "ag-grid-community";
+import {AgGridReact} from 'ag-grid-react' // React Data Grid Component
+import 'ag-grid-community/styles/ag-grid.css' // Mandatory CSS required by the Data Grid
+import 'ag-grid-community/styles/ag-theme-quartz.css' // Optional Theme applied to the Data Grid
+import {useServicesPage} from './useServicesPage'
+import {Box, Button, Group, Title} from '@mantine/core'
+import {IconPlus} from '@tabler/icons-react'
+import React, {useMemo} from 'react'
+import {SizeColumnsToFitGridStrategy} from 'ag-grid-community'
 
 export function ServicesPage() {
     const {
@@ -16,29 +16,31 @@ export function ServicesPage() {
         onCreateServiceButtonClick,
         onCellEditRequest,
         colorScheme
-    } = useServicesPage();
+    } = useServicesPage()
 
     const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(
         () => ({
-            type: "fitGridWidth",
+            type: 'fitGridWidth'
         }),
         []
-    );
+    )
 
     return (
-        <div>
-            <Group mb="lg" justify="space-between">
-                <h1>Services</h1>
-                <Button onClick={onCreateServiceButtonClick} color="blue"><IconPlus size={16}/></Button>
+        <Box p='md'>
+            <Group mb='lg' justify='space-between'>
+                <Title>Services</Title>
+                <Button onClick={onCreateServiceButtonClick} color='blue'>
+                    <IconPlus size={16}/>
+                </Button>
             </Group>
 
-            <div className={colorScheme === 'dark' ? "ag-theme-quartz-dark" : "ag-theme-quartz"} style={{height: 500}}>
+            <div className={colorScheme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz'} style={{height: 500}}>
                 <AgGridReact
                     rowData={services}
                     columnDefs={columnDefs}
                     ref={gridRef}
                     defaultColDef={defaultColDef}
-                    rowSelection="multiple"
+                    rowSelection='multiple'
                     suppressRowClickSelection={true}
                     readOnlyEdit={true}
                     autoSizeStrategy={autoSizeStrategy}
@@ -46,6 +48,6 @@ export function ServicesPage() {
                     onCellEditRequest={onCellEditRequest}
                 />
             </div>
-        </div>
+        </Box>
     )
 }

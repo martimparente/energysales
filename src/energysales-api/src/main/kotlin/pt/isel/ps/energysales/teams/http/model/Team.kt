@@ -14,7 +14,7 @@ data class LocationJSON(
     companion object {
         fun fromLocation(location: Location) =
             LocationJSON(
-                district = location.district,
+                district = location.district.districtName,
             )
     }
 }
@@ -25,6 +25,7 @@ data class TeamJSON(
     val name: String,
     val location: LocationJSON,
     val managerId: Int?,
+    val avatarPath: String?,
 ) {
     companion object {
         fun fromTeam(team: Team) =
@@ -33,6 +34,7 @@ data class TeamJSON(
                 name = team.name,
                 location = LocationJSON.fromLocation(team.location),
                 managerId = team.managerId,
+                avatarPath = team.avatarPath,
             )
     }
 }
@@ -54,6 +56,11 @@ data class TeamDetailsJSON(
 }
 
 @Serializable
+data class AvatarJSON(
+    val avatar: String,
+)
+
+@Serializable
 data class CreateTeamRequest(
     val name: String,
     val location: LocationJSON,
@@ -65,6 +72,13 @@ data class UpdateTeamRequest(
     val name: String,
     val location: LocationJSON,
     val managerId: Int?,
+)
+
+@Serializable
+data class PatchTeamRequest(
+    val name: String? = null,
+    val location: LocationJSON? = null,
+    val managerId: String? = null,
 )
 
 @Serializable

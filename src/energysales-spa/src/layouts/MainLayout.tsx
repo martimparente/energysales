@@ -1,79 +1,112 @@
-import {ActionIcon, AppShell, Burger, Button, Code, Group, useMantineColorScheme} from '@mantine/core';
-import {useDisclosure} from '@mantine/hooks';
-import {Link, Outlet} from "react-router-dom";
-import {useAuth} from "../context/useAuth.tsx";
-import {NavLinks} from "./NavLinks.tsx";
-import {IconMoonStars, IconSun} from '@tabler/icons-react';
-import logoName from '../assets/logo+name.svg';
-import {useEffect} from "react";
+import {
+    ActionIcon,
+    AppShell,
+    Avatar,
+    Burger,
+    Card,
+    Code,
+    Group,
+    NavLink,
+    Space,
+    Stack,
+    Text,
+    useMantineColorScheme,
+    useMantineTheme
+} from '@mantine/core'
+import {useDisclosure} from '@mantine/hooks'
+import {Link, Outlet} from 'react-router-dom'
+import {useAuth} from '../context/useAuth.tsx'
+import {IconLogin, IconLogout, IconMoonStars, IconSun} from '@tabler/icons-react'
+import logoName from '../assets/logo+name.svg'
+import {useEffect, useState} from 'react'
+import {navLinks} from '../router/Router.tsx'
 
-const energySalesIcon = <img src={logoName} width="150" height="50" alt="Logo"/>
+const energySalesIcon = <img src={logoName} width='150' height='50' alt='Logo'/>
 
 export function MainLayout() {
-    const [opened, {toggle, close}] = useDisclosure();
     const {colorScheme, toggleColorScheme} = useMantineColorScheme({
-        keepTransitions: true,
-    });
-    const {user, logout} = useAuth();
+        keepTransitions: true
+    })
+    const theme = useMantineTheme()
+    const [opened, {toggle, close}] = useDisclosure()
+    const [active, setActive] = useState(0)
+    const {user, logout} = useAuth()
 
-    // close the navbar if the user is not logged in
     // close the navbar if the user is not logged in
     useEffect(() => {
         if (!user) {
-            console.log(user + " user   useEffect   user is not logged in")
-            close();
+            close()
         }
-    }, [user, close]);
+    }, [user, close])
 
+    // print the active link
+    useEffect(() => {
+        console.log(active + navLinks[active].label)
+    }, [active])
 
     return (
         <AppShell
-            header={{height: {base: 60, md: 70, lg: 80}}}
+            layout='alt'
+            header={{height: {base: 50, md: 50, lg: 50}}}
             navbar={{
-                width: {base: 200, md: 300, lg: 400},
+                width: {base: 250, md: 250, lg: 250},
                 breakpoint: 'sm',
-                collapsed: {mobile: !opened},
+                collapsed: {mobile: !opened}
             }}
-            padding="md"
+            padding='xs'
         >
             <AppShell.Header>
-                <Group h="100%" px="md" justify="space-between">
+                <Group h='100%' px='md' justify='right'>
+                    <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm'/>
                     <Group>
-                        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm"/>
-                        {energySalesIcon}
-                        <Code fw={700}>v0.1.0</Code>
-                    </Group>
-
-                    <Group>
-                        {user ? (
-                            <>
-                                <span>Hi, {user.username}!</span>
-                                <Button onClick={logout}>Logout</Button>
-                            </>
-                        ) : (
-                            <Button component={Link} to="/login">Login</Button>
-                        )}
-
-
-                        <ActionIcon
-                            onClick={() => toggleColorScheme()}
-                            variant="transparent"
-                            size="lg"
-                            title="Toggle color scheme"
-                        >
-                            {colorScheme === 'dark' ? <IconSun size="1.25rem"/> : <IconMoonStars size="1.25rem"/>}
+                        <ActionIcon onClick={() => toggleColorScheme()} variant='transparent' size='lg'
+                                    title='Toggle color scheme'>
+                            {colorScheme === 'dark' ? <IconSun size='1.25rem'/> : <IconMoonStars size='1.25rem'/>}
                         </ActionIcon>
                     </Group>
                 </Group>
             </AppShell.Header>
 
-            <AppShell.Navbar p="md">
-                <NavLinks user={user}/>
+            <AppShell.Navbar p='md'>
+                <Stack gap='sm'>
+                    <Group justify='space-around'>
+                        {energySalesIcon}
+                        <Code>v0.1.0</Code>
+                    </Group>
+                    {user && (
+                        <Card padding='lg' radius='md' style={{backgroundColor: theme.colors.lime[9]}}>
+                            <Group align='center'>
+                                <Avatar radius='xl' src={user.avatar} alt={user.username}/>
+                                <Text c='white'>Hi, {user.username}!</Text>
+                            </Group>
+                        </Card>
+                    )}
+                    <Space h='xl'/>
+                    {navLinks
+                        .filter((item) => item.roles.includes(user?.role || 'NOUSER'))
+                        .map((item, index) => (
+                            <NavLink
+                                to={item.link}
+                                label={item.label}
+                                key={item.label}
+                                leftSection={<item.icon/>}
+                                component={Link}
+                                active={index === active}
+                                onClick={() => setActive(index)}
+                                variant='subtle'
+                            />
+                        ))}
+                    {user ? (
+                        <NavLink leftSection={<IconLogout/>} label={'Logout'} onClick={logout}/>
+                    ) : (
+                        <NavLink to='/login' label='Login' leftSection={<IconLogin/>} component={Link}/>
+                    )}
+                </Stack>
             </AppShell.Navbar>
 
             <AppShell.Main>
                 <Outlet/>
             </AppShell.Main>
         </AppShell>
-    );
+    )
 }

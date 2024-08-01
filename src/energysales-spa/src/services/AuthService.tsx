@@ -1,65 +1,65 @@
-import {ApiUris} from "./ApiUris";
-import {toast} from "react-toastify";
+import {ApiUris} from './ApiUris'
+import {toast} from 'react-toastify'
 
 export interface LoginResponse {
-    token: string;
+    token: string
 }
 
 export const loginAPI = async (username: string, password: string): Promise<LoginResponse | undefined> => {
     try {
         const response = await fetch(ApiUris.login, {
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify({username, password}),
-            headers: {"Content-Type": "application/json"},
-        });
-        const data = await response.json();
+            headers: {'Content-Type': 'application/json'}
+        })
+        const data = await response.json()
 
         if (!(response.status >= 200 && response.status < 300)) {
-            console.log("fetch failed")
-            toast.warning(data.title || 'Something went wrong');
+            console.log('fetch failed')
+            toast.warning(data.title || 'Something went wrong')
         }
-        return data;
+        return data
     } catch (error) {
-        toast('Something went wrong');
+        toast('Something went wrong')
     }
-};
+}
 
 export const resetPasswordAPI = async (email: string): Promise<void> => {
     try {
         const response = await fetch(ApiUris.resetPassword, {
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify({email}),
-            headers: {"Content-Type": "application/json"},
-        });
+            headers: {'Content-Type': 'application/json'}
+        })
 
         if (response.status == 200) {
-            toast.success("Verify your e-mail inbox for the password reset link")
+            toast.success('Verify your e-mail inbox for the password reset link')
         } else {
-            const data = await response.json();
-            console.log("fetch failed")
-            toast.error(data.title || 'Something went wrong');
+            const data = await response.json()
+            console.log('fetch failed')
+            toast.error(data.title || 'Something went wrong')
         }
     } catch (error) {
-        toast.error("Something went wrong")
+        toast.error('Something went wrong')
     }
 }
 
 export const changePasswordAPI = async (password: string): Promise<void> => {
     try {
         const response = await fetch(ApiUris.changePassword, {
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify({password}),
-            headers: {"Content-Type": "application/json"},
-        });
+            headers: {'Content-Type': 'application/json'}
+        })
 
         if (response.status == 200) {
-            toast.success("Password changed successfully")
+            toast.success('Password changed successfully')
         } else {
-            const data = await response.json();
-            console.log("fetch failed")
-            toast.error(data.title || 'Something went wrong');
+            const data = await response.json()
+            console.log('fetch failed')
+            toast.error(data.title || 'Something went wrong')
         }
     } catch (error) {
-        toast.error("Something went wrong")
+        toast.error('Something went wrong')
     }
 }

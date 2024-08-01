@@ -70,6 +70,7 @@ class PsqlTeamRepository : TeamRepository {
                         team.managerId?.let {
                             UserEntity.findById(it)
                         }
+                    avatarPath = team.avatarPath
                 }.id
                 .value
         }
@@ -104,6 +105,7 @@ class PsqlTeamRepository : TeamRepository {
                         district = team.location.district
                     }
                     it.manager = team.managerId?.let { UserEntity.findById(it) }
+                    it.avatarPath = team.avatarPath
                 }?.toTeam()
         }
 
@@ -160,7 +162,7 @@ class PsqlTeamRepository : TeamRepository {
     ): Boolean =
         dbQuery {
             TeamServices.deleteWhere {
-                (TeamServices.team eq teamID) and (TeamServices.service eq serviceId)
+                (team eq teamID) and (service eq serviceId)
             } > 0
         }
 

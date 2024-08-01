@@ -1,8 +1,7 @@
-import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {CreateUserInputModel} from '../../../services/models/UserModel';
-import {useCreateUser} from "../../../services/UsersService.tsx";
-
+import {useState} from 'react'
+import {useForm} from 'react-hook-form'
+import {CreateUserInputModel} from '../../../services/models/UserModel'
+import {useCreateUser} from '../../../services/UsersService.tsx'
 
 export function useCreateUserPage() {
     const {control, handleSubmit} = useForm<CreateUserInputModel>({
@@ -15,16 +14,16 @@ export function useCreateUserPage() {
             email: '',
             role: ''
         }
-    });
+    })
 
-    const {mutateAsync: createUser, isPending} = useCreateUser();
-    const [error, setError] = useState<string | null>(null);
+    const {mutateAsync: createUser, isPending} = useCreateUser()
+    const [error, setError] = useState<string | null>(null)
 
     return {
         control,
         handleSubmit,
-        createUser: async (input: CreateUserInputModel) => await createUser(input).catch(() => setError("error")),
+        createUser: async (input: CreateUserInputModel) => await createUser(input).catch(() => setError('error')),
         isPending,
-        error,
-    };
+        error
+    }
 }
