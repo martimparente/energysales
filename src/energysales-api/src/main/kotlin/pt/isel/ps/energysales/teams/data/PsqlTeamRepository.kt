@@ -102,7 +102,7 @@ class PsqlTeamRepository : TeamRepository {
                         district = team.location.district
                     }
                     manager = team.managerId?.let { UserEntity.findById(it.toInt()) }
-                    it.avatarPath = team.avatarPath
+                    avatarPath = team.avatarPath
                 }?.toTeam()
         }
 

@@ -12,12 +12,7 @@ import pt.isel.ps.energysales.teams.data.table.LocationTable
 class PsqlClientRepository : ClientRepository {
     override suspend fun getById(id: String): Client? =
         dbQuery {
-            ClientEntity.find { ClientTable.id eq id.toInt() }.firstOrNull()?.toClient()
-        }
-
-    override suspend fun clientExists(id: String): Boolean =
-        dbQuery {
-            ClientEntity.find { ClientTable.id eq id.toInt() }.count() > 0
+            ClientEntity.findById(id.toInt())?.toClient()
         }
 
     override suspend fun clientExistsByName(name: String) =

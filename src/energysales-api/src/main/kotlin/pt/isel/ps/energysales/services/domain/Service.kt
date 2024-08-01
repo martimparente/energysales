@@ -1,7 +1,7 @@
 package pt.isel.ps.energysales.services.domain
 
 data class Service(
-    val id: Int,
+    val id: String? = null,
     val name: String,
     val description: String,
     val cycleName: String,

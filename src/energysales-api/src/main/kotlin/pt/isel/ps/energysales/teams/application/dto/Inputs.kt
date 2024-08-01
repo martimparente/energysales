@@ -9,8 +9,8 @@ data class CreateTeamInput(
 )
 
 data class UpdateTeamInput(
-    val teamId: String,
-    val name: String,
-    val location: Location,
+    val id: String,
+    val name: String?,
+    val location: Location?,
     val managerId: String?,
 )

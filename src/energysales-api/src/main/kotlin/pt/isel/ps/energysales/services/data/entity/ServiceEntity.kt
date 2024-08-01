@@ -11,7 +11,7 @@ class ServiceEntity(
 ) : IntEntity(id) {
     companion object : IntEntityClass<ServiceEntity>(ServiceTable)
 
-    fun toService() = Service(id.value, name, description, cycleName, cycleType, periodName, periodNumPeriods, price.toPrice())
+    fun toService() = Service(id.value.toString(), name, description, cycleName, cycleType, periodName, periodNumPeriods, price.toPrice())
 
     var name by ServiceTable.name
     var description by ServiceTable.description

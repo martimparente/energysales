@@ -3,43 +3,43 @@ package pt.isel.ps.energysales.clients.application.dto
 import arrow.core.Either
 import pt.isel.ps.energysales.clients.domain.Client
 
-typealias ClientCreationResult = Either<ClientCreationError, String>
-typealias ClientReadingResult = Either<ClientReadingError, Client>
-typealias ClientUpdatingResult = Either<ClientUpdatingError, Client>
-typealias ClientDeletingResult = Either<ClientDeletingError, Boolean>
+typealias CreateClientResult = Either<CreateClientError, String>
+typealias GetClientResult = Either<GetClientError, Client>
+typealias UpdateClientResult = Either<UpdateClientError, Client>
+typealias DeleteClientResult = Either<DeleteClientError, Boolean>
 
-sealed interface ClientCreationError {
-    data object ClientAlreadyExists : ClientCreationError
+sealed interface CreateClientError {
+    data object ClientAlreadyExists : CreateClientError
 
-    data object ClientInfoIsInvalid : ClientCreationError
+    data object ClientInfoIsInvalid : CreateClientError
 
-    data object ClientNameIsInvalid : ClientCreationError
+    data object ClientNameIsInvalid : CreateClientError
 
-    data object ClientSurnameIsInvalid : ClientCreationError
+    data object ClientSurnameIsInvalid : CreateClientError
 
-    data object ClientEmailIsInvalid : ClientCreationError
+    data object ClientEmailIsInvalid : CreateClientError
 }
 
-sealed interface ClientReadingError {
-    data object ClientAlreadyExists : ClientReadingError
+sealed interface GetClientError {
+    data object ClientAlreadyExists : GetClientError
 
-    data object ClientNameIsInvalid : ClientReadingError
+    data object ClientNameIsInvalid : GetClientError
 }
 
-sealed interface ClientUpdatingError {
-    data object ClientNotFound : ClientUpdatingError
+sealed interface UpdateClientError {
+    data object ClientNotFound : UpdateClientError
 
-    data object ClientInfoIsInvalid : ClientUpdatingError
+    data object ClientInfoIsInvalid : UpdateClientError
 
-    data object ClientNameIsInvalid : ClientUpdatingError
+    data object ClientNameIsInvalid : UpdateClientError
 
-    data object ClientSurnameIsInvalid : ClientUpdatingError
+    data object ClientSurnameIsInvalid : UpdateClientError
 
-    data object ClientEmailIsInvalid : ClientUpdatingError
+    data object ClientEmailIsInvalid : UpdateClientError
 }
 
-sealed interface ClientDeletingError {
-    data object ClientNotFound : ClientDeletingError
+sealed interface DeleteClientError {
+    data object ClientNotFound : DeleteClientError
 
-    data object ClientInfoIsInvalid : ClientDeletingError
+    data object ClientInfoIsInvalid : DeleteClientError
 }

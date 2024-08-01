@@ -41,7 +41,7 @@ class PsqlOfferRepository : OfferRepository {
                     ?: throw IllegalArgumentException("Client not found with id: ${offer.client.id}")
 
             val serviceEntity =
-                ServiceEntity.findById(offer.service.id)
+                ServiceEntity.findById(offer.service.id!!.toInt())
                     ?: throw IllegalArgumentException("Service not found with id: ${offer.service.id}")
 
             val offerLinkEntity =

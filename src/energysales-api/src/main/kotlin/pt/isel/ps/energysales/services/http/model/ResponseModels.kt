@@ -6,7 +6,7 @@ import pt.isel.ps.energysales.services.domain.Service
 
 @Serializable
 data class ServiceJSON(
-    val id: Int,
+    val id: String,
     val name: String,
     val description: String,
     val cycleName: String,
@@ -18,7 +18,7 @@ data class ServiceJSON(
     companion object {
         fun fromService(service: Service) =
             ServiceJSON(
-                service.id,
+                service.id!!,
                 service.name,
                 service.description,
                 service.cycleName,

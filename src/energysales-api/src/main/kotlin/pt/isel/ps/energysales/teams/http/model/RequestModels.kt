@@ -17,19 +17,23 @@ data class UpdateTeamRequest(
 )
 
 @Serializable
-data class AddTeamToSellerRequest(
-    val teamId: String,
+data class PatchTeamRequest(
+    val name: String? = null,
+    val location: LocationJSON? = null,
+    val managerId: String? = null,
+)
+
+@Serializable
+data class AddTeamSellerRequest(
     val sellerId: String,
 )
 
 @Serializable
-data class AddServiceToTeamRequest(
-    val teamId: String,
+data class AddTeamServiceRequest(
     val serviceId: String,
 )
 
 @Serializable
-data class AddClientToTeamRequest(
-    val teamId: String,
+data class AddTeamClientRequest(
     val clientId: String,
 )

@@ -3,27 +3,27 @@ package pt.isel.ps.energysales.clients.application.dto
 import arrow.core.Either
 import pt.isel.ps.energysales.clients.domain.Offer
 
-typealias OfferCreationResult = Either<OfferCreationError, CreateOfferOutput>
-typealias OfferReadingResult = Either<OfferReadingError, Offer>
-typealias OfferDeletingResult = Either<OfferDeletingError, Boolean>
+typealias CreateOfferResult = Either<CreateOfferError, CreateOfferOutput>
+typealias GetOfferResult = Either<GetOfferError, Offer>
+typealias DeleteOfferResult = Either<DeleteOfferError, Boolean>
 typealias SendOfferEmailResult = Either<SendOfferEmailError, Boolean>
 
-sealed interface OfferCreationError {
-    data object OfferAlreadyExists : OfferCreationError
+sealed interface CreateOfferError {
+    data object OfferAlreadyExists : CreateOfferError
 
-    data object OfferInfoIsInvalid : OfferCreationError
+    data object OfferInfoIsInvalid : CreateOfferError
 
-    data object OfferNameIsInvalid : OfferCreationError
+    data object OfferNameIsInvalid : CreateOfferError
 
-    data object OfferSurnameIsInvalid : OfferCreationError
+    data object OfferSurnameIsInvalid : CreateOfferError
 
-    data object OfferEmailIsInvalid : OfferCreationError
+    data object OfferEmailIsInvalid : CreateOfferError
 }
 
-sealed interface OfferReadingError {
-    data object OfferAlreadyExists : OfferReadingError
+sealed interface GetOfferError {
+    data object OfferAlreadyExists : GetOfferError
 
-    data object OfferNameIsInvalid : OfferReadingError
+    data object OfferNameIsInvalid : GetOfferError
 }
 
 sealed interface OfferUpdatingError {
@@ -38,10 +38,10 @@ sealed interface OfferUpdatingError {
     data object OfferEmailIsInvalid : OfferUpdatingError
 }
 
-sealed interface OfferDeletingError {
-    data object OfferNotFound : OfferDeletingError
+sealed interface DeleteOfferError {
+    data object OfferNotFound : DeleteOfferError
 
-    data object OfferInfoIsInvalid : OfferDeletingError
+    data object OfferInfoIsInvalid : DeleteOfferError
 }
 
 sealed interface SendOfferEmailError {

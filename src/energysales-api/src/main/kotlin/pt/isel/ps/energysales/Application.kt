@@ -22,13 +22,14 @@ import pt.isel.ps.energysales.clients.http.clientRoutes
 import pt.isel.ps.energysales.email.SimpleJavaMailService
 import pt.isel.ps.energysales.email.model.MailConfig
 import pt.isel.ps.energysales.plugins.authorize
+import pt.isel.ps.energysales.plugins.configureAuth
 import pt.isel.ps.energysales.plugins.configureDatabases
 import pt.isel.ps.energysales.plugins.configureHTTP
 import pt.isel.ps.energysales.plugins.configureSerialization
-import pt.isel.ps.energysales.sellers.application.SellerService
+import pt.isel.ps.energysales.sellers.application.SellerServiceKtor
 import pt.isel.ps.energysales.sellers.data.PsqlSellerRepository
 import pt.isel.ps.energysales.sellers.http.sellerRoutes
-import pt.isel.ps.energysales.services.application.ServiceService
+import pt.isel.ps.energysales.services.application.ServiceServiceKtor
 import pt.isel.ps.energysales.services.data.PsqlServiceRepository
 import pt.isel.ps.energysales.services.http.serviceRoutes
 import pt.isel.ps.energysales.teams.application.TeamServiceKtor
@@ -38,7 +39,6 @@ import pt.isel.ps.energysales.users.application.UserService
 import pt.isel.ps.energysales.users.application.security.JwtConfig
 import pt.isel.ps.energysales.users.application.security.JwtTokenService
 import pt.isel.ps.energysales.users.application.security.SHA256HashingService
-import pt.isel.ps.energysales.users.configureAuth
 import pt.isel.ps.energysales.users.data.PsqlUserRepository
 import pt.isel.ps.energysales.users.http.authRoutes
 import pt.isel.ps.energysales.users.http.userRoutes
@@ -105,9 +105,9 @@ fun Application.module() {
         )
     }
 
-    val sellerService by lazy { SellerService(sellerRepository = PsqlSellerRepository()) }
+    val sellerService by lazy { SellerServiceKtor(sellerRepository = PsqlSellerRepository()) }
 
-    val productService by lazy { ServiceService(serviceRepository = PsqlServiceRepository()) }
+    val productService by lazy { ServiceServiceKtor(serviceRepository = PsqlServiceRepository()) }
 
     val clientService by lazy { ClientServiceKtor(clientRepository = PsqlClientRepository()) }
 

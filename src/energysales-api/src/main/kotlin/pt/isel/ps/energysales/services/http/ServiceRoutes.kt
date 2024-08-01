@@ -16,12 +16,13 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.services.application.ServiceCreationError
-import pt.isel.ps.energysales.services.application.ServiceDeletingError
-import pt.isel.ps.energysales.services.application.ServiceService
-import pt.isel.ps.energysales.services.application.ServiceUpdatingError
+import pt.isel.ps.energysales.services.application.ServiceServiceKtor
+import pt.isel.ps.energysales.services.application.dto.CreateServiceError
 import pt.isel.ps.energysales.services.application.dto.CreateServiceInput
+import pt.isel.ps.energysales.services.application.dto.DeleteServiceError
+import pt.isel.ps.energysales.services.application.dto.UpdateServiceError
 import pt.isel.ps.energysales.services.application.dto.UpdateServiceInput
+import pt.isel.ps.energysales.services.http.model.PriceJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.respondProblem
@@ -37,7 +38,7 @@ class ServiceResource(
     )
 }
 
-fun Route.serviceRoutes(serviceService: ServiceService) {
+fun Route.serviceRoutes(serviceService: ServiceServiceKtor) {
     get<ServiceResource> { queryParams ->
         val services = serviceService.getAllServicesPaging(10, queryParams.lastKeySeen)
         val servicesResponse = services.map { service -> ServiceJSON.fromService(service) }
@@ -45,7 +46,16 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
     }
 
     post<ServiceResource> {
-        val body = call.receive<CreateServiceRequest>()
+        val body =
+            CreateServiceRequest(
+                "newService1",
+                "newDescription1",
+                "newCycleName1",
+                "newCycleType1",
+                "newPeriodName1",
+                1,
+                PriceJSON(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f),
+            )
         val input =
             CreateServiceInput(
                 body.name,
@@ -56,33 +66,33 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
                 body.periodNumPeriods,
                 body.price,
             )
-
         val res = serviceService.createService(input)
 
         when (res) {
             is Right -> {
-                call.response.status(HttpStatusCode.Created)
                 call.response.header("Location", "${Uris.SERVICES}/${res.value}")
+                return@post call.response.status(HttpStatusCode.Created)
             }
 
-            is Left ->
+            is Left -> {
                 when (res.value) {
-                    ServiceCreationError.ServiceAlreadyExists ->
+                    CreateServiceError.ServiceAlreadyExists ->
                         call.respondProblem(
                             Problem.serviceEmailAlreadyInUse,
                             HttpStatusCode.Conflict,
                         )
 
-                    ServiceCreationError.ServiceInfoIsInvalid ->
+                    CreateServiceError.ServiceInfoIsInvalid ->
                         call.respondProblem(
                             Problem.serviceInfoIsInvalid,
                             HttpStatusCode.BadRequest,
                         )
 
-                    ServiceCreationError.ServiceEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
-                    ServiceCreationError.ServiceNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
-                    ServiceCreationError.ServiceSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
+                    CreateServiceError.ServiceEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
+                    CreateServiceError.ServiceNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
+                    CreateServiceError.ServiceSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
                 }
+            }
         }
     }
 
@@ -108,27 +118,29 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
                 body.periodNumPeriods,
                 body.price,
             )
-
         val res = serviceService.updateService(input)
 
         when (res) {
             is Right -> {
-                val serviceJson = ServiceJSON.fromService(res.value)
-                call.respond(serviceJson)
+                call.respond(ServiceJSON.fromService(res.value))
             }
 
             is Left -> {
                 when (res.value) {
-                    ServiceUpdatingError.ServiceNotFound -> call.respondProblem(Problem.serviceNotFound, HttpStatusCode.NotFound)
-                    ServiceUpdatingError.ServiceInfoIsInvalid ->
+                    UpdateServiceError.ServiceNotFound -> {
+                        call.respondProblem(Problem.serviceNotFound, HttpStatusCode.NotFound)
+                    }
+
+                    UpdateServiceError.ServiceInfoIsInvalid -> {
                         call.respondProblem(
                             Problem.serviceInfoIsInvalid,
                             HttpStatusCode.BadRequest,
                         )
+                    }
 
-                    ServiceUpdatingError.ServiceEmailIsInvalid -> TODO()
-                    ServiceUpdatingError.ServiceNameIsInvalid -> TODO()
-                    ServiceUpdatingError.ServiceSurnameIsInvalid -> TODO()
+                    UpdateServiceError.ServiceEmailIsInvalid -> TODO()
+                    UpdateServiceError.ServiceNameIsInvalid -> TODO()
+                    UpdateServiceError.ServiceSurnameIsInvalid -> TODO()
                 }
             }
         }
@@ -141,8 +153,8 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
             is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
-                    ServiceDeletingError.ServiceNotFound -> call.respondProblem(Problem.serviceNotFound, HttpStatusCode.NotFound)
-                    ServiceDeletingError.ServiceInfoIsInvalid ->
+                    DeleteServiceError.ServiceNotFound -> call.respondProblem(Problem.serviceNotFound, HttpStatusCode.NotFound)
+                    DeleteServiceError.ServiceInfoIsInvalid ->
                         call.respondProblem(
                             Problem.serviceInfoIsInvalid,
                             HttpStatusCode.BadRequest,

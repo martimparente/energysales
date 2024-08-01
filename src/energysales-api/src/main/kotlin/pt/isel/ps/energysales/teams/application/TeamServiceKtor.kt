@@ -4,6 +4,8 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.sellers.data.SellerRepository
+import pt.isel.ps.energysales.teams.application.dto.AddTeamAvatarError
+import pt.isel.ps.energysales.teams.application.dto.AddTeamAvatarResult
 import pt.isel.ps.energysales.teams.application.dto.AddTeamClientError
 import pt.isel.ps.energysales.teams.application.dto.AddTeamClientResult
 import pt.isel.ps.energysales.teams.application.dto.AddTeamSellerError
@@ -36,7 +38,6 @@ class TeamServiceKtor(
     override suspend fun createTeam(input: CreateTeamInput): CreateTeamResult =
         either {
             ensure(input.name.length in 3..50) { CreateTeamError.TeamInfoIsInvalid }
-            ensure(input.location.district.length in 3..50) { CreateTeamError.TeamInfoIsInvalid }
             ensure(!teamRepository.teamExistsByName(input.name)) { CreateTeamError.TeamAlreadyExists }
 
             val team = Team(null, input.name, Location(input.location.district), input.managerId)
@@ -60,11 +61,16 @@ class TeamServiceKtor(
     // Update
     override suspend fun updateTeam(input: UpdateTeamInput): UpdateTeamResult =
         either {
-            ensure(input.name.length in 3..50) { UpdateTeamError.TeamInfoIsInvalid }
-            ensure(input.location.district.length in 3..50) { UpdateTeamError.TeamInfoIsInvalid }
-            ensure(teamRepository.teamExists(input.teamId)) { UpdateTeamError.TeamNotFound }
-            val team = Team(input.teamId, input.name, Location(input.location.district), input.managerId)
-            val updatedTeam = teamRepository.update(team)
+            ensure(input.name?.length in 3..50) { UpdateTeamError.TeamInfoIsInvalid }
+            val team = teamRepository.getById(input.id) ?: raise(UpdateTeamError.TeamNotFound)
+            val patchedTeam =
+                team.copy(
+                    name = input.name ?: team.name,
+                    location = input.location ?: team.location,
+                    managerId = input.managerId ?: team.managerId,
+                )
+
+            val updatedTeam = teamRepository.update(patchedTeam)
             ensureNotNull(updatedTeam) { UpdateTeamError.TeamNotFound }
         }
 
@@ -122,5 +128,18 @@ class TeamServiceKtor(
         either {
             ensure(teamRepository.teamExists(id)) { AddTeamClientError.TeamNotFound }
             teamRepository.addClientToTeam(id, clientId)
+        }
+
+    override suspend fun addTeamAvatar(
+        teamId: String,
+        avatarPath: String,
+    ): AddTeamAvatarResult =
+        either {
+            val team =
+                teamRepository.getById(teamId)
+                    ?: raise(AddTeamAvatarError.TeamNotFound)
+            val teamToUpdate = team.copy(avatarPath = avatarPath)
+            val updatedTeam = teamRepository.update(teamToUpdate) ?: raise(AddTeamAvatarError.TeamNotFound)
+            updatedTeam.avatarPath ?: raise(AddTeamAvatarError.TeamNotFound)
         }
 }

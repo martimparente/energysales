@@ -3,6 +3,7 @@ package pt.isel.ps.energysales.teams.http.model
 import kotlinx.serialization.Serializable
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
+import pt.isel.ps.energysales.teams.domain.District
 import pt.isel.ps.energysales.teams.domain.Location
 import pt.isel.ps.energysales.teams.domain.Team
 import pt.isel.ps.energysales.teams.domain.TeamDetails
@@ -14,11 +15,11 @@ data class LocationJSON(
     companion object {
         fun fromLocation(location: Location) =
             LocationJSON(
-                district = location.district,
+                district = location.district.districtName,
             )
     }
 
-    fun toLocation() = Location(district)
+    fun toLocation() = Location(District.fromName(district))
 }
 
 @Serializable
@@ -56,3 +57,8 @@ data class TeamDetailsJSON(
             )
     }
 }
+
+@Serializable
+data class AvatarJSON(
+    val avatar: String,
+)

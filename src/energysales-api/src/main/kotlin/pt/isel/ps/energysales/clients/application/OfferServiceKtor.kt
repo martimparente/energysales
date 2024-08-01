@@ -11,12 +11,12 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import pt.isel.ps.energysales.clients.application.dto.CreateOfferError
 import pt.isel.ps.energysales.clients.application.dto.CreateOfferInput
 import pt.isel.ps.energysales.clients.application.dto.CreateOfferOutput
-import pt.isel.ps.energysales.clients.application.dto.OfferCreationError
-import pt.isel.ps.energysales.clients.application.dto.OfferCreationResult
-import pt.isel.ps.energysales.clients.application.dto.OfferDeletingError
-import pt.isel.ps.energysales.clients.application.dto.OfferDeletingResult
+import pt.isel.ps.energysales.clients.application.dto.CreateOfferResult
+import pt.isel.ps.energysales.clients.application.dto.DeleteOfferError
+import pt.isel.ps.energysales.clients.application.dto.DeleteOfferResult
 import pt.isel.ps.energysales.clients.application.dto.SendOfferEmailError
 import pt.isel.ps.energysales.clients.application.dto.SendOfferEmailResult
 import pt.isel.ps.energysales.clients.data.ClientRepository
@@ -36,15 +36,15 @@ class OfferServiceKtor(
     private val mailService: MailService,
 ) : OfferService {
     // Create
-    override suspend fun createOffer(input: CreateOfferInput): OfferCreationResult =
+    override suspend fun createOffer(input: CreateOfferInput): CreateOfferResult =
         either {
-            ensure(input.dueInDays > 0) { OfferCreationError.OfferInfoIsInvalid }
+            ensure(input.dueInDays > 0) { CreateOfferError.OfferInfoIsInvalid }
             val seller = sellerRepository.getById(input.createdBy)
-            ensureNotNull(seller) { OfferCreationError.OfferInfoIsInvalid }
+            ensureNotNull(seller) { CreateOfferError.OfferInfoIsInvalid }
             val client = clientRepository.getById(input.clientId)
-            ensureNotNull(client) { OfferCreationError.OfferInfoIsInvalid }
+            ensureNotNull(client) { CreateOfferError.OfferInfoIsInvalid }
             val service = serviceRepository.getById(input.serviceId)
-            ensureNotNull(service) { OfferCreationError.OfferInfoIsInvalid }
+            ensureNotNull(service) { CreateOfferError.OfferInfoIsInvalid }
 
             // Generate due date time based on current date time and due in days
             val currentDateTime = Clock.System.now()
@@ -70,10 +70,10 @@ class OfferServiceKtor(
 
     override suspend fun getById(id: String): Offer? = offerRepository.getById(id)
 
-    override suspend fun deleteOffer(id: String): OfferDeletingResult =
+    override suspend fun deleteOffer(id: String): DeleteOfferResult =
         either {
             val offer = offerRepository.getById(id)
-            ensureNotNull(offer) { OfferDeletingError.OfferNotFound }
+            ensureNotNull(offer) { DeleteOfferError.OfferNotFound }
             offerRepository.delete(offer)
         }
 

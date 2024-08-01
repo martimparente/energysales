@@ -4,14 +4,15 @@ import arrow.core.Either
 import pt.isel.ps.energysales.sellers.domain.Seller
 
 typealias CreateTeamResult = Either<CreateTeamError, Int>
+typealias GetTeamSellersResult = Either<GetTeamSellersError, List<Seller>>
 typealias UpdateTeamResult = Either<UpdateTeamError, Unit>
 typealias DeleteTeamResult = Either<DeleteTeamError, Unit>
-typealias GetTeamSellersResult = Either<GetTeamSellersError, List<Seller>>
 typealias AddTeamSellerResult = Either<AddTeamSellerError, Unit>
 typealias DeleteTeamSellerResult = Either<DeleteTeamSellerError, Unit>
 typealias AddTeamServiceResult = Either<AddTeamServiceError, Unit>
 typealias DeleteTeamServiceResult = Either<DeleteTeamServiceError, Unit>
 typealias AddTeamClientResult = Either<AddTeamClientError, Unit>
+typealias AddTeamAvatarResult = Either<AddTeamAvatarError, String>
 
 sealed interface CreateTeamError {
     data object TeamAlreadyExists : CreateTeamError
@@ -65,4 +66,10 @@ sealed interface AddTeamClientError {
     data object TeamNotFound : AddTeamClientError
 
     data object SellerNotFound : AddTeamClientError
+}
+
+sealed interface AddTeamAvatarError {
+    data object TeamNotFound : AddTeamAvatarError
+
+    data object AvatarImgNotFound : AddTeamAvatarError
 }

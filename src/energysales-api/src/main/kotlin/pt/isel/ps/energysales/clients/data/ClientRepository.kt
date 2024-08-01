@@ -16,8 +16,6 @@ interface ClientRepository {
 
     suspend fun getById(id: String): Client?
 
-    suspend fun clientExists(id: String): Boolean
-
     suspend fun clientExistsByName(name: String): Boolean
 
     suspend fun update(client: Client): Client?

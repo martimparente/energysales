@@ -13,10 +13,10 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.sellers.application.SellerCreationError
-import pt.isel.ps.energysales.sellers.application.SellerDeletingError
-import pt.isel.ps.energysales.sellers.application.SellerService
+import pt.isel.ps.energysales.sellers.application.SellerServiceKtor
+import pt.isel.ps.energysales.sellers.application.dto.CreateSellerError
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerInput
+import pt.isel.ps.energysales.sellers.application.dto.DeleteSellerError
 import pt.isel.ps.energysales.sellers.application.dto.GetAllSellerInput
 import pt.isel.ps.energysales.sellers.http.model.CreateSellerRequest
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
@@ -36,10 +36,9 @@ class SellerResource(
     )
 }
 
-fun Route.sellerRoutes(sellerService: SellerService) {
+fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
     get<SellerResource> { queryParams ->
         val input = GetAllSellerInput(queryParams.lastKeySeen, queryParams.noTeam, queryParams.searchQuery)
-
         val res = sellerService.getAllSellers(input)
 
         when (res) {
@@ -53,13 +52,10 @@ fun Route.sellerRoutes(sellerService: SellerService) {
     }
 
     post<SellerResource> {
-        // Receive the request body
         val body = call.receive<CreateSellerRequest>()
-        // Create the DTO object
         val input = CreateSellerInput(body.name, body.surname, body.email, body.team)
-        // Call the service
         val res = sellerService.createSeller(input)
-        // Handle the result and respond accordingly
+
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -68,16 +64,15 @@ fun Route.sellerRoutes(sellerService: SellerService) {
 
             is Left ->
                 when (res.value) {
-                    SellerCreationError.SellerAlreadyExists -> TODO()
-                    SellerCreationError.SellerInfoIsInvalid -> TODO()
+                    CreateSellerError.SellerAlreadyExists -> TODO()
+                    CreateSellerError.SellerInfoIsInvalid -> TODO()
                 }
         }
     }
 
-    get<SellerResource.Id> { pathParams ->
-        val sellerId = pathParams.id
+    get<SellerResource.Id> { params ->
         val seller =
-            sellerService.getById(sellerId)
+            sellerService.getById(params.id)
                 ?: return@get call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
         val sellerJson = SellerJSON.fromSeller(seller)
         call.respond(sellerJson)
@@ -85,13 +80,13 @@ fun Route.sellerRoutes(sellerService: SellerService) {
 
     /*
     todo update
-    put<SellerResource.Id> { pathParams ->
+    put<SellerResource.Id> { params ->
         val body = call.receive<UpdateSellerRequest>()
-        if (body.uid.toInt() != pathParams.id) {
+        if (body.uid.toInt() != params.id) {
             call.respondProblem(Problem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
             return@put
         }
-        val updatedSeller = Seller(pathParams.id, body.totalSales, body.team)
+        val updatedSeller = Seller(params.id, body.totalSales, body.team)
         val res = sellerService.updateSeller(updatedSeller)
         when (res) {
             is Right -> {
@@ -111,15 +106,15 @@ fun Route.sellerRoutes(sellerService: SellerService) {
         }
     }*/
 
-    delete<SellerResource.Id> { pathParams ->
-        val res = sellerService.deleteSeller(pathParams.id)
+    delete<SellerResource.Id> { params ->
+        val res = sellerService.deleteSeller(params.id)
 
         when (res) {
             is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
-                    SellerDeletingError.SellerNotFound -> call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
-                    SellerDeletingError.SellerInfoIsInvalid ->
+                    DeleteSellerError.SellerNotFound -> call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
+                    DeleteSellerError.SellerInfoIsInvalid ->
                         call.respondProblem(
                             Problem.sellerInfoIsInvalid,
                             HttpStatusCode.BadRequest,

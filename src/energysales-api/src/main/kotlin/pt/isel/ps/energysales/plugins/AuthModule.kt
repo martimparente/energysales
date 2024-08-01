@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.users
+package pt.isel.ps.energysales.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm

@@ -153,8 +153,8 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", "2")
-                    setBody(UpdateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
+                    parameter("id", "1")
+                    setBody(UpdateClientRequest("updateName", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
@@ -223,7 +223,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 3)
+                    parameter("id", "1")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
