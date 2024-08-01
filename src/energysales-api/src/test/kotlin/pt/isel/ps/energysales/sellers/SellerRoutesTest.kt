@@ -27,7 +27,7 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateSellerRequest("name", "surname", "email", 1))
+                    setBody(CreateSellerRequest("name", "surname", "email", "1"))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/13")
                     response.shouldHaveStatus(HttpStatusCode.Created)
@@ -45,7 +45,7 @@ class SellerRoutesTest : BaseRouteTest() {
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateSellerRequest("name", "surname", "email", 1))
+                    setBody(CreateSellerRequest("name", "surname", "email", "1"))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -62,7 +62,7 @@ class SellerRoutesTest : BaseRouteTest() {
                         "Authorization",
                         "Bearer $sellerToken",
                     )
-                    setBody(CreateSellerRequest("name", "surname", "email", 1))
+                    setBody(CreateSellerRequest("name", "surname", "email", "1"))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
                     response.shouldHaveStatus(HttpStatusCode.Forbidden)
@@ -204,7 +204,7 @@ class SellerRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 3)
+                    parameter("id", "1")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }

@@ -14,8 +14,8 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import org.simplejavamail.mailer.MailerBuilder
 import org.slf4j.event.Level
-import pt.isel.ps.energysales.clients.application.ClientService
-import pt.isel.ps.energysales.clients.application.OfferService
+import pt.isel.ps.energysales.clients.application.ClientServiceKtor
+import pt.isel.ps.energysales.clients.application.OfferServiceKtor
 import pt.isel.ps.energysales.clients.data.PsqlClientRepository
 import pt.isel.ps.energysales.clients.data.PsqlOfferRepository
 import pt.isel.ps.energysales.clients.http.clientRoutes
@@ -31,7 +31,7 @@ import pt.isel.ps.energysales.sellers.http.sellerRoutes
 import pt.isel.ps.energysales.services.application.ServiceService
 import pt.isel.ps.energysales.services.data.PsqlServiceRepository
 import pt.isel.ps.energysales.services.http.serviceRoutes
-import pt.isel.ps.energysales.teams.application.TeamService
+import pt.isel.ps.energysales.teams.application.TeamServiceKtor
 import pt.isel.ps.energysales.teams.data.PsqlTeamRepository
 import pt.isel.ps.energysales.teams.http.teamRoutes
 import pt.isel.ps.energysales.users.application.UserService
@@ -99,7 +99,7 @@ fun Application.module() {
     }
 
     val teamService by lazy {
-        TeamService(
+        TeamServiceKtor(
             teamRepository = PsqlTeamRepository(),
             sellerRepository = PsqlSellerRepository(),
         )
@@ -109,10 +109,10 @@ fun Application.module() {
 
     val productService by lazy { ServiceService(serviceRepository = PsqlServiceRepository()) }
 
-    val clientService by lazy { ClientService(clientRepository = PsqlClientRepository()) }
+    val clientService by lazy { ClientServiceKtor(clientRepository = PsqlClientRepository()) }
 
     val offerService by lazy {
-        OfferService(
+        OfferServiceKtor(
             offerRepository = PsqlOfferRepository(),
             sellerRepository = PsqlSellerRepository(),
             clientRepository = PsqlClientRepository(),
@@ -148,16 +148,17 @@ fun Application.module() {
 
         route(Uris.API) {
             authRoutes(userService)
+            userRoutes(userService)
             authenticate {
                 authorize("SELLER") {
                 }
                 authorize("ADMIN") {
-                    userRoutes(userService)
+                    clientRoutes(clientService, offerService)
+                    serviceRoutes(productService)
                     teamRoutes(teamService)
                     sellerRoutes(sellerService)
                     serviceRoutes(productService)
                     // clientRoutes(clientService)
-                    clientRoutes(clientService, offerService)
                 }
             }
         }

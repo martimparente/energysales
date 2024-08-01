@@ -30,9 +30,9 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.CLIENTS) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Location 1")))
+                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.CLIENTS}/11")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.CLIENTS}/2")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }
@@ -48,7 +48,7 @@ class ClientRoutesTest : BaseRouteTest() {
                             "eyJhdWQiOiJyZWFsbSIsImlzcyI6ImF1ZGllbmNlIiwidWlkIjoxLCJleHAiOjE3MTM1Njk1MDl9." +
                             "PujUDxkJjBeo8viQELQquH5zeW9P_LfS1jYBNmXIOAY",
                     )
-                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Location 1")))
+                    setBody(CreateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -153,8 +153,8 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 2)
-                    setBody(UpdateClientRequest(2, "newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Location 1")))
+                    parameter("id", "2")
+                    setBody(UpdateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
@@ -165,8 +165,8 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
-                    parameter("id", 2)
-                    setBody(UpdateClientRequest(2, "newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Location 1")))
+                    parameter("id", "2")
+                    setBody(UpdateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
@@ -194,7 +194,7 @@ class ClientRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
-                    setBody(UpdateClientRequest(-1, "nonClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Location 1")))
+                    setBody(UpdateClientRequest("nonClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.clientNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -203,13 +203,13 @@ class ClientRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Update Client - Bad Request`() =
+    fun `Update Client - Bad Request - Invalid E-mail`() =
         testApplication {
             testClient()
                 .put(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", "abc")
-                    setBody(UpdateClientRequest(-1, "123456789", "123456789", "newLocation", "email1@mail.com", LocationJSON("Location 1")))
+                    parameter("id", "1c")
+                    setBody(UpdateClientRequest("client", "123456789", "123456789", "invalidEmail", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)

@@ -4,11 +4,11 @@ data class CreateSellerInput(
     val name: String,
     val surname: String,
     val email: String,
-    val team: Int? = null,
+    val team: String? = null,
 )
 
 data class GetAllSellerInput(
-    val lastKeySeen: Int? = null,
+    val lastKeySeen: String? = null,
     val noTeam: Boolean = false,
     val searchQuery: String?,
 )

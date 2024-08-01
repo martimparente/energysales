@@ -1,5 +1,6 @@
 package pt.isel.ps.energysales.users.application
 
+import PatchUserRequest
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
@@ -13,7 +14,6 @@ import pt.isel.ps.energysales.users.domain.User
 import pt.isel.ps.energysales.users.domain.UserCredentials
 import pt.isel.ps.energysales.users.domain.toRole
 import pt.isel.ps.energysales.users.http.UserQueryParams
-import pt.isel.ps.energysales.users.http.model.PatchUserRequest
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -49,8 +49,8 @@ class UserService(
 
             // todo what happens if the user suddenly exists? Transaction?
             val saltedHash = hashingService.generateSaltedHash(input.password, SALT_NUM_OF_BYTES)
-            val user = User(-1, input.name, input.surname, input.email, input.role.toRole())
-            val userCredentials = UserCredentials(-1, input.username, saltedHash.hash, saltedHash.salt)
+            val user = User(null, input.name, input.surname, input.email, input.role.toRole())
+            val userCredentials = UserCredentials(null, input.username, saltedHash.hash, saltedHash.salt)
             userRepository.createUser(user, userCredentials)
         }
 
@@ -72,13 +72,13 @@ class UserService(
             ensureNotNull(credentials) { TokenCreationError.UserOrPasswordAreInvalid }
             val passwordIsValid = hashingService.matches(password, SaltedHash(credentials.password, credentials.salt))
             ensure(passwordIsValid) { TokenCreationError.UserOrPasswordAreInvalid }
-            val role = userRepository.getUserRole(credentials.id)
+            val role = userRepository.getUserRole(credentials.id!!)
             // Generate token TODO HARDCODED EXPIRATION TIME
             tokenService.generateJwtToken(credentials.username, credentials.id.toString(), role.toString(), 3600000)
         }
 
     suspend fun changeUserPassword(
-        uid: Int,
+        uid: String,
         oldPassword: String,
         newPassword: String,
         repeatNewPassword: String,
@@ -109,7 +109,7 @@ class UserService(
             }
         }
 
-    suspend fun getUserRole(uid: Int): RoleReadingResult =
+    suspend fun getUserRole(uid: String): RoleReadingResult =
         either {
             ensureNotNull(userRepository.getUserById(uid)) { RoleReadingError.UserNotFound }
             val roleFound = userRepository.getUserRole(uid)
@@ -118,7 +118,7 @@ class UserService(
         }
 
     suspend fun changeUserRole(
-        uid: Int,
+        uid: String,
         role: String,
     ): RoleAssignResult =
         either {
@@ -131,7 +131,7 @@ class UserService(
             userRepository.getAll()
         }
 
-    suspend fun getUser(uid: Int): UserReadingResult =
+    suspend fun getUser(uid: String): UserReadingResult =
         either {
             val user = userRepository.getUserById(uid)
             ensureNotNull(user) { UserReadingError.WrongQueryParams }
@@ -139,7 +139,7 @@ class UserService(
 
     suspend fun updateUser(input: PatchUserRequest): Either<UserUpdatingError, User> =
         either {
-            val user = userRepository.getUserById(input.id.toInt())
+            val user = userRepository.getUserById(input.id)
             ensureNotNull(user) { UserUpdatingError.UserNotFound }
             val patchedUser =
                 user.copy(
@@ -153,16 +153,16 @@ class UserService(
             ensureNotNull(updatedUser) { UserUpdatingError.UserNotFound }
         }
 
-    suspend fun deleteUser(uid: Int): DeleteUserResult =
+    suspend fun deleteUser(uid: String): DeleteUserResult =
         either {
             val user = userRepository.getUserById(uid)
             ensureNotNull(user) { UserDeletingError.UserNotFound }
-            userRepository.deleteUser(user.id)
+            userRepository.deleteUser(user.id!!)
         }
 }
 
 typealias DeleteUserResult = Either<UserDeletingError, Unit>
-typealias UserCreationResult = Either<UserCreationError, Int>
+typealias UserCreationResult = Either<UserCreationError, String>
 typealias TokenCreationResult = Either<TokenCreationError, String>
 typealias ChangeUserPasswordResult = Either<ChangeUserPasswordError, Boolean>
 typealias ResetPasswordResult = Either<ResetPasswordError, Boolean>

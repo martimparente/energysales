@@ -12,7 +12,7 @@ interface UserRepository {
 
     suspend fun updateUser(user: User): User?
 
-    suspend fun getUserById(uid: Int): User?
+    suspend fun getUserById(uid: String): User?
 
     suspend fun getUserByEmail(email: String): User?
 
@@ -26,10 +26,10 @@ interface UserRepository {
 
     suspend fun updateUserCredentials(credentials: UserCredentials): Boolean
 
-    suspend fun getUserRole(uid: Int): Role?
+    suspend fun getUserRole(uid: String): Role?
 
     suspend fun changeUserRole(
-        uid: Int,
+        uid: String,
         roleName: String,
     ): Boolean
 
@@ -37,8 +37,8 @@ interface UserRepository {
 
     suspend fun getAllKeyPaging(
         pageSize: Int,
-        lastKeySeen: Int? = null,
+        lastKeySeen: String? = null,
     ): List<User>
 
-    suspend fun deleteUser(uid: Int): Boolean
+    suspend fun deleteUser(uid: String): Boolean
 }

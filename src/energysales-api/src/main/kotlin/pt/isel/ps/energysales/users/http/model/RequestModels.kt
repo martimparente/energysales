@@ -1,6 +1,11 @@
-package pt.isel.ps.energysales.users.http.model
-
 import kotlinx.serialization.Serializable
+
+@Serializable
+data class ChangePasswordRequest(
+    val oldPassword: String,
+    val newPassword: String,
+    val repeatNewPassword: String,
+)
 
 @Serializable
 data class CreateUserRequest(
@@ -25,4 +30,20 @@ data class PatchUserRequest(
 @Serializable
 data class ResetPasswordRequest(
     val email: String,
+)
+
+@Serializable
+data class LoginRequest(
+    val username: String,
+    val password: String,
+)
+
+@Serializable
+data class LoginResponse(
+    val token: String,
+)
+
+@Serializable
+data class RoleRequest(
+    val role: String,
 )

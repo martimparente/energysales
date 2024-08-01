@@ -6,11 +6,7 @@ import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import pt.isel.ps.energysales.sellers.data.SellerRepository
 import pt.isel.ps.energysales.sellers.domain.Seller
-import pt.isel.ps.energysales.teams.application.dto.AddAvatarOutput
-import pt.isel.ps.energysales.teams.application.dto.CreateTeamInput
-import pt.isel.ps.energysales.teams.application.dto.UpdateTeamInput
 import pt.isel.ps.energysales.teams.data.TeamRepository
-import pt.isel.ps.energysales.teams.domain.District
 import pt.isel.ps.energysales.teams.domain.Location
 import pt.isel.ps.energysales.teams.domain.Team
 import pt.isel.ps.energysales.teams.domain.TeamDetails
@@ -20,13 +16,17 @@ class TeamService(
     private val sellerRepository: SellerRepository,
 ) {
     // Create
-    suspend fun createTeam(input: CreateTeamInput): TeamCreationResult =
+    suspend fun createTeam(
+        name: String,
+        district: String,
+        managerId: Int?,
+    ): TeamCreationResult =
         either {
-            ensure(input.name.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
-            ensure(!teamRepository.teamExistsByName(input.name)) { TeamCreationError.TeamAlreadyExists }
+            ensure(name.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
+            ensure(district.length in 3..50) { TeamCreationError.TeamInfoIsInvalid }
+            ensure(!teamRepository.teamExistsByName(name)) { TeamCreationError.TeamAlreadyExists }
 
-            val team = Team(-1, input.name, Location(District.fromName(input.district)), input.managerId)
-            teamRepository.create(team)
+            teamRepository.create(Team(-1, name, Location(district), managerId))
         }
 
     // Read
@@ -44,18 +44,12 @@ class TeamService(
     suspend fun getByIdWithDetails(id: Int): TeamDetails? = teamRepository.getByIdWithDetails(id)
 
     // Update
-    suspend fun updateTeam(input: UpdateTeamInput): TeamUpdatingResult =
+    suspend fun updateTeam(team: Team): TeamUpdatingResult =
         either {
-            ensure(input.name?.length in 3..50) { TeamUpdatingError.TeamInfoIsInvalid }
-            val team = teamRepository.getById(input.id) ?: raise(TeamUpdatingError.TeamNotFound)
-            val patchedTeam =
-                team.copy(
-                    name = input.name ?: team.name,
-                    location = input.district?.let { Location(District.fromName(it)) } ?: team.location,
-                    managerId = input.managerId ?: team.managerId,
-                )
-
-            val updatedTeam = teamRepository.update(patchedTeam)
+            ensure(team.name.length in 3..50) { TeamUpdatingError.TeamInfoIsInvalid }
+            ensure(team.location.district.length in 3..50) { TeamUpdatingError.TeamInfoIsInvalid }
+            ensure(teamRepository.teamExists(team.id)) { TeamUpdatingError.TeamNotFound }
+            val updatedTeam = teamRepository.update(team)
             ensureNotNull(updatedTeam) { TeamUpdatingError.TeamNotFound } // todo check if this is necessary
         }
 
@@ -116,19 +110,6 @@ class TeamService(
             ensure(teamRepository.teamExists(teamId)) { TeamAddClientError.TeamNotFound }
             teamRepository.addClientToTeam(teamId, clientId)
         }
-
-    suspend fun addAvatar(
-        teamId: Int,
-        avatarPath: String,
-    ): TeamUpdateAvatarResult =
-        either {
-            val team =
-                teamRepository.getById(teamId)
-                    ?: raise(TeamUpdateAvatarError.TeamNotFound)
-            val teamToUpdate = team.copy(avatarPath = avatarPath)
-            val updatedTeam = teamRepository.update(teamToUpdate) ?: raise(TeamUpdateAvatarError.TeamNotFound)
-            updatedTeam.avatarPath?.let { AddAvatarOutput(it) } ?: raise(TeamUpdateAvatarError.TeamNotFound)
-        }
 }
 
 typealias TeamCreationResult = Either<TeamCreationError, Int>
@@ -143,8 +124,6 @@ typealias TeamDeleteSellerResult = Either<TeamSellersReadingError, Boolean>
 typealias TeamAddServiceResult = Either<TeamAddServiceError, Boolean>
 typealias TeamDeleteServiceResult = Either<TeamDeleteServiceError, Boolean>
 typealias TeamAddClientResult = Either<TeamAddClientError, Boolean>
-
-typealias TeamUpdateAvatarResult = Either<TeamUpdateAvatarError, AddAvatarOutput>
 
 sealed interface TeamCreationError {
     data object TeamAlreadyExists : TeamCreationError

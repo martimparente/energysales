@@ -8,14 +8,14 @@ import pt.isel.ps.energysales.services.data.table.ServiceTable
 import pt.isel.ps.energysales.services.domain.Service
 
 class PsqlServiceRepository : ServiceRepository {
-    override suspend fun getById(id: Int): Service? =
+    override suspend fun getById(id: String): Service? =
         dbQuery {
-            ServiceEntity.findById(id)?.toService()
+            ServiceEntity.findById(id.toInt())?.toService()
         }
 
-    override suspend fun serviceExists(id: Int): Boolean =
+    override suspend fun serviceExists(id: String): Boolean =
         dbQuery {
-            ServiceEntity.findById(id) != null
+            ServiceEntity.findById(id.toInt()) != null
         }
 
     override suspend fun serviceExistsByName(name: String) =
@@ -25,7 +25,7 @@ class PsqlServiceRepository : ServiceRepository {
                 .count() > 0
         }
 
-    override suspend fun create(service: Service): Int =
+    override suspend fun create(service: Service): String =
         dbQuery {
             ServiceEntity
                 .new {
@@ -48,6 +48,7 @@ class PsqlServiceRepository : ServiceRepository {
                         }
                 }.id
                 .value
+                .toString()
         }
 
     override suspend fun getAll(): List<Service> =
@@ -59,11 +60,11 @@ class PsqlServiceRepository : ServiceRepository {
 
     override suspend fun getAllKeyPaging(
         pageSize: Int,
-        lastKeySeen: Int?,
+        lastKeySeen: String?,
     ): List<Service> =
         dbQuery {
             ServiceEntity
-                .find { ServiceTable.id greaterEq (lastKeySeen ?: 0) }
+                .find { ServiceTable.id greaterEq (lastKeySeen!!.toInt()) }
                 .orderBy(ServiceTable.id to SortOrder.ASC)
                 .limit(pageSize)
                 .map { it.toService() }

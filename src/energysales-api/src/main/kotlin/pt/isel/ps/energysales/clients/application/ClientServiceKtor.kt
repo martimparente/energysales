@@ -1,7 +1,13 @@
 package pt.isel.ps.energysales.clients.application
 
+import arrow.core.raise.either
+import arrow.core.raise.ensure
+import arrow.core.raise.ensureNotNull
+import pt.isel.ps.energysales.clients.application.dto.ClientCreationError
 import pt.isel.ps.energysales.clients.application.dto.ClientCreationResult
+import pt.isel.ps.energysales.clients.application.dto.ClientDeletingError
 import pt.isel.ps.energysales.clients.application.dto.ClientDeletingResult
+import pt.isel.ps.energysales.clients.application.dto.ClientUpdatingError
 import pt.isel.ps.energysales.clients.application.dto.ClientUpdatingResult
 import pt.isel.ps.energysales.clients.application.dto.CreateClientInput
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
@@ -9,42 +15,39 @@ import pt.isel.ps.energysales.clients.data.ClientRepository
 import pt.isel.ps.energysales.clients.domain.Client
 import pt.isel.ps.energysales.teams.domain.Location
 
-class ClientService(
+class ClientServiceKtor(
     private val clientRepository: ClientRepository,
-) {
+) : ClientService {
     // Create
-    suspend fun createClient(input: CreateClientInput): ClientCreationResult =
+    override suspend fun createClient(input: CreateClientInput): ClientCreationResult =
         either {
             ensure(input.name.length in 2..16) { ClientCreationError.ClientNameIsInvalid }
             ensure(input.nif.length == 9) { ClientCreationError.ClientInfoIsInvalid }
             ensure(input.phone.length == 9) { ClientCreationError.ClientInfoIsInvalid }
             ensure(input.location.district.length in 2..16) { ClientCreationError.ClientInfoIsInvalid }
-            // ensure(!clientRepository.clientExistsByName(name)) { ClientCreationError.ClientAlreadyExists } //TODO SHOULD CHECK HERE OR LET SQL HANDLE IT?
 
-            val client =
-                Client(-1, input.name, input.nif, input.phone, input.email, Location(input.location.district), input.sellerId.toInt())
+            val client = Client(null, input.name, input.nif, input.phone, input.email, Location(input.location.district), input.sellerId)
             clientRepository.create(client)
         }
 
     // Read
-    suspend fun getAllClients() = clientRepository.getAll()
+    override suspend fun getAllClients() = clientRepository.getAll()
 
-    suspend fun getAllClientsPaging(
+    override suspend fun getAllClientsPaging(
         pageSize: Int,
-        lastKeySeen: Int?,
+        lastKeySeen: String?,
     ) = clientRepository.getAllKeyPaging(pageSize, lastKeySeen)
 
-    // suspend fun getByName(name: String): Client? = clientRepository.getByName(name)
-
-    suspend fun getById(id: Int): Client? = clientRepository.getById(id)
+    override suspend fun getById(id: String): Client? = clientRepository.getById(id)
 
     // Update
-    suspend fun updateClient(input: UpdateClientInput): ClientUpdatingResult =
+    override suspend fun updateClient(input: UpdateClientInput): ClientUpdatingResult =
         either {
             ensure(input.name.length in 2..16) { ClientUpdatingError.ClientNameIsInvalid }
             ensure(input.nif.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
             ensure(input.phone.length == 9) { ClientUpdatingError.ClientInfoIsInvalid }
             ensure(input.location.district.length in 2..16) { ClientUpdatingError.ClientInfoIsInvalid }
+            ensure(isValidEmail(input.email)) { ClientUpdatingError.ClientEmailIsInvalid }
             val client = clientRepository.getById(input.id)
             ensureNotNull(client) { ClientUpdatingError.ClientNotFound }
 
@@ -54,62 +57,19 @@ class ClientService(
                     nif = input.nif,
                     phone = input.phone,
                     location = Location(input.location.district),
-                    sellerId = input.sellerId.toInt(),
+                    sellerId = input.sellerId,
                 )
 
             val updatedClient = clientRepository.update(newClient)
             ensureNotNull(updatedClient) { ClientUpdatingError.ClientNotFound }
         }
 
-    suspend fun deleteClient(id: Int): ClientDeletingResult =
+    override suspend fun deleteClient(id: String): ClientDeletingResult =
         either {
             val client = clientRepository.getById(id)
             ensureNotNull(client) { ClientDeletingError.ClientNotFound }
             clientRepository.delete(client)
         }
-}
-
-typealias ClientCreationResult = Either<ClientCreationError, Int>
-typealias ClientReadingResult = Either<ClientReadingError, Client>
-typealias ClientUpdatingResult = Either<ClientUpdatingError, Client>
-typealias ClientDeletingResult = Either<ClientDeletingError, Boolean>
-
-sealed interface ClientCreationError {
-    data object ClientAlreadyExists : ClientCreationError
-
-    data object ClientInfoIsInvalid : ClientCreationError
-
-    data object ClientNameIsInvalid : ClientCreationError
-
-    data object ClientSurnameIsInvalid : ClientCreationError
-
-    data object ClientEmailIsInvalid : ClientCreationError
-
-//    data object ClientSurnameIsInvalid : ClientCreationError
-}
-
-sealed interface ClientReadingError {
-    data object ClientAlreadyExists : ClientReadingError
-
-    data object ClientNameIsInvalid : ClientReadingError
-}
-
-sealed interface ClientUpdatingError {
-    data object ClientNotFound : ClientUpdatingError
-
-    data object ClientInfoIsInvalid : ClientUpdatingError
-
-    data object ClientNameIsInvalid : ClientUpdatingError
-
-    data object ClientSurnameIsInvalid : ClientUpdatingError
-
-    data object ClientEmailIsInvalid : ClientUpdatingError
-}
-
-sealed interface ClientDeletingError {
-    data object ClientNotFound : ClientDeletingError
-
-    data object ClientInfoIsInvalid : ClientDeletingError
 }
 
 private fun isValidEmail(email: String): Boolean {

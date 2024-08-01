@@ -1,5 +1,7 @@
 package pt.isel.ps.energysales.services.http
 
+import CreateServiceRequest
+import UpdateServiceRequest
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import io.ktor.http.HttpStatusCode
@@ -20,20 +22,18 @@ import pt.isel.ps.energysales.services.application.ServiceService
 import pt.isel.ps.energysales.services.application.ServiceUpdatingError
 import pt.isel.ps.energysales.services.application.dto.CreateServiceInput
 import pt.isel.ps.energysales.services.application.dto.UpdateServiceInput
-import pt.isel.ps.energysales.services.http.model.CreateServiceRequest
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
-import pt.isel.ps.energysales.services.http.model.UpdateServiceRequest
 import pt.isel.ps.energysales.users.http.model.Problem
 import pt.isel.ps.energysales.users.http.model.respondProblem
 
 @Resource(Uris.SERVICES)
 class ServiceResource(
-    val lastKeySeen: Int? = null,
+    val lastKeySeen: String? = null,
 ) {
     @Resource("{id}")
     class Id(
         val parent: ServiceResource = ServiceResource(),
-        val id: Int,
+        val id: String,
     )
 }
 
@@ -97,11 +97,6 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
 
     put<ServiceResource.Id> { pathParams ->
         val body = call.receive<UpdateServiceRequest>()
-        // check if path id is equal to body id
-        if (pathParams.id != body.id) {
-            call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
-            return@put
-        }
         val input =
             UpdateServiceInput(
                 pathParams.id,

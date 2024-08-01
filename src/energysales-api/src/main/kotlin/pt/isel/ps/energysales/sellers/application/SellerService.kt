@@ -16,7 +16,7 @@ class SellerService(
     // Create
     suspend fun createSeller(info: CreateSellerInput): SellerCreationResult =
         either {
-            val user = User(-1, info.name, info.surname, info.email, Role.SELLER)
+            val user = User(null, info.name, info.surname, info.email, Role.SELLER)
             val seller = Seller(user, 0.0f, info.team)
 
             sellerRepository.create(seller)
@@ -34,13 +34,13 @@ class SellerService(
 
     suspend fun getAllSellersPaging(
         pageSize: Int,
-        lastKeySeen: Int?,
+        lastKeySeen: String?,
         noTeam: Boolean,
     ) = sellerRepository.getAllKeyPaging(pageSize, lastKeySeen, noTeam)
 
     // suspend fun getByName(name: String): Seller? = sellerRepository.getByName(name)
 
-    suspend fun getById(id: Int): Seller? = sellerRepository.getById(id)
+    suspend fun getById(id: String): Seller? = sellerRepository.getById(id)
 
     // Update
     suspend fun updateSeller(seller: Seller): SellerUpdatingResult =
@@ -49,7 +49,7 @@ class SellerService(
             ensureNotNull(updatedSeller) { SellerUpdatingError.SellerNotFound }
         }
 
-    suspend fun deleteSeller(id: Int): SellerDeletingResult =
+    suspend fun deleteSeller(id: String): SellerDeletingResult =
         either {
             val seller = sellerRepository.getById(id)
             ensureNotNull(seller) { SellerDeletingError.SellerNotFound }
@@ -57,7 +57,7 @@ class SellerService(
         }
 }
 
-typealias SellerCreationResult = Either<SellerCreationError, Int>
+typealias SellerCreationResult = Either<SellerCreationError, String>
 typealias SellerReadingResult = Either<SellerReadingError, Seller>
 
 typealias SellerUpdatingResult = Either<SellerUpdatingError, Seller>

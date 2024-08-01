@@ -18,8 +18,8 @@ object Uris {
 
     // User routes
     const val USERS = "/users"
-    const val USERS_BY_ID = "$USERS/{userId}"
-    const val USERS_ROLE = "$USERS/{userId}/role"
+    const val USERS_BY_ID = "$USERS/{id}"
+    const val USERS_ROLE = "$USERS/{id}/role"
     const val USER_CHANGE_PASSWORD = "$USERS/{id}/change-password"
 
     // Admin routes

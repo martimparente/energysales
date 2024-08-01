@@ -1,7 +1,7 @@
 package pt.isel.ps.energysales.users.domain
 
 data class User(
-    val id: Int,
+    val id: String? = null,
     val name: String,
     val surname: String,
     val email: String,
@@ -9,14 +9,14 @@ data class User(
 )
 
 data class UserCredentials(
-    val id: Int,
+    val id: String? = null,
     val username: String,
     val password: String,
     val salt: String,
 )
 
 data class Manager(
-    val id: Int,
+    val id: String,
     val name: String,
     val surname: String,
     val email: String,

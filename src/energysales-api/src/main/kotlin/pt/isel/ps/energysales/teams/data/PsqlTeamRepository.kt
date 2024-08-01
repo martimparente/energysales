@@ -27,30 +27,30 @@ class PsqlTeamRepository : TeamRepository {
                 ?.toTeam()
         }
 
-    override suspend fun getById(id: Int): Team? =
+    override suspend fun getById(id: String): Team? =
         dbQuery {
-            TeamEntity.findById(id)?.toTeam()
+            TeamEntity.findById(id.toInt())?.toTeam()
         }
 
-    override suspend fun getByIdWithDetails(id: Int): TeamDetails =
+    override suspend fun getByIdWithDetails(id: String): TeamDetails? =
         dbQuery {
             TeamEntity
-                .findById(id)
+                .findById(id.toInt())
                 ?.let {
                     TeamDetails(
                         it.toTeam(),
                         it.sellers.map { it.toSeller() },
                         it.services.map { it.toService() },
                     )
-                } ?: throw IllegalArgumentException("Team not found")
+                }
         }
 
-    override suspend fun teamExists(id: Int): Boolean =
+    override suspend fun teamExists(id: String): Boolean =
         dbQuery {
-            TeamEntity.findById(id) != null
+            TeamEntity.findById(id.toInt()) != null
         }
 
-    override suspend fun teamExistsByName(name: String) =
+    override suspend fun teamExistsByName(name: String): Boolean =
         dbQuery {
             TeamEntity
                 .find { TeamTable.name eq name }
@@ -66,10 +66,7 @@ class PsqlTeamRepository : TeamRepository {
                         LocationEntity.new {
                             district = team.location.district
                         }
-                    manager =
-                        team.managerId?.let {
-                            UserEntity.findById(it)
-                        }
+                    manager = team.managerId?.let { UserEntity.findById(it.toInt()) }
                     avatarPath = team.avatarPath
                 }.id
                 .value
@@ -98,13 +95,13 @@ class PsqlTeamRepository : TeamRepository {
     override suspend fun update(team: Team): Team? =
         dbQuery {
             TeamEntity
-                .findById(team.id)
-                ?.also {
-                    it.name = team.name
-                    it.location = LocationEntity.findById(it.location.id.value) ?: LocationEntity.new {
+                .findById(team.id?.toInt()!!)
+                ?.apply {
+                    name = team.name
+                    location = LocationEntity.findById(location.id.value) ?: LocationEntity.new {
                         district = team.location.district
                     }
-                    it.manager = team.managerId?.let { UserEntity.findById(it) }
+                    manager = team.managerId?.let { UserEntity.findById(it.toInt()) }
                     it.avatarPath = team.avatarPath
                 }?.toTeam()
         }
@@ -118,62 +115,60 @@ class PsqlTeamRepository : TeamRepository {
             true
         }
 
-    override suspend fun getTeamSellers(id: Int): List<Seller> =
+    override suspend fun getTeamSellers(id: String): List<Seller> =
         dbQuery {
             TeamEntity
-                .findById(id)
+                .findById(id.toInt())
                 ?.sellers
                 ?.map { it.toSeller() }
                 ?: emptyList()
         }
 
     override suspend fun addSellerToTeam(
-        teamId: Int,
-        sellerId: Int,
+        teamId: String,
+        sellerId: String,
     ): Boolean =
         dbQuery {
-            val seller = SellerEntity.findById(sellerId) ?: return@dbQuery false
-            seller.team = TeamEntity.findById(teamId) ?: return@dbQuery false
+            val seller = SellerEntity.findById(sellerId.toInt()) ?: return@dbQuery false
+            seller.team = TeamEntity.findById(teamId.toInt()) ?: return@dbQuery false
             true
         }
 
-    override suspend fun deleteSellerFromTeam(sellerId: Int): Boolean =
+    override suspend fun deleteSellerFromTeam(sellerId: String): Boolean =
         dbQuery {
-            val seller = SellerEntity.findById(sellerId) ?: return@dbQuery false
+            val seller = SellerEntity.findById(sellerId.toInt()) ?: return@dbQuery false
             seller.team = null
             true
         }
 
     override suspend fun addServiceToTeam(
-        teamId: Int,
-        serviceId: Int,
+        teamId: String,
+        serviceId: String,
     ): Boolean =
         dbQuery {
-            // add a service to team - is a many to many relationship on
-            val team = TeamEntity.findById(teamId) ?: return@dbQuery false
-            val service = ServiceEntity.findById(serviceId) ?: return@dbQuery false
+            val team = TeamEntity.findById(teamId.toInt()) ?: return@dbQuery false
+            val service = ServiceEntity.findById(serviceId.toInt()) ?: return@dbQuery false
             team.services = SizedCollection(team.services + service)
             true
         }
 
     override suspend fun deleteServiceFromTeam(
-        teamID: Int,
-        serviceId: Int,
+        teamID: String,
+        serviceId: String,
     ): Boolean =
         dbQuery {
             TeamServices.deleteWhere {
-                (team eq teamID) and (service eq serviceId)
+                (TeamServices.team eq teamID.toInt()) and (TeamServices.service eq serviceId.toInt())
             } > 0
         }
 
     override suspend fun addClientToTeam(
-        teamId: Int,
-        clientId: Int,
+        teamId: String,
+        clientId: String,
     ): Boolean =
         dbQuery {
-            // add a client to team - is a many to many relationship on
-            val team = TeamEntity.findById(teamId) ?: return@dbQuery false
-            val client = ClientEntity.findById(clientId) ?: return@dbQuery false
+            val team = TeamEntity.findById(teamId.toInt()) ?: return@dbQuery false
+            val client = ClientEntity.findById(clientId.toInt()) ?: return@dbQuery false
             team.clients = SizedCollection(team.clients + client)
             true
         }

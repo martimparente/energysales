@@ -10,7 +10,7 @@ data class SellerJSON(
     val surname: String,
     val email: String,
     val totalSales: Float,
-    val team: Int?,
+    val team: String?,
 ) {
     companion object {
         fun fromSeller(seller: Seller) =
@@ -24,18 +24,3 @@ data class SellerJSON(
             )
     }
 }
-
-@Serializable
-data class CreateSellerRequest(
-    val name: String,
-    val surname: String,
-    val email: String,
-    val team: Int? = null,
-)
-
-@Serializable
-data class UpdateSellerRequest(
-    val uid: String,
-    val totalSales: Float,
-    val team: Int? = null,
-)

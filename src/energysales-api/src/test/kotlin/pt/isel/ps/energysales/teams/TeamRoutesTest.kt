@@ -221,7 +221,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("teamId", -1)
+                    parameter("teamId", "-1")
                     setBody(UpdateTeamRequest("nonExistingTeam", LocationJSON("newDistrict"), null))
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.teamNotFound.type)
@@ -231,15 +231,15 @@ class TeamRoutesTest : BaseRouteTest() {
         }
 
     @Test
-    fun `Update Team - Bad Request`() =
+    fun `Update Team - Bad Request - Invalid Name`() =
         testApplication {
             testClient()
                 .put(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("teamId", "abc")
+                    parameter("teamId", "1")
                     setBody(UpdateTeamRequest("", LocationJSON("newDistrict"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
+                    response.body<Problem>().type.shouldBeEqual(Problem.teamInfoIsInvalid.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
@@ -251,7 +251,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("teamId", 3)
+                    parameter("teamId", "3")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
@@ -263,7 +263,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Invalid Token")
-                    parameter("teamId", 3)
+                    parameter("teamId", "3")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.Unauthorized)
                 }
@@ -275,7 +275,7 @@ class TeamRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.TEAMS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("teamId", -1)
+                    parameter("teamId", "-1")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
                 }

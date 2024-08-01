@@ -16,14 +16,14 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.clients.application.ClientCreationError
-import pt.isel.ps.energysales.clients.application.ClientDeletingError
-import pt.isel.ps.energysales.clients.application.ClientService
-import pt.isel.ps.energysales.clients.application.ClientUpdatingError
-import pt.isel.ps.energysales.clients.application.OfferCreationError
-import pt.isel.ps.energysales.clients.application.OfferService
+import pt.isel.ps.energysales.clients.application.ClientServiceKtor
+import pt.isel.ps.energysales.clients.application.OfferServiceKtor
+import pt.isel.ps.energysales.clients.application.dto.ClientCreationError
+import pt.isel.ps.energysales.clients.application.dto.ClientDeletingError
+import pt.isel.ps.energysales.clients.application.dto.ClientUpdatingError
 import pt.isel.ps.energysales.clients.application.dto.CreateClientInput
 import pt.isel.ps.energysales.clients.application.dto.CreateOfferInput
+import pt.isel.ps.energysales.clients.application.dto.OfferCreationError
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
@@ -35,12 +35,12 @@ import pt.isel.ps.energysales.users.http.model.respondProblem
 
 @Resource(Uris.CLIENTS)
 class ClientResource(
-    val lastKeySeen: Int? = null,
+    val lastKeySeen: String? = null,
 ) {
     @Resource("{id}")
     class Id(
         val parent: ClientResource = ClientResource(),
-        val id: Int,
+        val id: String,
     ) {
         @Resource(Uris.OFFERS)
         class OfferResource(
@@ -55,8 +55,8 @@ class ClientResource(
 }
 
 fun Route.clientRoutes(
-    clientService: ClientService,
-    offerService: OfferService,
+    clientService: ClientServiceKtor,
+    offerService: OfferServiceKtor,
 ) {
     get<ClientResource> { queryParams ->
         val clients = clientService.getAllClientsPaging(10, queryParams.lastKeySeen)
@@ -98,7 +98,7 @@ fun Route.clientRoutes(
                             HttpStatusCode.BadRequest,
                         )
 
-                    ClientCreationError.ClientEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
+                    ClientCreationError.ClientEmailIsInvalid -> call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
                     ClientCreationError.ClientNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
                     ClientCreationError.ClientSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
                 }
@@ -117,17 +117,17 @@ fun Route.clientRoutes(
     put<ClientResource.Id> { pathParams ->
         val userId =
             call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
-                ?: call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
+                ?: return@put call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
         val body = call.receive<UpdateClientRequest>()
         val input =
             UpdateClientInput(
-                body.id,
+                userId,
                 body.name,
                 body.nif,
                 body.phone,
                 body.email,
                 body.location.toLocation(),
-                userId.toString(),
+                pathParams.id,
             )
 
         val res = clientService.updateClient(input)
@@ -145,7 +145,12 @@ fun Route.clientRoutes(
                             HttpStatusCode.BadRequest,
                         )
 
-                    ClientUpdatingError.ClientEmailIsInvalid -> TODO()
+                    ClientUpdatingError.ClientEmailIsInvalid ->
+                        call.respondProblem(
+                            Problem.badRequest,
+                            HttpStatusCode.BadRequest,
+                        )
+
                     ClientUpdatingError.ClientNameIsInvalid -> TODO()
                     ClientUpdatingError.ClientSurnameIsInvalid -> TODO()
                 }

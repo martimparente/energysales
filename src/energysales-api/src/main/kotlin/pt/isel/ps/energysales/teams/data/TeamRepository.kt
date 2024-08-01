@@ -16,11 +16,11 @@ interface TeamRepository {
 
     suspend fun getByName(name: String): Team?
 
-    suspend fun getById(id: Int): Team?
+    suspend fun getById(id: String): Team?
 
-    suspend fun getByIdWithDetails(id: Int): TeamDetails?
+    suspend fun getByIdWithDetails(id: String): TeamDetails?
 
-    suspend fun teamExists(id: Int): Boolean
+    suspend fun teamExists(id: String): Boolean
 
     suspend fun teamExistsByName(name: String): Boolean
 
@@ -28,27 +28,27 @@ interface TeamRepository {
 
     suspend fun delete(team: Team): Boolean
 
-    suspend fun getTeamSellers(id: Int): List<Seller>
+    suspend fun getTeamSellers(id: String): List<Seller>
 
     suspend fun addSellerToTeam(
-        teamId: Int,
-        sellerId: Int,
+        teamId: String,
+        sellerId: String,
     ): Boolean
 
-    suspend fun deleteSellerFromTeam(sellerId: Int): Boolean
+    suspend fun deleteSellerFromTeam(sellerId: String): Boolean
 
     suspend fun addServiceToTeam(
-        teamId: Int,
-        serviceId: Int,
+        teamId: String,
+        serviceId: String,
     ): Boolean
 
     suspend fun deleteServiceFromTeam(
-        teamID: Int,
-        serviceId: Int,
+        teamID: String,
+        serviceId: String,
     ): Boolean
 
     suspend fun addClientToTeam(
-        teamId: Int,
-        clientId: Int,
+        teamId: String,
+        clientId: String,
     ): Boolean
 }

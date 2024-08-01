@@ -3,7 +3,7 @@ package pt.isel.ps.energysales.users.data
 import org.jetbrains.exposed.sql.SortOrder
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.users.data.entity.RoleEntity
-import pt.isel.ps.energysales.users.data.entity.UserCredentialsEntity
+import pt.isel.ps.energysales.users.data.entity.UserCredentialEntity
 import pt.isel.ps.energysales.users.data.entity.UserEntity
 import pt.isel.ps.energysales.users.data.table.RoleTable
 import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
@@ -27,7 +27,7 @@ class PsqlUserRepository : UserRepository {
                     role = RoleEntity.find { RoleTable.name eq user.role.name }.single()
                 }
 
-            UserCredentialsEntity.new(userEntity.id.value) {
+            UserCredentialEntity.new(userEntity.id.value) {
                 username = userCredentials.username
                 password = userCredentials.password
                 salt = userCredentials.salt
@@ -36,9 +36,9 @@ class PsqlUserRepository : UserRepository {
             userEntity.id.value.toString()
         }
 
-    override suspend fun getUserById(uid: Int): User? =
+    override suspend fun getUserById(uid: String): User? =
         dbQuery {
-            UserEntity.findById(uid)?.toUser()
+            UserEntity.findById(uid.toInt())?.toUser()
         }
 
     override suspend fun getUserByEmail(email: String): User? =
@@ -48,20 +48,20 @@ class PsqlUserRepository : UserRepository {
 
     override suspend fun getUserCredentialsByUsername(username: String): UserCredentials? =
         dbQuery {
-            UserCredentialsEntity
+            UserCredentialEntity
                 .find { UserCredentialsTable.username eq username }
                 .singleOrNull()
-                ?.let { UserCredentials(it.id.value, it.username, it.password, it.salt) }
+                ?.let { UserCredentials(it.id.value.toString(), it.username, it.password, it.salt) }
         }
 
     override suspend fun getUserCredentialsById(uid: String): UserCredentials? =
         dbQuery {
-            UserCredentialsEntity.findById(uid.toInt())?.toUserCredentials()
+            UserCredentialEntity.findById(uid.toInt())?.toUserCredentials()
         }
 
     override suspend fun userExists(username: String): Boolean =
         dbQuery {
-            UserCredentialsEntity.find { UserCredentialsTable.username eq username }.count() > 0
+            UserCredentialEntity.find { UserCredentialsTable.username eq username }.count() > 0
         }
 
     override suspend fun isEmailAvailable(email: String): Boolean =
@@ -71,7 +71,7 @@ class PsqlUserRepository : UserRepository {
 
     override suspend fun updateUserCredentials(credentials: UserCredentials): Boolean =
         dbQuery {
-            UserCredentialsEntity.findById(credentials.id)?.let { userCredentialsEntity ->
+            UserCredentialEntity.findById(credentials.id!!.toInt())?.let { userCredentialsEntity ->
                 userCredentialsEntity.password = credentials.password
                 userCredentialsEntity.salt = credentials.salt
                 true
@@ -80,7 +80,7 @@ class PsqlUserRepository : UserRepository {
 
     override suspend fun updateUser(user: User): User? =
         dbQuery {
-            UserEntity.findById(user.id)?.let { userEntity ->
+            UserEntity.findById(user.id!!.toInt())?.let { userEntity ->
                 userEntity.name = user.name
                 userEntity.surname = user.surname
                 userEntity.email = user.email
@@ -90,22 +90,22 @@ class PsqlUserRepository : UserRepository {
         }
 
     override suspend fun changeUserRole(
-        uid: Int,
+        uid: String,
         roleName: String,
     ): Boolean =
         dbQuery {
             val roleFound = RoleEntity.find { RoleTable.name eq roleName }.single()
 
-            UserEntity.findById(uid)?.let { userEntity ->
+            UserEntity.findById(uid.toInt())?.let { userEntity ->
                 userEntity.role = roleFound
                 true
             } ?: false
         }
 
-    override suspend fun getUserRole(uid: Int): Role? =
+    override suspend fun getUserRole(uid: String): Role? =
         dbQuery {
             UserEntity
-                .findById(uid)
+                .findById(uid.toInt())
                 ?.role
                 ?.name
                 ?.toRole()
@@ -118,21 +118,21 @@ class PsqlUserRepository : UserRepository {
 
     override suspend fun getAllKeyPaging(
         pageSize: Int,
-        lastKeySeen: Int?,
+        lastKeySeen: String?,
     ): List<User> =
         dbQuery {
             UserEntity
-                .find { UserTable.id greater (lastKeySeen ?: 0) }
+                .find { UserTable.id greater (lastKeySeen?.toInt() ?: 0) }
                 .orderBy(UserTable.id to SortOrder.ASC)
                 .limit(pageSize)
                 .map { it.toUser() }
                 .toList()
         }
 
-    override suspend fun deleteUser(uid: Int): Boolean =
+    override suspend fun deleteUser(uid: String): Boolean =
         dbQuery {
-            UserCredentialsEntity.findById(uid)?.delete() ?: false
-            UserEntity.findById(uid)?.delete() ?: false
+            UserCredentialEntity.findById(uid.toInt())?.delete() ?: false
+            UserEntity.findById(uid.toInt())?.delete() ?: false
             true
         }
 }

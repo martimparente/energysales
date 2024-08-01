@@ -12,7 +12,7 @@ data class CreateClientInput(
 )
 
 data class UpdateClientInput(
-    val id: Int,
+    val id: String,
     val name: String,
     val nif: String,
     val phone: String,

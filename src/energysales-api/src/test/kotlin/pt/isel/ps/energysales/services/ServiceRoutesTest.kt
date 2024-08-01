@@ -1,5 +1,7 @@
 package pt.isel.ps.energysales.services
 
+import CreateServiceRequest
+import UpdateServiceRequest
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.equals.shouldBeEqual
@@ -16,10 +18,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.services.http.model.CreateServiceRequest
 import pt.isel.ps.energysales.services.http.model.PriceJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
-import pt.isel.ps.energysales.services.http.model.UpdateServiceRequest
 import pt.isel.ps.energysales.users.http.model.Problem
 import kotlin.test.Test
 
@@ -160,6 +160,10 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.SERVICES) {
                     headers.append("Authorization", "Bearer $adminToken")
+                    url {
+                        parameters.append("lastKeySeen", "3")
+                    }
+                    parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<List<ServiceJSON>>()
                 }
@@ -171,10 +175,9 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 2)
+                    parameter("id", "2")
                     setBody(
                         UpdateServiceRequest(
-                            2,
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -198,10 +201,9 @@ class ServiceRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
-                    parameter("id", 2)
+                    parameter("id", "2")
                     setBody(
                         UpdateServiceRequest(
-                            2,
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -237,10 +239,9 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", -1)
+                    parameter("id", "-1")
                     setBody(
                         UpdateServiceRequest(
-                            -1,
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -266,7 +267,6 @@ class ServiceRoutesTest : BaseRouteTest() {
                     parameter("id", "abc")
                     setBody(
                         UpdateServiceRequest(
-                            1,
                             "newService",
                             "newDescription",
                             "newCycleName",
