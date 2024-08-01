@@ -13,7 +13,6 @@ data class CreateClientRequest(
 
 @Serializable
 data class UpdateClientRequest(
-    val id: Int,
     val name: String,
     val nif: String,
     val phone: String,

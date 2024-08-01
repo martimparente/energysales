@@ -15,16 +15,18 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
-import pt.isel.ps.energysales.teams.application.TeamAddClientError
-import pt.isel.ps.energysales.teams.application.TeamAddServiceError
-import pt.isel.ps.energysales.teams.application.TeamCreationError
-import pt.isel.ps.energysales.teams.application.TeamDeleteServiceError
-import pt.isel.ps.energysales.teams.application.TeamDeletingError
-import pt.isel.ps.energysales.teams.application.TeamSellersReadingError
 import pt.isel.ps.energysales.teams.application.TeamService
-import pt.isel.ps.energysales.teams.application.TeamUpdatingError
-import pt.isel.ps.energysales.teams.domain.Location
-import pt.isel.ps.energysales.teams.domain.Team
+import pt.isel.ps.energysales.teams.application.dto.AddTeamClientError
+import pt.isel.ps.energysales.teams.application.dto.AddTeamSellerError
+import pt.isel.ps.energysales.teams.application.dto.AddTeamServiceError
+import pt.isel.ps.energysales.teams.application.dto.CreateTeamError
+import pt.isel.ps.energysales.teams.application.dto.CreateTeamInput
+import pt.isel.ps.energysales.teams.application.dto.DeleteTeamError
+import pt.isel.ps.energysales.teams.application.dto.DeleteTeamSellerError
+import pt.isel.ps.energysales.teams.application.dto.DeleteTeamServiceError
+import pt.isel.ps.energysales.teams.application.dto.GetTeamSellersError
+import pt.isel.ps.energysales.teams.application.dto.UpdateTeamError
+import pt.isel.ps.energysales.teams.application.dto.UpdateTeamInput
 import pt.isel.ps.energysales.teams.http.model.AddClientToTeamRequest
 import pt.isel.ps.energysales.teams.http.model.AddServiceToTeamRequest
 import pt.isel.ps.energysales.teams.http.model.AddTeamToSellerRequest
@@ -37,12 +39,12 @@ import pt.isel.ps.energysales.users.http.model.respondProblem
 
 @Resource(Uris.TEAMS)
 class TeamResource(
-    val lastKeySeen: Int? = null,
+    val lastKeySeen: String? = null,
 ) {
     @Resource("{teamId}")
     class TeamId(
         val parent: TeamResource = TeamResource(),
-        val teamId: Int,
+        val teamId: String,
         val include: String? = null,
     ) {
         @Resource(Uris.SELLERS)
@@ -52,7 +54,7 @@ class TeamResource(
             @Resource("{sellerId}")
             class SellerId(
                 val parent: Sellers,
-                val sellerId: Int,
+                val sellerId: String,
             )
         }
 
@@ -63,7 +65,7 @@ class TeamResource(
             @Resource("{serviceId}")
             class ServiceId(
                 val parent: Services,
-                val serviceId: Int,
+                val serviceId: String,
             )
         }
 
@@ -74,7 +76,7 @@ class TeamResource(
             @Resource("{clientId}")
             class ClientId(
                 val parent: Clients,
-                val clientId: Int,
+                val clientId: String,
             )
         }
     }
@@ -89,8 +91,9 @@ fun Route.teamRoutes(teamService: TeamService) {
 
     post<TeamResource> {
         val body = call.receive<CreateTeamRequest>()
+        val input = CreateTeamInput(body.name, body.location.toLocation(), body.managerId)
+        val res = teamService.createTeam(input)
 
-        val res = teamService.createTeam(body.name, body.location.district, body.managerId)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.Created)
@@ -99,41 +102,35 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left ->
                 when (res.value) {
-                    TeamCreationError.TeamAlreadyExists -> call.respondProblem(Problem.teamAlreadyExists, HttpStatusCode.Conflict)
-                    TeamCreationError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
+                    CreateTeamError.TeamAlreadyExists -> call.respondProblem(Problem.teamAlreadyExists, HttpStatusCode.Conflict)
+                    CreateTeamError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
                 }
         }
     }
 
     get<TeamResource.TeamId> { pathParams ->
-        val res =
-            if (pathParams.include == "details") {
-                val res =
-                    teamService.getByIdWithDetails(pathParams.teamId)
-                        ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                val teamDetailsJson = TeamDetailsJSON.fromTeamDetails(res)
-                call.response.status(HttpStatusCode.OK)
-                call.respond(teamDetailsJson)
-            } else {
-                val res =
-                    teamService.getById(pathParams.teamId)
-                        ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                val teamJson = TeamJSON.fromTeam(res)
-                call.response.status(HttpStatusCode.OK)
-                call.respond(teamJson)
-            }
+        if (pathParams.include == "details") {
+            val res =
+                teamService.getByIdWithDetails(pathParams.teamId)
+                    ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+            val teamDetailsJson = TeamDetailsJSON.fromTeamDetails(res)
+            call.response.status(HttpStatusCode.OK)
+            call.respond(teamDetailsJson)
+        } else {
+            val res =
+                teamService.getById(pathParams.teamId)
+                    ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+            val teamJson = TeamJSON.fromTeam(res)
+            call.response.status(HttpStatusCode.OK)
+            call.respond(teamJson)
+        }
     }
 
     put<TeamResource.TeamId> { pathParams ->
         val body = call.receive<UpdateTeamRequest>()
-        val updatedTeam =
-            Team(
-                id = pathParams.teamId,
-                name = body.name,
-                location = Location(body.location.district),
-                managerId = body.managerId,
-            )
-        val res = teamService.updateTeam(updatedTeam)
+        val input = UpdateTeamInput(pathParams.teamId, body.name, body.location.toLocation(), body.managerId)
+
+        val res = teamService.updateTeam(input)
         when (res) {
             is Right -> {
                 call.response.status(HttpStatusCode.OK)
@@ -141,8 +138,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    TeamUpdatingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    TeamUpdatingError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
+                    UpdateTeamError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
+                    UpdateTeamError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
             }
         }
@@ -155,14 +152,15 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
-                    TeamDeletingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    TeamDeletingError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
+                    DeleteTeamError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
+                    DeleteTeamError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
         }
     }
 
     get<TeamResource.TeamId.Sellers> { pathParams ->
         val res = teamService.getTeamSellers(pathParams.parent.teamId)
+
         when (res) {
             is Right -> {
                 val sellersJson = res.value.map { seller -> SellerJSON.fromSeller(seller) }
@@ -171,25 +169,24 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left ->
                 when (res.value) {
-                    TeamSellersReadingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    TeamSellersReadingError.SellerNotFound -> TODO()
+                    GetTeamSellersError.SellerNotFound -> TODO()
+                    GetTeamSellersError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
         }
     }
 
     put<TeamResource.TeamId.Sellers> { pathParams ->
         val teamId = pathParams.parent.teamId
+        // todo remove teamId from the request body
         val body = call.receive<AddTeamToSellerRequest>()
-        val sellerId =
-            body.sellerId.toIntOrNull()
-                ?: return@put call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest) // todo error message
-        print("sellerId: $sellerId")
+        val sellerId = body.sellerId
+
         // Check if the teamId in the request body = teamId in the path
-        if (teamId != body.teamId.toInt()) {
+        if (teamId != body.teamId) {
             call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest) // todo error message
         }
 
-        val res = teamService.addSellerToTeam(teamId, sellerId)
+        val res = teamService.addTeamSeller(teamId, sellerId)
 
         when (res) {
             is Right -> {
@@ -198,15 +195,15 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left ->
                 when (res.value) {
-                    TeamSellersReadingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    TeamSellersReadingError.SellerNotFound -> TODO()
+                    AddTeamSellerError.SellerNotFound -> TODO()
+                    AddTeamSellerError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
         }
     }
 
     delete<TeamResource.TeamId.Sellers.SellerId> { pathParams ->
         val sellerId = pathParams.sellerId
-        val res = teamService.deleteSellerFromTeam(sellerId)
+        val res = teamService.deleteTeamSeller(sellerId)
 
         when (res) {
             is Right -> {
@@ -215,8 +212,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left ->
                 when (res.value) {
-                    TeamSellersReadingError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    TeamSellersReadingError.SellerNotFound -> TODO()
+                    DeleteTeamSellerError.SellerNotFound -> TODO()
+                    DeleteTeamSellerError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
         }
     }
@@ -224,13 +221,9 @@ fun Route.teamRoutes(teamService: TeamService) {
     put<TeamResource.TeamId.Services> { pathParams ->
         val body = call.receive<AddServiceToTeamRequest>()
         val teamId = pathParams.parent.teamId
-        val serviceId =
-            body.serviceId.toIntOrNull()
-                ?: return@put call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest) // todo error message
+        val serviceId = body.serviceId
 
-        // todo Check if the teamId in the request body = teamId in the path
-
-        val res = teamService.addServiceToTeam(teamId, serviceId)
+        val res = teamService.addTeamService(teamId, serviceId)
 
         when (res) {
             is Right -> {
@@ -239,16 +232,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    TeamAddServiceError.ServiceNotFound ->
-                        call.respondProblem(
-                            Problem.teamNotFound,
-                            HttpStatusCode.NotFound,
-                        ) // todo error message
-                    TeamAddServiceError.TeamNotFound ->
-                        call.respondProblem(
-                            Problem.teamNotFound,
-                            HttpStatusCode.NotFound,
-                        ) // todo error message
+                    AddTeamServiceError.ServiceNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    AddTeamServiceError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
             }
         }
@@ -257,7 +242,7 @@ fun Route.teamRoutes(teamService: TeamService) {
     delete<TeamResource.TeamId.Services.ServiceId> { pathParams ->
         val serviceId = pathParams.serviceId
         val teamId = pathParams.parent.parent.teamId
-        val res = teamService.deleteServiceFromTeam(teamId, serviceId)
+        val res = teamService.deleteTeamService(teamId, serviceId)
 
         when (res) {
             is Right -> {
@@ -266,16 +251,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    TeamDeleteServiceError.ServiceNotFound ->
-                        call.respondProblem(
-                            Problem.teamNotFound,
-                            HttpStatusCode.NotFound,
-                        ) // todo error message
-                    TeamDeleteServiceError.TeamNotFound ->
-                        call.respondProblem(
-                            Problem.teamNotFound,
-                            HttpStatusCode.NotFound,
-                        ) // todo error message
+                    DeleteTeamServiceError.ServiceNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    DeleteTeamServiceError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
             }
         }
@@ -284,13 +261,11 @@ fun Route.teamRoutes(teamService: TeamService) {
     put<TeamResource.TeamId.Clients> { pathParams ->
         val body = call.receive<AddClientToTeamRequest>()
         val teamId = pathParams.parent.teamId
-        val clientId =
-            body.clientId.toIntOrNull()
-                ?: return@put call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest) // todo error message
+        val clientId = body.clientId
 
-        // todo Check if the teamId in the request body = teamId in the path
+        // todo remove teamId from the request body
 
-        val res = teamService.addClientToTeam(teamId, clientId)
+        val res = teamService.addTeamClient(teamId, clientId)
 
         when (res) {
             is Right -> {
@@ -299,17 +274,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    TeamAddClientError.SellerNotFound ->
-                        call.respondProblem(
-                            Problem.teamNotFound,
-                            HttpStatusCode.NotFound,
-                        )
-
-                    TeamAddClientError.TeamNotFound ->
-                        call.respondProblem(
-                            Problem.teamNotFound,
-                            HttpStatusCode.NotFound,
-                        )
+                    AddTeamClientError.SellerNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    AddTeamClientError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
                 }
             }
         }

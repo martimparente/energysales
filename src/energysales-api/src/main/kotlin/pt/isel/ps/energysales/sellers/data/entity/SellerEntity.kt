@@ -21,6 +21,6 @@ class SellerEntity(
         Seller(
             user.toUser(),
             totalSales,
-            team?.id?.value,
+            team?.id?.value.toString(),
         )
 }

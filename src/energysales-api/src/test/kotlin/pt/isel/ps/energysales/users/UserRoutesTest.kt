@@ -177,7 +177,7 @@ class UserRoutesTest : BaseRouteTest() {
                     parameter("id", "1")
                 }.also { response ->
                     val user = response.call.response.body<UserJSON>()
-                    user.id.shouldBe(1)
+                    user.id.shouldBe("1")
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
         }
@@ -269,7 +269,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.USERS_ROLE) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 1)
+                    parameter("id", "1")
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.OK)
                     it.shouldHaveContentType(ContentType.parse("application/json; charset=UTF-8"))
@@ -282,7 +282,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.USERS_ROLE) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 1)
+                    parameter("id", "1")
                     setBody(RoleRequest("NONE"))
                 }.also {
                     it.shouldHaveStatus(HttpStatusCode.Created)
@@ -308,7 +308,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 1)
+                    parameter("id", "1")
                     setBody(
                         ChangePasswordRequest(
                             "SecurePass123!",
@@ -327,7 +327,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 2)
+                    parameter("id", "2")
                     setBody(
                         ChangePasswordRequest(
                             "wrongPassword123!",
@@ -348,7 +348,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .post(Uris.API + Uris.USER_CHANGE_PASSWORD) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 2)
+                    parameter("id", "2")
                     setBody(
                         ChangePasswordRequest(
                             "SecurePass123!",

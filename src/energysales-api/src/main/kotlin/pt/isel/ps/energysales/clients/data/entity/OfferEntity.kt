@@ -20,7 +20,7 @@ class OfferEntity(
 
     fun toOffer() =
         Offer(
-            id.value,
+            id.value.toString(),
             createdAt,
             createdBy.toSeller(),
             client.toClient(),

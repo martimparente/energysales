@@ -19,7 +19,7 @@ open class UserEntity(
 
     fun toUser() =
         User(
-            id.value,
+            id.value.toString(),
             name,
             surname,
             email,

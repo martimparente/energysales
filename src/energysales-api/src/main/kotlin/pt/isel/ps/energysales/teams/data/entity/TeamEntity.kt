@@ -20,10 +20,10 @@ class TeamEntity(
 
     fun toTeam() =
         Team(
-            id.value,
+            id.value.toString(),
             name,
             location.toLocation(),
-            manager?.id?.value,
+            manager?.id?.value.toString(),
         )
 
     var name by TeamTable.name

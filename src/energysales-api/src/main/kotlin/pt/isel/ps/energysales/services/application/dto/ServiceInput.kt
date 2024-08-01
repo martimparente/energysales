@@ -13,7 +13,7 @@ data class CreateServiceInput(
 )
 
 data class UpdateServiceInput(
-    val id: Int,
+    val id: String,
     val name: String?,
     val description: String?,
     val cycleName: String?,

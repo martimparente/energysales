@@ -160,6 +160,10 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.SERVICES) {
                     headers.append("Authorization", "Bearer $adminToken")
+                    url {
+                        parameters.append("lastKeySeen", "3")
+                    }
+                    parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<List<ServiceJSON>>()
                 }
@@ -171,10 +175,9 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 2)
+                    parameter("id", "2")
                     setBody(
                         UpdateServiceRequest(
-                            2,
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -198,10 +201,9 @@ class ServiceRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
-                    parameter("id", 2)
+                    parameter("id", "2")
                     setBody(
                         UpdateServiceRequest(
-                            2,
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -237,10 +239,9 @@ class ServiceRoutesTest : BaseRouteTest() {
             testClient()
                 .put(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", -1)
+                    parameter("id", "-1")
                     setBody(
                         UpdateServiceRequest(
-                            -1,
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -266,7 +267,6 @@ class ServiceRoutesTest : BaseRouteTest() {
                     parameter("id", "abc")
                     setBody(
                         UpdateServiceRequest(
-                            1,
                             "newService",
                             "newDescription",
                             "newCycleName",

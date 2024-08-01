@@ -25,14 +25,14 @@ import pt.isel.ps.energysales.users.http.model.respondProblem
 
 @Resource(Uris.SELLERS)
 class SellerResource(
-    val lastKeySeen: Int? = null,
+    val lastKeySeen: String? = null,
     val noTeam: Boolean = false,
     val searchQuery: String? = null,
 ) {
     @Resource("{id}")
     class Id(
         val parent: SellerResource = SellerResource(),
-        val id: Int,
+        val id: String,
     )
 }
 

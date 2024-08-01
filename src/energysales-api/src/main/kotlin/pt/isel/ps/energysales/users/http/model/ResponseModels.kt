@@ -4,7 +4,7 @@ import java.util.Locale
 
 @Serializable
 data class UserJSON(
-    val id: Int,
+    val id: String,
     val name: String,
     val surname: String,
     val email: String,
@@ -13,17 +13,17 @@ data class UserJSON(
     companion object {
         fun fromUser(user: User) =
             UserJSON(
-                id = user.id,
+                id = user.id.toString(),
                 name = user.name,
                 surname = user.surname,
                 email = user.email,
                 role =
-                user.role.name[0] +
-                    user
-                        .role
-                        .name
-                        .substring(1)
-                        .lowercase(Locale.getDefault()),
+                    user.role.name[0] +
+                        user
+                            .role
+                            .name
+                            .substring(1)
+                            .lowercase(Locale.getDefault()),
             )
     }
 }

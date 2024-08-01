@@ -3,20 +3,20 @@ package pt.isel.ps.energysales.clients.data
 import pt.isel.ps.energysales.clients.domain.Client
 
 interface ClientRepository {
-    suspend fun create(client: Client): Int
+    suspend fun create(client: Client): String
 
     suspend fun getAll(): List<Client>
 
     suspend fun getAllKeyPaging(
         pageSize: Int,
-        lastKeySeen: Int? = null,
+        lastKeySeen: String? = null,
     ): List<Client>
 
     suspend fun getByNif(nif: String): Client?
 
-    suspend fun getById(id: Int): Client?
+    suspend fun getById(id: String): Client?
 
-    suspend fun clientExists(id: Int): Boolean
+    suspend fun clientExists(id: String): Boolean
 
     suspend fun clientExistsByName(name: String): Boolean
 

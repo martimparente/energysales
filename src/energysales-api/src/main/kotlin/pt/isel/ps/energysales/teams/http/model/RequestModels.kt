@@ -6,14 +6,14 @@ import kotlinx.serialization.Serializable
 data class CreateTeamRequest(
     val name: String,
     val location: LocationJSON,
-    val managerId: Int?,
+    val managerId: String?,
 )
 
 @Serializable
 data class UpdateTeamRequest(
     val name: String,
     val location: LocationJSON,
-    val managerId: Int?,
+    val managerId: String?,
 )
 
 @Serializable

@@ -47,7 +47,7 @@ class UserResource(
     @Resource("{id}")
     class Id(
         val parent: UserResource = UserResource(),
-        val id: Int,
+        val id: String,
     )
 }
 
@@ -87,7 +87,7 @@ fun Route.authRoutes(userService: UserService) {
     route(Uris.AUTH_CHANGE_PASSWORD) {
         post {
             val uid =
-                call.parameters["id"]?.toIntOrNull()
+                call.parameters["id"]
                     ?: return@post call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
             val body = call.receive<ChangePasswordRequest>()
             val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
@@ -185,7 +185,7 @@ fun Route.userRoutes(userService: UserService) {
 
             get(Uris.USERS_BY_ID) {
                 val uid =
-                    call.parameters["id"]?.toIntOrNull()
+                    call.parameters["id"]
                         ?: return@get call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
 
                 val res = userService.getUser(uid)
@@ -219,7 +219,7 @@ fun Route.userRoutes(userService: UserService) {
 
             delete(Uris.USERS_BY_ID) {
                 val uid =
-                    call.parameters["id"]?.toIntOrNull()
+                    call.parameters["id"]
                         ?: return@delete call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
 
                 val res = userService.deleteUser(uid)
@@ -233,7 +233,7 @@ fun Route.userRoutes(userService: UserService) {
             route(Uris.USER_CHANGE_PASSWORD) {
                 post {
                     val uid =
-                        call.parameters["id"]?.toIntOrNull()
+                        call.parameters["id"]
                             ?: return@post call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
                     val body = call.receive<ChangePasswordRequest>()
                     val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
@@ -267,7 +267,7 @@ fun Route.userRoutes(userService: UserService) {
             route(Uris.USERS_ROLE) {
                 get {
                     val uid =
-                        call.parameters["id"]?.toIntOrNull()
+                        call.parameters["id"]
                             ?: return@get call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
 
                     val res = userService.getUserRole(uid)
@@ -283,7 +283,7 @@ fun Route.userRoutes(userService: UserService) {
 
                 put {
                     val uid =
-                        call.parameters["id"]?.toIntOrNull()
+                        call.parameters["id"]
                             ?: return@put call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
                     val body = call.receive<RoleRequest>()
 

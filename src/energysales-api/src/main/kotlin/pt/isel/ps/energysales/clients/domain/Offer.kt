@@ -6,7 +6,7 @@ import pt.isel.ps.energysales.services.domain.Service
 import java.util.UUID
 
 data class Offer(
-    val id: Int,
+    val id: String? = null,
     val createdAt: LocalDateTime,
     val createdBy: Seller,
     val client: Client,

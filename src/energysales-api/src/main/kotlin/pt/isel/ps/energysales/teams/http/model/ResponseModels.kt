@@ -17,6 +17,8 @@ data class LocationJSON(
                 district = location.district,
             )
     }
+
+    fun toLocation() = Location(district)
 }
 
 @Serializable
@@ -24,12 +26,12 @@ data class TeamJSON(
     val id: String,
     val name: String,
     val location: LocationJSON,
-    val managerId: Int?,
+    val managerId: String?,
 ) {
     companion object {
         fun fromTeam(team: Team) =
             TeamJSON(
-                id = team.id.toString(),
+                id = team.id!!,
                 name = team.name,
                 location = LocationJSON.fromLocation(team.location),
                 managerId = team.managerId,

@@ -6,7 +6,7 @@ import pt.isel.ps.energysales.teams.domain.Location
 
 @Serializable
 data class ClientJSON(
-    val id: Int,
+    val id: String,
     val name: String,
     val nif: String,
     val phone: String,
@@ -16,7 +16,7 @@ data class ClientJSON(
     companion object {
         fun fromClient(client: Client) =
             ClientJSON(
-                client.id,
+                client.id!!,
                 client.name,
                 client.nif,
                 client.phone,

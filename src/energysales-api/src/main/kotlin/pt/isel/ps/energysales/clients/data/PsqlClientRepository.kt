@@ -10,14 +10,14 @@ import pt.isel.ps.energysales.teams.data.entity.LocationEntity
 import pt.isel.ps.energysales.teams.data.table.LocationTable
 
 class PsqlClientRepository : ClientRepository {
-    override suspend fun getById(id: Int): Client? =
+    override suspend fun getById(id: String): Client? =
         dbQuery {
-            ClientEntity.findById(id)?.toClient()
+            ClientEntity.find { ClientTable.id eq id.toInt() }.firstOrNull()?.toClient()
         }
 
-    override suspend fun clientExists(id: Int): Boolean =
+    override suspend fun clientExists(id: String): Boolean =
         dbQuery {
-            ClientEntity.findById(id) != null
+            ClientEntity.find { ClientTable.id eq id.toInt() }.count() > 0
         }
 
     override suspend fun clientExistsByName(name: String) =
@@ -27,7 +27,7 @@ class PsqlClientRepository : ClientRepository {
                 .count() > 0
         }
 
-    override suspend fun create(client: Client): Int =
+    override suspend fun create(client: Client): String =
         dbQuery {
             ClientEntity
                 .new {
@@ -36,9 +36,10 @@ class PsqlClientRepository : ClientRepository {
                     phone = client.phone
                     email = client.email
                     location = LocationEntity.find { LocationTable.district eq client.location.district }.first()
-                    seller = client.sellerId?.let { SellerEntity.findById(it) }
+                    seller = client.sellerId?.let { SellerEntity.findById(it.toInt()) }
                 }.id
                 .value
+                .toString()
         }
 
     override suspend fun getAll(): List<Client> =
@@ -50,15 +51,22 @@ class PsqlClientRepository : ClientRepository {
 
     override suspend fun getAllKeyPaging(
         pageSize: Int,
-        lastKeySeen: Int?,
+        lastKeySeen: String?,
     ): List<Client> =
         dbQuery {
-            ClientEntity
-                .find { ClientTable.id greaterEq (lastKeySeen ?: 0) }
-                .orderBy(ClientTable.id to SortOrder.ASC)
-                .limit(pageSize)
-                .map { it.toClient() }
-                .toList()
+            val query =
+                if (lastKeySeen != null) {
+                    ClientEntity
+                        .find { ClientTable.id greater lastKeySeen.toInt() }
+                        .orderBy(ClientTable.id to SortOrder.ASC)
+                        .limit(pageSize)
+                } else {
+                    ClientEntity
+                        .all()
+                        .orderBy(ClientTable.id to SortOrder.ASC)
+                        .limit(pageSize)
+                }
+            query.map { it.toClient() }.toList()
         }
 
     override suspend fun getByNif(nif: String): Client? =
@@ -72,7 +80,8 @@ class PsqlClientRepository : ClientRepository {
     override suspend fun update(client: Client): Client? =
         dbQuery {
             ClientEntity
-                .findById(client.id)
+                .find { ClientTable.id eq client.id?.toInt() }
+                .firstOrNull()
                 ?.also { clientEntity ->
                     clientEntity.name = client.name
                 }?.toClient()
@@ -80,7 +89,7 @@ class PsqlClientRepository : ClientRepository {
 
     override suspend fun delete(client: Client): Boolean =
         dbQuery {
-            ClientEntity.findById(client.id)?.delete() ?: false
+            ClientEntity.find { ClientTable.id eq client.id?.toInt() }.firstOrNull()?.delete() ?: false
             true
         }
 }

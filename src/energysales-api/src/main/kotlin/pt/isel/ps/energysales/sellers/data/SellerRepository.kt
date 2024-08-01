@@ -3,19 +3,19 @@ package pt.isel.ps.energysales.sellers.data
 import pt.isel.ps.energysales.sellers.domain.Seller
 
 interface SellerRepository {
-    suspend fun create(seller: Seller): Int
+    suspend fun create(seller: Seller): String
 
     suspend fun getAll(): List<Seller>
 
     suspend fun getAllKeyPaging(
         pageSize: Int,
-        lastKeySeen: Int? = null,
+        lastKeySeen: String? = null,
         noTeam: Boolean,
     ): List<Seller>
 
-    suspend fun getById(id: Int): Seller?
+    suspend fun getById(id: String): Seller?
 
-    suspend fun sellerExists(id: Int): Boolean
+    suspend fun sellerExists(id: String): Boolean
 
     suspend fun update(seller: Seller): Seller?
 

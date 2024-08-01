@@ -14,7 +14,6 @@ data class CreateServiceRequest(
 
 @Serializable
 data class UpdateServiceRequest(
-    val id: Int,
     val name: String,
     val description: String,
     val cycleName: String,

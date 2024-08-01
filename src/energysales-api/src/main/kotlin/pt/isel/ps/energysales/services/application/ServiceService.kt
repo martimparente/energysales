@@ -30,7 +30,7 @@ class ServiceService(
                     input.periodNumPeriods,
                     PriceJSON.toPrice(input.price),
                 )
-            serviceRepository.create(newService)
+            serviceRepository.create(newService).toString()
         }
 
     // Read
@@ -38,12 +38,12 @@ class ServiceService(
 
     suspend fun getAllServicesPaging(
         pageSize: Int,
-        lastKeySeen: Int?,
+        lastKeySeen: String?,
     ) = serviceRepository.getAllKeyPaging(pageSize, lastKeySeen)
 
     // suspend fun getByName(name: String): Service? = serviceRepository.getByName(name)
 
-    suspend fun getById(id: Int): Service? = serviceRepository.getById(id)
+    suspend fun getById(id: String): Service? = serviceRepository.getById(id)
 
     // Update
     suspend fun updateService(input: UpdateServiceInput): ServiceUpdatingResult =
@@ -67,7 +67,7 @@ class ServiceService(
             ensureNotNull(updatedService) { ServiceUpdatingError.ServiceNotFound }
         }
 
-    suspend fun deleteService(id: Int): ServiceDeletingResult =
+    suspend fun deleteService(id: String): ServiceDeletingResult =
         either {
             val service = serviceRepository.getById(id)
             ensureNotNull(service) { ServiceDeletingError.ServiceNotFound }
@@ -75,7 +75,7 @@ class ServiceService(
         }
 }
 
-typealias ServiceCreationResult = Either<ServiceCreationError, Int>
+typealias ServiceCreationResult = Either<ServiceCreationError, String>
 typealias ServiceReadingResult = Either<ServiceReadingError, Service>
 typealias ServiceUpdatingResult = Either<ServiceUpdatingError, Service>
 typealias ServiceDeletingResult = Either<ServiceDeletingError, Boolean>

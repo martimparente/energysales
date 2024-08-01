@@ -28,12 +28,12 @@ import pt.isel.ps.energysales.users.http.model.respondProblem
 
 @Resource(Uris.SERVICES)
 class ServiceResource(
-    val lastKeySeen: Int? = null,
+    val lastKeySeen: String? = null,
 ) {
     @Resource("{id}")
     class Id(
         val parent: ServiceResource = ServiceResource(),
-        val id: Int,
+        val id: String,
     )
 }
 
@@ -97,11 +97,6 @@ fun Route.serviceRoutes(serviceService: ServiceService) {
 
     put<ServiceResource.Id> { pathParams ->
         val body = call.receive<UpdateServiceRequest>()
-        // check if path id is equal to body id
-        if (pathParams.id != body.id) {
-            call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
-            return@put
-        }
         val input =
             UpdateServiceInput(
                 pathParams.id,

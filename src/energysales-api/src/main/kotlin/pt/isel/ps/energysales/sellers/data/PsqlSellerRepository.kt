@@ -15,17 +15,17 @@ import pt.isel.ps.energysales.users.data.table.UserTable
 import pt.isel.ps.energysales.users.domain.Role
 
 class PsqlSellerRepository : SellerRepository {
-    override suspend fun getById(id: Int): Seller? =
+    override suspend fun getById(id: String): Seller? =
         dbQuery {
-            SellerEntity.findById(id)?.toSeller()
+            SellerEntity.findById(id.toInt())?.toSeller()
         }
 
-    override suspend fun sellerExists(id: Int): Boolean =
+    override suspend fun sellerExists(id: String): Boolean =
         dbQuery {
-            SellerEntity.findById(id) != null
+            SellerEntity.findById(id.toInt()) != null
         }
 
-    override suspend fun create(seller: Seller): Int =
+    override suspend fun create(seller: Seller): String =
         dbQuery {
             val userEntity =
                 UserEntity.new {
@@ -38,9 +38,10 @@ class PsqlSellerRepository : SellerRepository {
             SellerEntity
                 .new(userEntity.id.value) {
                     totalSales = seller.totalSales
-                    team = seller.team?.let { TeamEntity.findById(it) }
+                    team = seller.team?.let { TeamEntity.findById(it.toInt()) }
                 }.id
                 .value
+                .toString()
         }
 
     override suspend fun getAll(): List<Seller> =
@@ -53,13 +54,13 @@ class PsqlSellerRepository : SellerRepository {
 
     override suspend fun getAllKeyPaging(
         pageSize: Int,
-        lastKeySeen: Int?,
+        lastKeySeen: String?,
         noTeam: Boolean,
     ): List<Seller> =
         dbQuery {
             SellerEntity
                 .find {
-                    SellerTable.id greater (lastKeySeen ?: 0) and
+                    SellerTable.id greater (lastKeySeen!!.toInt()) and
                         (if (noTeam) SellerTable.team.isNull() else SellerTable.team.isNotNull())
                 }.orderBy(SellerTable.id to SortOrder.ASC)
                 .limit(pageSize)
@@ -70,19 +71,19 @@ class PsqlSellerRepository : SellerRepository {
     override suspend fun update(seller: Seller): Seller? =
         dbQuery {
             SellerEntity
-                .findById(seller.user.id)
+                .findById(seller.user.id!!.toInt())
                 ?.apply {
                     user.name = seller.user.name
                     user.surname = seller.user.surname
                     user.email = seller.user.email
                     totalSales = seller.totalSales
-                    team = seller.team?.let { TeamEntity.findById(it) }
+                    team = seller.team?.let { TeamEntity.findById(it.toInt()) }
                 }?.toSeller()
         }
 
     override suspend fun delete(seller: Seller): Boolean =
         dbQuery {
-            SellerEntity.findById(seller.user.id)?.delete() ?: false
+            SellerEntity.findById(seller.user.id!!.toInt())?.delete() ?: false
             true
         }
 

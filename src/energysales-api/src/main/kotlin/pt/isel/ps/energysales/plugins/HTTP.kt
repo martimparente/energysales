@@ -31,6 +31,10 @@ fun Application.configureHTTP() {
             call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
             // call.respond(status = HttpStatusCode.BadRequest, message = cause.message ?: "Bad request!")
         }
+        exception<NumberFormatException> { call, _ ->
+            call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
+            // call.respond(status = HttpStatusCode.BadRequest, message = cause.message ?: "Bad request!")
+        }
     }
 
     install(CORS) {
