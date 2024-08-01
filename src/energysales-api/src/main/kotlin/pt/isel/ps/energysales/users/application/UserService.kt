@@ -1,5 +1,6 @@
 package pt.isel.ps.energysales.users.application
 
+import PatchUserRequest
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
@@ -13,7 +14,6 @@ import pt.isel.ps.energysales.users.domain.User
 import pt.isel.ps.energysales.users.domain.UserCredentials
 import pt.isel.ps.energysales.users.domain.toRole
 import pt.isel.ps.energysales.users.http.UserQueryParams
-import pt.isel.ps.energysales.users.http.model.PatchUserRequest
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 

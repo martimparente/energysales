@@ -7,7 +7,6 @@ data class ChangePasswordRequest(
     val repeatNewPassword: String,
 )
 
-
 @Serializable
 data class CreateUserRequest(
     val username: String,

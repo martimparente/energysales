@@ -1,5 +1,7 @@
 package pt.isel.ps.energysales
 
+import LoginRequest
+import LoginResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -18,8 +20,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.BeforeClass
-import pt.isel.ps.energysales.users.http.model.LoginRequest
-import pt.isel.ps.energysales.users.http.model.LoginResponse
 
 open class BaseRouteTest {
     companion object {

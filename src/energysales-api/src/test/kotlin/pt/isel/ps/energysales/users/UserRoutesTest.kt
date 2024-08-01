@@ -1,5 +1,11 @@
 package pt.isel.ps.energysales.users
 
+import ChangePasswordRequest
+import CreateUserRequest
+import LoginRequest
+import LoginResponse
+import RoleRequest
+import UserJSON
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.equals.shouldBeEqual
@@ -16,13 +22,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.users.http.model.ChangePasswordRequest
-import pt.isel.ps.energysales.users.http.model.CreateUserRequest
-import pt.isel.ps.energysales.users.http.model.LoginRequest
-import pt.isel.ps.energysales.users.http.model.LoginResponse
 import pt.isel.ps.energysales.users.http.model.Problem
-import pt.isel.ps.energysales.users.http.model.RoleRequest
-import pt.isel.ps.energysales.users.http.model.UserJSON
 import kotlin.test.Test
 
 class UserRoutesTest : BaseRouteTest() {
@@ -174,7 +174,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.USERS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("userId", "1")
+                    parameter("id", "1")
                 }.also { response ->
                     val user = response.call.response.body<UserJSON>()
                     user.id.shouldBe(1)
@@ -188,7 +188,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.USERS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("userId", -1)
+                    parameter("id", -1)
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.userNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
@@ -202,7 +202,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.USERS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("userId", "paramTypeInvalid")
+                    parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
@@ -216,7 +216,7 @@ class UserRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.USERS_BY_ID) {
                     headers.append("Authorization", "Bearer $sellerToken")
-                    parameter("userId", "1")
+                    parameter("id", "1")
                 }.also { response ->
                     response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
                     response.shouldHaveStatus(HttpStatusCode.Forbidden)

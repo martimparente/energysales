@@ -1,5 +1,13 @@
 package pt.isel.ps.energysales.users.http
 
+import ChangePasswordRequest
+import CreateUserRequest
+import LoginRequest
+import LoginResponse
+import PatchUserRequest
+import ResetPasswordRequest
+import RoleRequest
+import UserJSON
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import io.ktor.http.HttpStatusCode
@@ -25,15 +33,7 @@ import pt.isel.ps.energysales.users.application.UserCreationError
 import pt.isel.ps.energysales.users.application.UserService
 import pt.isel.ps.energysales.users.application.UserUpdatingError
 import pt.isel.ps.energysales.users.application.dto.CreateUserInput
-import pt.isel.ps.energysales.users.http.model.ChangePasswordRequest
-import pt.isel.ps.energysales.users.http.model.CreateUserRequest
-import pt.isel.ps.energysales.users.http.model.LoginRequest
-import pt.isel.ps.energysales.users.http.model.LoginResponse
-import pt.isel.ps.energysales.users.http.model.PatchUserRequest
 import pt.isel.ps.energysales.users.http.model.Problem
-import pt.isel.ps.energysales.users.http.model.ResetPasswordRequest
-import pt.isel.ps.energysales.users.http.model.RoleRequest
-import pt.isel.ps.energysales.users.http.model.UserJSON
 import pt.isel.ps.energysales.users.http.model.respondProblem
 
 data class UserQueryParams(
@@ -44,7 +44,7 @@ data class UserQueryParams(
 class UserResource(
     val lastKeySeen: Int? = null,
 ) {
-    @Resource("{userId}")
+    @Resource("{id}")
     class Id(
         val parent: UserResource = UserResource(),
         val id: Int,
@@ -171,7 +171,6 @@ fun Route.userRoutes(userService: UserService) {
             // ROUTE TO get manager candidates for a team, query parameters are "role" and "available"
             get(Uris.USERS) {
                 val params = UserQueryParams(call.request.queryParameters["role"])
-
                 val res = userService.getUsers(params)
 
                 when (res) {
@@ -186,7 +185,7 @@ fun Route.userRoutes(userService: UserService) {
 
             get(Uris.USERS_BY_ID) {
                 val uid =
-                    call.parameters["userId"]?.toIntOrNull()
+                    call.parameters["id"]?.toIntOrNull()
                         ?: return@get call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
 
                 val res = userService.getUser(uid)
@@ -198,8 +197,8 @@ fun Route.userRoutes(userService: UserService) {
             }
 
             patch(Uris.USERS_BY_ID) {
-                val input = call.receive<PatchUserRequest>()
-                val res = userService.updateUser(input)
+                val body = call.receive<PatchUserRequest>()
+                val res = userService.updateUser(body)
 
                 when (res) {
                     is Right -> {
@@ -220,7 +219,7 @@ fun Route.userRoutes(userService: UserService) {
 
             delete(Uris.USERS_BY_ID) {
                 val uid =
-                    call.parameters["userId"]?.toIntOrNull()
+                    call.parameters["id"]?.toIntOrNull()
                         ?: return@delete call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
 
                 val res = userService.deleteUser(uid)

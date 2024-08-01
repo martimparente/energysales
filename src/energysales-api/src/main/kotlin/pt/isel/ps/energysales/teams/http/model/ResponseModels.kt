@@ -1,4 +1,7 @@
+package pt.isel.ps.energysales.teams.http.model
+
 import kotlinx.serialization.Serializable
+import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
 import pt.isel.ps.energysales.teams.domain.Location
 import pt.isel.ps.energysales.teams.domain.Team

@@ -1,5 +1,7 @@
 package pt.isel.ps.energysales.services
 
+import CreateServiceRequest
+import UpdateServiceRequest
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.equals.shouldBeEqual
@@ -16,10 +18,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.services.http.model.CreateServiceRequest
 import pt.isel.ps.energysales.services.http.model.PriceJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
-import pt.isel.ps.energysales.services.http.model.UpdateServiceRequest
 import pt.isel.ps.energysales.users.http.model.Problem
 import kotlin.test.Test
 

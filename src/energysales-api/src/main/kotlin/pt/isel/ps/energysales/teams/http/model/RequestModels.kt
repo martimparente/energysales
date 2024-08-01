@@ -1,3 +1,5 @@
+package pt.isel.ps.energysales.teams.http.model
+
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,3 +1,5 @@
+package pt.isel.ps.energysales.sellers.http.model
+
 import kotlinx.serialization.Serializable
 import pt.isel.ps.energysales.sellers.domain.Seller
 
