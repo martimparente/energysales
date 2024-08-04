@@ -64,7 +64,7 @@ fun fillDb() {
 
         UserCredentialsTable.insert {
             it[username] = "User$i" // pass = "SecurePass123!"
-            it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+            it[pwHash] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
             it[salt] = "c3f842f3630ebb3d96543709bc316402"
         }
 
@@ -139,12 +139,12 @@ fun fillDb() {
 
     UserCredentialsTable.insert {
         it[username] = "adminUser" // pass = "SecurePass123!"
-        it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+        it[pwHash] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
         it[salt] = "c3f842f3630ebb3d96543709bc316402"
     }
     UserCredentialsTable.insert {
         it[username] = "sellerUser" // pass = "SecurePass123!"
-        it[password] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+        it[pwHash] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
         it[salt] = "c3f842f3630ebb3d96543709bc316402"
     }
 

@@ -1,7 +1,8 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {ApiUris} from './ApiUris'
-import {Client, CreateClientInputModel, MakeOfferInputModel, UpdateClientInputModel} from './models/ClientModel'
+import {Client, CreateClientInputModel, MakeOfferInputModel} from './models/ClientModel'
 import {fetchData, mutateData} from './ApiUtils.tsx'
+import {UpdateServiceInputModel} from './models/ServiceModel.tsx'
 
 export function useCreateClient() {
     return useMutation({
@@ -25,7 +26,8 @@ export function useGetClient(id: string) {
 
 export function useUpdateClient() {
     return useMutation({
-        mutationFn: (newClientInfo: UpdateClientInputModel) => mutateData(ApiUris.updateClient(newClientInfo.id), 'PUT', newClientInfo)
+        mutationFn: ({clientId, input}: { clientId: string; input: UpdateServiceInputModel }) =>
+            mutateData(ApiUris.updateClient(clientId), 'PUT', input)
     })
 }
 

@@ -11,12 +11,12 @@ export interface Service {
 
 export interface Price {
     ponta: number
-    cheia: number
-    vazio: number
-    superVazio: number
+    cheia: number | null
+    vazio: number | null
+    superVazio: number | null
     operadorMercado: number
     gdo: number
-    omip: number
+    omip: number | null
     margem: number
 }
 

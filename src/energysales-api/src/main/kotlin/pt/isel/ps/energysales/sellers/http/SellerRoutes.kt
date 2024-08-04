@@ -13,6 +13,7 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.plugins.respondProblem
 import pt.isel.ps.energysales.sellers.application.SellerServiceKtor
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerError
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerInput
@@ -20,8 +21,7 @@ import pt.isel.ps.energysales.sellers.application.dto.DeleteSellerError
 import pt.isel.ps.energysales.sellers.application.dto.GetAllSellerInput
 import pt.isel.ps.energysales.sellers.http.model.CreateSellerRequest
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
-import pt.isel.ps.energysales.users.http.model.Problem
-import pt.isel.ps.energysales.users.http.model.respondProblem
+import pt.isel.ps.energysales.sellers.http.model.SellerProblem
 
 @Resource(Uris.SELLERS)
 class SellerResource(
@@ -47,7 +47,7 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
                 call.respond(sellers)
             }
 
-            is Left -> call.respondProblem(Problem.userNotFound, HttpStatusCode.NotFound)
+            is Left -> call.respondProblem(SellerProblem.sellerNotFound)
         }
     }
 
@@ -73,7 +73,7 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
     get<SellerResource.Id> { params ->
         val seller =
             sellerService.getById(params.id)
-                ?: return@get call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
+                ?: return@get call.respondProblem(SellerProblem.sellerNotFound)
         val sellerJson = SellerJSON.fromSeller(seller)
         call.respond(sellerJson)
     }
@@ -83,7 +83,7 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
     put<SellerResource.Id> { params ->
         val body = call.receive<UpdateSellerRequest>()
         if (body.uid.toInt() != params.id) {
-            call.respondProblem(Problem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
+            call.respondProblem(SellerProblem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
             return@put
         }
         val updatedSeller = Seller(params.id, body.totalSales, body.team)
@@ -95,7 +95,7 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
 
             is Left -> {
                 when (res.value) {
-                    SellerUpdatingError.SellerNotFound -> call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
+                    SellerUpdatingError.SellerNotFound -> call.respondProblem(SellerProblem.sellerNotFound, HttpStatusCode.NotFound)
                     SellerUpdatingError.SellerInfoIsInvalid ->
                         call.respondProblem(
                             Problem.sellerInfoIsInvalid,
@@ -113,12 +113,8 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
             is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
-                    DeleteSellerError.SellerNotFound -> call.respondProblem(Problem.sellerNotFound, HttpStatusCode.NotFound)
-                    DeleteSellerError.SellerInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.sellerInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
+                    DeleteSellerError.SellerNotFound -> call.respondProblem(SellerProblem.sellerNotFound)
+                    DeleteSellerError.SellerInfoIsInvalid -> call.respondProblem(SellerProblem.sellerIsInvalid)
                 }
         }
     }

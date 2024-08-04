@@ -21,7 +21,7 @@ data class UpdateClientRequest(
 )
 
 @Serializable
-data class CreateOfferRequest(
+data class MakeOfferRequest(
     val clientId: String,
     val serviceId: String,
     val dueInDays: Int,

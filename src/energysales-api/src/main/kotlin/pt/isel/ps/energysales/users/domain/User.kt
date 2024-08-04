@@ -11,7 +11,7 @@ data class User(
 data class UserCredentials(
     val id: String? = null,
     val username: String,
-    val password: String,
+    val pwHash: String,
     val salt: String,
 )
 

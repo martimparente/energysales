@@ -5,8 +5,8 @@ import {
     AddTeamSellerInputModel,
     AddTeamServiceInputModel,
     CreateTeamInputModel,
-    DeleteTeamSellerInput,
-    DeleteTeamServiceInput,
+    DeleteTeamSellerParams,
+    DeleteTeamServiceParams,
     Team,
     TeamDetails,
     UpdateTeamInputModel
@@ -47,15 +47,13 @@ export function useGetTeamDetails(id: string) {
     })
 }
 
-interface UpdateTeamMutationInput {
-    id: string
-    input: UpdateTeamInputModel
-}
-
 export function useUpdateTeam() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: ({id, input}: UpdateTeamMutationInput) => mutateData(ApiUris.updateTeam(id), 'PUT', input),
+        mutationFn: ({id, input}: {
+            id: string
+            input: UpdateTeamInputModel
+        }) => mutateData(ApiUris.updateTeam(id), 'PUT', input),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teamDetails']})
@@ -92,7 +90,8 @@ export function useGetManagerCandidates() {
 export function useAddTeamSeller() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async (input: AddTeamSellerInputModel) => mutateData(ApiUris.addTeamSeller(input.teamId), 'PUT', input),
+        mutationFn: async ({teamId, input}: { teamId: string; input: AddTeamSellerInputModel }) =>
+            mutateData(ApiUris.addTeamSeller(teamId), 'PUT', input),
         onSuccess: () => {
             // Invalidate and re-fetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teamDetails']})
@@ -105,7 +104,8 @@ export function useAddTeamSeller() {
 export function useDeleteTeamSeller() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async (input: DeleteTeamSellerInput) => mutateData(ApiUris.deleteTeamSeller(input.teamId, input.sellerId), 'DELETE'),
+        mutationFn: async (params: DeleteTeamSellerParams) =>
+            mutateData(ApiUris.deleteTeamSeller(params.teamId, params.sellerId), 'DELETE'),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teamDetails']})
@@ -118,7 +118,8 @@ export function useDeleteTeamSeller() {
 export function useAddServiceToTeam() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async (input: AddTeamServiceInputModel) => mutateData(ApiUris.addServiceToTeam(input.teamId), 'PUT', input),
+        mutationFn: async ({teamId, input}: { teamId: string; input: AddTeamServiceInputModel }) =>
+            mutateData(ApiUris.addServiceToTeam(teamId), 'PUT', input),
         onSuccess: () => {
             // Invalidate and re-fetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teamDetails']})
@@ -131,8 +132,8 @@ export function useAddServiceToTeam() {
 export function useDeleteServiceFromTeam() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async (input: DeleteTeamServiceInput) =>
-            mutateData(ApiUris.deleteServiceFromTeam(input.teamId, input.serviceId), 'DELETE'),
+        mutationFn: async (params: DeleteTeamServiceParams) =>
+            mutateData(ApiUris.deleteServiceFromTeam(params.teamId, params.serviceId), 'DELETE'),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teamDetails']})
@@ -144,12 +145,12 @@ export function useUploadTeamAvatar() {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: async (input: AddTeamAvatarInputModel) => {
+        mutationFn: async ({teamId, input}: { teamId: string; input: AddTeamAvatarInputModel }) => {
             const formData = new FormData()
-            formData.append('teamId', input.teamId)
+            formData.append('teamId', teamId)
             formData.append('file', input.avatarImg)
 
-            return mutateData1(ApiUris.uploadAvatar(input.teamId), 'POST', formData)
+            return mutateData1(ApiUris.uploadAvatar(teamId), 'POST', formData)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['teamDetails']})

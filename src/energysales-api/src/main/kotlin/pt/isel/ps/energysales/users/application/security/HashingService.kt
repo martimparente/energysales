@@ -1,4 +1,4 @@
-package pt.isel.ps.energysales.users.application
+package pt.isel.ps.energysales.users.application.security
 
 import pt.isel.ps.energysales.users.domain.SaltedHash
 

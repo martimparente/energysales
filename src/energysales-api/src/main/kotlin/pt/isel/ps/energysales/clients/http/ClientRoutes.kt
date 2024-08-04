@@ -26,12 +26,12 @@ import pt.isel.ps.energysales.clients.application.dto.DeleteClientError
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientError
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
+import pt.isel.ps.energysales.clients.http.model.ClientProblem
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
-import pt.isel.ps.energysales.clients.http.model.CreateOfferRequest
+import pt.isel.ps.energysales.clients.http.model.MakeOfferRequest
 import pt.isel.ps.energysales.clients.http.model.OfferLinkJSON
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
-import pt.isel.ps.energysales.users.http.model.Problem
-import pt.isel.ps.energysales.users.http.model.respondProblem
+import pt.isel.ps.energysales.plugins.respondProblem
 
 @Resource(Uris.CLIENTS)
 class ClientResource(
@@ -87,20 +87,14 @@ fun Route.clientRoutes(
             is Left ->
                 when (res.value) {
                     CreateClientError.ClientAlreadyExists ->
-                        call.respondProblem(
-                            Problem.clientEmailAlreadyInUse,
-                            HttpStatusCode.Conflict,
-                        )
+                        call.respondProblem(ClientProblem.clientEmailAlreadyInUse)
 
                     CreateClientError.ClientInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.clientInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
+                        call.respondProblem(ClientProblem.clientInfoIsInvalid)
 
-                    CreateClientError.ClientEmailIsInvalid -> call.respondProblem(Problem.badRequest, HttpStatusCode.BadRequest)
-                    CreateClientError.ClientNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
-                    CreateClientError.ClientSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
+                    CreateClientError.ClientEmailIsInvalid -> call.respondProblem(ClientProblem.badRequest)
+                    CreateClientError.ClientNameIsInvalid -> call.respondProblem(ClientProblem.todo)
+                    CreateClientError.ClientSurnameIsInvalid -> call.respondProblem(ClientProblem.todo)
                 }
         }
     }
@@ -108,7 +102,7 @@ fun Route.clientRoutes(
     get<ClientResource.Id> { params ->
         val client =
             clientService.getById(params.id)
-                ?: return@get call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
+                ?: return@get call.respondProblem(ClientProblem.clientNotFound)
         val clientJson = ClientJSON.fromClient(client)
         call.respond(clientJson)
     }
@@ -116,7 +110,7 @@ fun Route.clientRoutes(
     put<ClientResource.Id> { params ->
         val userId =
             call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
-                ?: return@put call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
+                ?: return@put call.respondProblem(ClientProblem.clientNotFound)
         val body = call.receive<UpdateClientRequest>()
         val input =
             UpdateClientInput(
@@ -137,18 +131,12 @@ fun Route.clientRoutes(
 
             is Left -> {
                 when (res.value) {
-                    UpdateClientError.ClientNotFound -> call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
+                    UpdateClientError.ClientNotFound -> call.respondProblem(ClientProblem.clientNotFound)
                     UpdateClientError.ClientInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.clientInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
+                        call.respondProblem(ClientProblem.clientInfoIsInvalid)
 
                     UpdateClientError.ClientEmailIsInvalid ->
-                        call.respondProblem(
-                            Problem.badRequest,
-                            HttpStatusCode.BadRequest,
-                        )
+                        call.respondProblem(ClientProblem.badRequest)
 
                     UpdateClientError.ClientNameIsInvalid -> TODO()
                     UpdateClientError.ClientSurnameIsInvalid -> TODO()
@@ -164,12 +152,9 @@ fun Route.clientRoutes(
             is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
-                    DeleteClientError.ClientNotFound -> call.respondProblem(Problem.clientNotFound, HttpStatusCode.NotFound)
+                    DeleteClientError.ClientNotFound -> call.respondProblem(ClientProblem.clientNotFound)
                     DeleteClientError.ClientInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.clientInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
+                        call.respondProblem(ClientProblem.clientInfoIsInvalid)
                 }
         }
     }
@@ -183,8 +168,8 @@ fun Route.clientRoutes(
     post<ClientResource.Id.OfferResource> {
         val userId =
             call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
-                ?: return@post call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
-        val body = call.receive<CreateOfferRequest>()
+                ?: return@post call.respondProblem(ClientProblem.todo)
+        val body = call.receive<MakeOfferRequest>()
         val input =
             CreateOfferInput(
                 body.clientId,
@@ -203,11 +188,11 @@ fun Route.clientRoutes(
 
             is Left ->
                 when (res.value) {
-                    CreateOfferError.OfferAlreadyExists -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
-                    CreateOfferError.OfferEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
-                    CreateOfferError.OfferInfoIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
-                    CreateOfferError.OfferNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
-                    CreateOfferError.OfferSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+                    CreateOfferError.OfferAlreadyExists -> call.respondProblem(ClientProblem.todo)
+                    CreateOfferError.OfferEmailIsInvalid -> call.respondProblem(ClientProblem.todo)
+                    CreateOfferError.OfferInfoIsInvalid -> call.respondProblem(ClientProblem.todo)
+                    CreateOfferError.OfferNameIsInvalid -> call.respondProblem(ClientProblem.todo)
+                    CreateOfferError.OfferSurnameIsInvalid -> call.respondProblem(ClientProblem.todo)
                 }
         }
     }
@@ -215,14 +200,14 @@ fun Route.clientRoutes(
         // this route sends an email to the client with the offer
         val userId =
             call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
-                ?: return@post call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+                ?: return@post call.respondProblem(ClientProblem.todo)
         val clientId = params.parent.parent.id
 
         val res = offerService.sendOfferByEmail(clientId)
 
         when (res) {
             is Right -> call.respond(HttpStatusCode.OK)
-            is Left -> call.respondProblem(Problem.todo, HttpStatusCode.BadRequest)
+            is Left -> call.respondProblem(ClientProblem.todo)
         }
     }
 }

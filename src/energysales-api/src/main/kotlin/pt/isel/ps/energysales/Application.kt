@@ -35,11 +35,11 @@ import pt.isel.ps.energysales.services.http.serviceRoutes
 import pt.isel.ps.energysales.teams.application.TeamServiceKtor
 import pt.isel.ps.energysales.teams.data.PsqlTeamRepository
 import pt.isel.ps.energysales.teams.http.teamRoutes
-import pt.isel.ps.energysales.users.application.UserService
+import pt.isel.ps.energysales.users.application.UserServiceKtor
+import pt.isel.ps.energysales.users.application.security.HashingServiceSHA256
 import pt.isel.ps.energysales.users.application.security.JwtConfig
 import pt.isel.ps.energysales.users.application.security.JwtTokenService
-import pt.isel.ps.energysales.users.application.security.SHA256HashingService
-import pt.isel.ps.energysales.users.data.PsqlUserRepository
+import pt.isel.ps.energysales.users.data.UserRepositoryPsql
 import pt.isel.ps.energysales.users.http.authRoutes
 import pt.isel.ps.energysales.users.http.userRoutes
 import java.io.File
@@ -90,10 +90,10 @@ fun Application.module() {
     }
 
     val userService by lazy {
-        UserService(
-            userRepository = PsqlUserRepository(),
+        UserServiceKtor(
+            userRepository = UserRepositoryPsql(),
             tokenService = JwtTokenService(jwtConfig),
-            hashingService = SHA256HashingService(),
+            hashingService = HashingServiceSHA256(),
             mailService = mailService,
         )
     }

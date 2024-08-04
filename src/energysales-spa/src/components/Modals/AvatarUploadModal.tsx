@@ -12,8 +12,7 @@ export const AvatarUploadModal: React.FC<AvatarUploadModalProps> = ({currAvatarU
     return (
         <div>
             <Text size='sm' mb='md'>
-                Please select a new avatar to upload or delete the current avatar. Click 'Confirm' to save the changes.
-                {console.log(currAvatarUrl)}
+                Choose an image for the Avatar. Click 'Confirm' to save the changes.
             </Text>
             <FileInput
                 leftSection={<IconPhotoUp style={{width: rem(18), height: rem(18)}} stroke={1.5}/>}

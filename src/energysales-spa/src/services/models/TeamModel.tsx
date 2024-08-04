@@ -31,27 +31,30 @@ export interface UpdateTeamInputModel {
     location: Location
 }
 
+export interface PatchTeamInputModel {
+    name: string | null
+    managerId: string | null
+    location: Location | null
+}
+
 export interface AddTeamSellerInputModel {
-    teamId: string
     sellerId: string
 }
 
-export interface DeleteTeamSellerInput {
+export interface DeleteTeamSellerParams {
     teamId: string
     sellerId: string
 }
 
 export interface AddTeamServiceInputModel {
-    teamId: string
     serviceId: string
 }
 
-export interface DeleteTeamServiceInput {
+export interface DeleteTeamServiceParams {
     teamId: string
     serviceId: string
 }
 
 export interface AddTeamAvatarInputModel {
-    teamId: string
     avatarImg: File
 }

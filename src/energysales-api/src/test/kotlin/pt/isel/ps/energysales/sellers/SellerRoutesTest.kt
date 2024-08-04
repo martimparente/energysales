@@ -15,9 +15,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.plugins.ProblemJSON
 import pt.isel.ps.energysales.sellers.http.model.CreateSellerRequest
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
-import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.sellers.http.model.SellerProblem
+import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
 
 class SellerRoutesTest : BaseRouteTest() {
@@ -47,8 +49,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     )
                     setBody(CreateSellerRequest("name", "surname", "email", "1"))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
+                    response.shouldHaveStatus(UserProblem.unauthorized.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -64,8 +66,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     )
                     setBody(CreateSellerRequest("name", "surname", "email", "1"))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -92,8 +94,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.sellerNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.sellerNotFound.type)
+                    response.shouldHaveStatus(SellerProblem.sellerNotFound.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -106,8 +108,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.badRequest.type)
+                    response.shouldHaveStatus(SellerProblem.badRequest.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -218,7 +220,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Invalid Token")
                     parameter("id", 3)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
+                    response.shouldHaveStatus(UserProblem.unauthorized.status)
                 }
         }
 
@@ -230,7 +233,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.sellerNotFound.type)
+                    response.shouldHaveStatus(SellerProblem.sellerNotFound.status)
                 }
         }
 
@@ -242,7 +246,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.sellerNotFound.type)
+                    response.shouldHaveStatus(SellerProblem.sellerNotFound.status)
                 }
         }
 
@@ -254,7 +259,8 @@ class SellerRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.badRequest.type)
+                    response.shouldHaveStatus(SellerProblem.badRequest.status)
                 }
         }
 }

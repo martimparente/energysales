@@ -1,12 +1,11 @@
 package pt.isel.ps.energysales.users.application.security
 
-import pt.isel.ps.energysales.users.application.HashingService
 import pt.isel.ps.energysales.users.domain.SaltedHash
 import java.security.MessageDigest
 import java.security.SecureRandom
 
 @OptIn(ExperimentalStdlibApi::class) // For toHexString
-class SHA256HashingService : HashingService {
+class HashingServiceSHA256 : HashingService {
     /**
      * Generates a salted hash for the given password
      *

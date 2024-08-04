@@ -39,11 +39,6 @@ export function MainLayout() {
         }
     }, [user, close])
 
-    // print the active link
-    useEffect(() => {
-        console.log(active + navLinks[active].label)
-    }, [active])
-
     return (
         <AppShell
             layout='alt'

@@ -1,6 +1,5 @@
 package pt.isel.ps.energysales.plugins
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.createRouteScopedPlugin
 import io.ktor.server.application.install
@@ -12,8 +11,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.RouteSelector
 import io.ktor.server.routing.RouteSelectorEvaluation
 import io.ktor.server.routing.RoutingResolveContext
-import pt.isel.ps.energysales.users.http.model.Problem
-import pt.isel.ps.energysales.users.http.model.respondProblem
+import pt.isel.ps.energysales.users.http.model.UserProblem
 
 class PluginConfiguration {
     var roles: Set<String> = emptySet()
@@ -34,7 +32,7 @@ val RoleBasedAuthorizationPlugin =
 
                 if (!authorized) {
                     println("User does not have permission to access this resource.")
-                    call.respond(call.respondProblem(Problem.forbidden, HttpStatusCode.Forbidden))
+                    call.respond(call.respondProblem(UserProblem.forbidden))
                 }
             }
         }

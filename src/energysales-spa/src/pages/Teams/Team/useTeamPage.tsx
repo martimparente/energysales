@@ -77,9 +77,7 @@ export function useTeamPage() {
             title: 'Upload New Avatar',
             children: AvatarUploadModal({
                 currAvatarUrl: teamDetails.team.avatarPath,
-                onFileAdded: (file: File | null) => {
-                    avatarFile = file
-                },
+                onFileAdded: (file: File | null) => avatarFile = file,
                 onAvatarDelete: () => {
                     throw new Error('Function not implemented.')
                 }
@@ -91,7 +89,7 @@ export function useTeamPage() {
                     if (avatarFile != null) {
                         await uploadAvatar({
                             teamId: id!,
-                            avatarImg: avatarFile!
+                            input: {avatarImg: avatarFile}
                         })
                         toast.success('Avatar updated successfully')
                     }
@@ -115,7 +113,7 @@ export function useTeamPage() {
             centered: true,
             labels: {confirm: 'Add to Team', cancel: 'Cancel'},
             onCancel: () => console.log('Cancel'),
-            onConfirm: () => addSeller({teamId: id!, sellerId: selectedSeller})
+            onConfirm: () => addSeller({teamId: id!, input: {sellerId: selectedSeller}})
         })
     const addTeamServiceModal = () =>
         modals.openConfirmModal({
@@ -131,7 +129,7 @@ export function useTeamPage() {
             centered: true,
             labels: {confirm: 'Add to Team', cancel: 'Cancel'},
             onCancel: () => console.log('Cancel'),
-            onConfirm: () => addService({teamId: id!, serviceId: selectedService})
+            onConfirm: () => addService({teamId: id!, input: {serviceId: selectedService}})
         })
     const confirmDeleteModal = () =>
         modals.openConfirmModal({
@@ -155,7 +153,7 @@ export function useTeamPage() {
 
     const handleUpdateTeam = async (input: UpdateTeamInputModel) => {
         try {
-            await updateTeam({id, input})
+            await updateTeam({id: id!, input: input})
             toast.success('Team updated successfully')
         } catch (error) {
             toast.error('Failed to update team. Try again later')

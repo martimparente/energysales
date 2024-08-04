@@ -17,10 +17,12 @@ import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
 import pt.isel.ps.energysales.clients.http.model.ClientJSON
+import pt.isel.ps.energysales.clients.http.model.ClientProblem
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
 import pt.isel.ps.energysales.clients.http.model.LocationJSON
 import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
-import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.plugins.ProblemJSON
+import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
 
 class ClientRoutesTest : BaseRouteTest() {
@@ -50,8 +52,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     )
                     setBody(CreateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.unauthorized.type)
+                    response.shouldHaveStatus(ClientProblem.unauthorized.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -116,8 +118,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.clientNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
+                    response.shouldHaveStatus(ClientProblem.clientNotFound.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -130,8 +132,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.badRequest.type)
+                    response.shouldHaveStatus(ClientProblem.badRequest.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -168,8 +170,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     parameter("id", "2")
                     setBody(UpdateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
+                    response.shouldHaveStatus(UserProblem.unauthorized.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -196,8 +198,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     parameter("id", -1)
                     setBody(UpdateClientRequest("nonClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.clientNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
+                    response.shouldHaveStatus(ClientProblem.clientNotFound.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -211,8 +213,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     parameter("id", "1c")
                     setBody(UpdateClientRequest("client", "123456789", "123456789", "invalidEmail", LocationJSON("Lisboa")))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.badRequest.type)
+                    response.shouldHaveStatus(ClientProblem.badRequest.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -237,7 +239,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Invalid Token")
                     parameter("id", 1)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
+                    response.shouldHaveStatus(UserProblem.unauthorized.status)
                 }
         }
 
@@ -249,7 +252,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
+                    response.shouldHaveStatus(ClientProblem.clientNotFound.status)
                 }
         }
 
@@ -261,7 +265,8 @@ class ClientRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
+                    response.shouldHaveStatus(ClientProblem.clientNotFound.status)
                 }
         }
 
@@ -273,6 +278,7 @@ class ClientRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
+                    response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.badRequest.type)
                     response.shouldHaveStatus(HttpStatusCode.BadRequest)
                 }
         }

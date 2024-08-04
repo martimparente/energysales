@@ -19,6 +19,7 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.plugins.respondProblem
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.teams.application.TeamService
 import pt.isel.ps.energysales.teams.application.dto.AddTeamAvatarError
@@ -40,8 +41,7 @@ import pt.isel.ps.energysales.teams.http.model.CreateTeamRequest
 import pt.isel.ps.energysales.teams.http.model.PatchTeamRequest
 import pt.isel.ps.energysales.teams.http.model.TeamDetailsJSON
 import pt.isel.ps.energysales.teams.http.model.TeamJSON
-import pt.isel.ps.energysales.users.http.model.Problem
-import pt.isel.ps.energysales.users.http.model.respondProblem
+import pt.isel.ps.energysales.teams.http.model.TeamProblem
 import java.io.File
 
 @Resource(Uris.TEAMS)
@@ -114,8 +114,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left ->
                 when (res.value) {
-                    CreateTeamError.TeamAlreadyExists -> call.respondProblem(Problem.teamAlreadyExists, HttpStatusCode.Conflict)
-                    CreateTeamError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
+                    CreateTeamError.TeamAlreadyExists -> call.respondProblem(TeamProblem.teamAlreadyExists)
+                    CreateTeamError.TeamInfoIsInvalid -> call.respondProblem(TeamProblem.teamInfoIsInvalid)
                 }
         }
     }
@@ -124,13 +124,13 @@ fun Route.teamRoutes(teamService: TeamService) {
         if (params.include == "details") {
             val res =
                 teamService.getByIdWithDetails(params.teamId)
-                    ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    ?: return@get call.respondProblem(TeamProblem.teamNotFound)
             val teamDetailsJson = TeamDetailsJSON.fromTeamDetails(res)
             call.respond(teamDetailsJson)
         } else {
             val res =
                 teamService.getById(params.teamId)
-                    ?: return@get call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    ?: return@get call.respondProblem(TeamProblem.teamNotFound)
             val teamJson = TeamJSON.fromTeam(res)
             call.respond(teamJson)
         }
@@ -148,8 +148,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    UpdateTeamError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
-                    UpdateTeamError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    UpdateTeamError.TeamInfoIsInvalid -> call.respondProblem(TeamProblem.teamInfoIsInvalid)
+                    UpdateTeamError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
             }
         }
@@ -162,8 +162,8 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
-                    DeleteTeamError.TeamInfoIsInvalid -> call.respondProblem(Problem.teamInfoIsInvalid, HttpStatusCode.BadRequest)
-                    DeleteTeamError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    DeleteTeamError.TeamInfoIsInvalid -> call.respondProblem(TeamProblem.teamInfoIsInvalid)
+                    DeleteTeamError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
         }
     }
@@ -180,7 +180,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Left ->
                 when (res.value) {
                     GetTeamSellersError.SellerNotFound -> TODO()
-                    GetTeamSellersError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    GetTeamSellersError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
         }
     }
@@ -197,7 +197,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Left ->
                 when (res.value) {
                     AddTeamSellerError.SellerNotFound -> TODO()
-                    AddTeamSellerError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    AddTeamSellerError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
         }
     }
@@ -213,7 +213,7 @@ fun Route.teamRoutes(teamService: TeamService) {
             is Left ->
                 when (res.value) {
                     DeleteTeamSellerError.SellerNotFound -> TODO()
-                    DeleteTeamSellerError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    DeleteTeamSellerError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
         }
     }
@@ -229,8 +229,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    AddTeamServiceError.ServiceNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    AddTeamServiceError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    AddTeamServiceError.ServiceNotFound -> call.respondProblem(TeamProblem.teamNotFound)
+                    AddTeamServiceError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
             }
         }
@@ -248,8 +248,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    DeleteTeamServiceError.ServiceNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    DeleteTeamServiceError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    DeleteTeamServiceError.ServiceNotFound -> call.respondProblem(TeamProblem.teamNotFound)
+                    DeleteTeamServiceError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
             }
         }
@@ -266,8 +266,8 @@ fun Route.teamRoutes(teamService: TeamService) {
 
             is Left -> {
                 when (res.value) {
-                    AddTeamClientError.SellerNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
-                    AddTeamClientError.TeamNotFound -> call.respondProblem(Problem.teamNotFound, HttpStatusCode.NotFound)
+                    AddTeamClientError.SellerNotFound -> call.respondProblem(TeamProblem.teamNotFound)
+                    AddTeamClientError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
             }
         }
@@ -320,23 +320,13 @@ fun Route.teamRoutes(teamService: TeamService) {
         val res = teamService.addTeamAvatar(teamId, avatarUri)
 
         when (res) {
-            is Right -> {
-                call.respond(HttpStatusCode.OK, mapOf("avatarPath" to res.value))
-            }
+            is Right -> call.respond(HttpStatusCode.OK, mapOf("avatarPath" to res.value))
 
             is Left -> {
                 when (res.value) {
-                    AddTeamAvatarError.AvatarImgNotFound ->
-                        call.respondProblem(
-                            Problem.todo,
-                            HttpStatusCode.NotFound,
-                        )
+                    AddTeamAvatarError.AvatarImgNotFound -> call.respondProblem(TeamProblem.teamNotFound)
 
-                    AddTeamAvatarError.TeamNotFound ->
-                        call.respondProblem(
-                            Problem.teamNotFound,
-                            HttpStatusCode.NotFound,
-                        )
+                    AddTeamAvatarError.TeamNotFound -> call.respondProblem(TeamProblem.teamNotFound)
                 }
             }
         }

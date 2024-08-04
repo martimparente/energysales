@@ -12,14 +12,14 @@ class UserCredentialEntity(
     companion object : IntEntityClass<UserCredentialEntity>(UserCredentialsTable)
 
     var username by UserCredentialsTable.username
-    var password by UserCredentialsTable.password
+    var pwHash by UserCredentialsTable.pwHash
     var salt by UserCredentialsTable.salt
 
     fun toUserCredentials() =
         UserCredentials(
             id.value.toString(),
             username,
-            password,
+            pwHash,
             salt,
         )
 }

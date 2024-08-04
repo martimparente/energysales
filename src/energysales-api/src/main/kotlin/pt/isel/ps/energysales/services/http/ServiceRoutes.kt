@@ -16,6 +16,7 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.plugins.respondProblem
 import pt.isel.ps.energysales.services.application.ServiceServiceKtor
 import pt.isel.ps.energysales.services.application.dto.CreateServiceError
 import pt.isel.ps.energysales.services.application.dto.CreateServiceInput
@@ -24,8 +25,7 @@ import pt.isel.ps.energysales.services.application.dto.UpdateServiceError
 import pt.isel.ps.energysales.services.application.dto.UpdateServiceInput
 import pt.isel.ps.energysales.services.http.model.PriceJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
-import pt.isel.ps.energysales.users.http.model.Problem
-import pt.isel.ps.energysales.users.http.model.respondProblem
+import pt.isel.ps.energysales.services.http.model.ServiceProblem
 
 @Resource(Uris.SERVICES)
 class ServiceResource(
@@ -76,21 +76,11 @@ fun Route.serviceRoutes(serviceService: ServiceServiceKtor) {
 
             is Left -> {
                 when (res.value) {
-                    CreateServiceError.ServiceAlreadyExists ->
-                        call.respondProblem(
-                            Problem.serviceEmailAlreadyInUse,
-                            HttpStatusCode.Conflict,
-                        )
-
-                    CreateServiceError.ServiceInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.serviceInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
-
-                    CreateServiceError.ServiceEmailIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
-                    CreateServiceError.ServiceNameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
-                    CreateServiceError.ServiceSurnameIsInvalid -> call.respondProblem(Problem.todo, HttpStatusCode.Continue)
+                    CreateServiceError.ServiceAlreadyExists -> call.respondProblem(ServiceProblem.serviceEmailAlreadyInUse)
+                    CreateServiceError.ServiceInfoIsInvalid -> call.respondProblem(ServiceProblem.serviceInfoIsInvalid)
+                    CreateServiceError.ServiceEmailIsInvalid -> call.respondProblem(ServiceProblem.todo)
+                    CreateServiceError.ServiceNameIsInvalid -> call.respondProblem(ServiceProblem.todo)
+                    CreateServiceError.ServiceSurnameIsInvalid -> call.respondProblem(ServiceProblem.todo)
                 }
             }
         }
@@ -99,7 +89,7 @@ fun Route.serviceRoutes(serviceService: ServiceServiceKtor) {
     get<ServiceResource.Id> { pathParams ->
         val service =
             serviceService.getById(pathParams.id)
-                ?: return@get call.respondProblem(Problem.serviceNotFound, HttpStatusCode.NotFound)
+                ?: return@get call.respondProblem(ServiceProblem.serviceNotFound)
         val serviceJson = ServiceJSON.fromService(service)
         call.response.status(HttpStatusCode.OK)
         call.respond(serviceJson)
@@ -121,22 +111,13 @@ fun Route.serviceRoutes(serviceService: ServiceServiceKtor) {
         val res = serviceService.updateService(input)
 
         when (res) {
-            is Right -> {
-                call.respond(ServiceJSON.fromService(res.value))
-            }
+            is Right -> call.respond(ServiceJSON.fromService(res.value))
 
             is Left -> {
                 when (res.value) {
-                    UpdateServiceError.ServiceNotFound -> {
-                        call.respondProblem(Problem.serviceNotFound, HttpStatusCode.NotFound)
-                    }
+                    UpdateServiceError.ServiceNotFound -> call.respondProblem(ServiceProblem.serviceNotFound)
 
-                    UpdateServiceError.ServiceInfoIsInvalid -> {
-                        call.respondProblem(
-                            Problem.serviceInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
-                    }
+                    UpdateServiceError.ServiceInfoIsInvalid -> call.respondProblem(ServiceProblem.serviceInfoIsInvalid)
 
                     UpdateServiceError.ServiceEmailIsInvalid -> TODO()
                     UpdateServiceError.ServiceNameIsInvalid -> TODO()
@@ -153,12 +134,8 @@ fun Route.serviceRoutes(serviceService: ServiceServiceKtor) {
             is Right -> call.respond(HttpStatusCode.OK)
             is Left ->
                 when (res.value) {
-                    DeleteServiceError.ServiceNotFound -> call.respondProblem(Problem.serviceNotFound, HttpStatusCode.NotFound)
-                    DeleteServiceError.ServiceInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.serviceInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
+                    DeleteServiceError.ServiceNotFound -> call.respondProblem(ServiceProblem.serviceNotFound)
+                    DeleteServiceError.ServiceInfoIsInvalid -> call.respondProblem(ServiceProblem.serviceInfoIsInvalid)
                 }
         }
     }

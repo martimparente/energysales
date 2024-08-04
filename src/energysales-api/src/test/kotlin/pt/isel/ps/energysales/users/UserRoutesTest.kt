@@ -1,11 +1,5 @@
 package pt.isel.ps.energysales.users
 
-import ChangePasswordRequest
-import CreateUserRequest
-import LoginRequest
-import LoginResponse
-import RoleRequest
-import UserJSON
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.equals.shouldBeEqual
@@ -22,7 +16,14 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
-import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.plugins.ProblemJSON
+import pt.isel.ps.energysales.users.http.model.ChangePasswordRequest
+import pt.isel.ps.energysales.users.http.model.CreateUserRequest
+import pt.isel.ps.energysales.users.http.model.LoginRequest
+import pt.isel.ps.energysales.users.http.model.LoginResponse
+import pt.isel.ps.energysales.users.http.model.RoleRequest
+import pt.isel.ps.energysales.users.http.model.UserJSON
+import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
 
 class UserRoutesTest : BaseRouteTest() {
@@ -66,8 +67,8 @@ class UserRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.userIsInvalid.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.userUsernameIsInvalid.type)
+                    response.shouldHaveStatus(UserProblem.userUsernameIsInvalid.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -90,8 +91,8 @@ class UserRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.userAlreadyExists.type)
-                    response.shouldHaveStatus(HttpStatusCode.Conflict)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.userAlreadyExists.type)
+                    response.shouldHaveStatus(UserProblem.userAlreadyExists.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -114,8 +115,8 @@ class UserRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.passwordMismatch.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.passwordMismatch.type)
+                    response.shouldHaveStatus(UserProblem.passwordMismatch.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -138,8 +139,8 @@ class UserRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.insecurePassword.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.insecurePassword.type)
+                    response.shouldHaveStatus(UserProblem.insecurePassword.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -162,8 +163,8 @@ class UserRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -190,7 +191,7 @@ class UserRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.userNotFound.type)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.userNotFound.type)
                     response.shouldHaveStatus(HttpStatusCode.NotFound)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
@@ -204,8 +205,8 @@ class UserRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.badRequest.type)
+                    response.shouldHaveStatus(UserProblem.badRequest.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -218,8 +219,8 @@ class UserRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $sellerToken")
                     parameter("id", "1")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -244,8 +245,8 @@ class UserRoutesTest : BaseRouteTest() {
                 .post(Uris.API + Uris.AUTH_LOGIN) {
                     setBody(LoginRequest("nonExistUser", "SecurePass123!"))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.userOrPasswordAreInvalid.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.userOrPasswordAreInvalid.type)
+                    response.shouldHaveStatus(UserProblem.userOrPasswordAreInvalid.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -257,8 +258,8 @@ class UserRoutesTest : BaseRouteTest() {
                 .post(Uris.API + Uris.AUTH_LOGIN) {
                     setBody(LoginRequest("testUser", "wrongPassword"))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.userOrPasswordAreInvalid.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.userOrPasswordAreInvalid.type)
+                    response.shouldHaveStatus(UserProblem.userOrPasswordAreInvalid.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -296,8 +297,8 @@ class UserRoutesTest : BaseRouteTest() {
                 .put(Uris.API + Uris.USERS_ROLE) {
                     headers.append("Authorization", "Bearer $sellerToken")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -336,8 +337,8 @@ class UserRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.userOrPasswordAreInvalid.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.wrongPassword.type)
+                    response.shouldHaveStatus(UserProblem.wrongPassword.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -357,8 +358,8 @@ class UserRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.passwordMismatch.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.passwordMismatch.type)
+                    response.shouldHaveStatus(UserProblem.passwordMismatch.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }

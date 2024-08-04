@@ -16,7 +16,6 @@ export interface CreateClientInputModel {
 }
 
 export interface UpdateClientInputModel {
-    id: string
     name: string
     nif: string
     phone: string
@@ -31,11 +30,10 @@ export interface MakeOfferInputModel {
 }
 
 export interface PatchClientInputModel {
-    id: string
     name: string | null
     nif: string | null
     phone: string | null
-    email: string
+    email: string | null
     location: Location | null
 }
 

@@ -13,7 +13,7 @@ import pt.isel.ps.energysales.users.domain.User
 import pt.isel.ps.energysales.users.domain.UserCredentials
 import pt.isel.ps.energysales.users.domain.toRole
 
-class PsqlUserRepository : UserRepository {
+class UserRepositoryPsql : UserRepository {
     override suspend fun createUser(
         user: User,
         userCredentials: UserCredentials,
@@ -29,7 +29,7 @@ class PsqlUserRepository : UserRepository {
 
             UserCredentialEntity.new(userEntity.id.value) {
                 username = userCredentials.username
-                password = userCredentials.password
+                pwHash = userCredentials.pwHash
                 salt = userCredentials.salt
             }
 
@@ -51,7 +51,7 @@ class PsqlUserRepository : UserRepository {
             UserCredentialEntity
                 .find { UserCredentialsTable.username eq username }
                 .singleOrNull()
-                ?.let { UserCredentials(it.id.value.toString(), it.username, it.password, it.salt) }
+                ?.let { UserCredentials(it.id.value.toString(), it.username, it.pwHash, it.salt) }
         }
 
     override suspend fun getUserCredentialsById(uid: String): UserCredentials? =
@@ -72,7 +72,7 @@ class PsqlUserRepository : UserRepository {
     override suspend fun updateUserCredentials(credentials: UserCredentials): Boolean =
         dbQuery {
             UserCredentialEntity.findById(credentials.id!!.toInt())?.let { userCredentialsEntity ->
-                userCredentialsEntity.password = credentials.password
+                userCredentialsEntity.pwHash = credentials.pwHash
                 userCredentialsEntity.salt = credentials.salt
                 true
             } ?: false

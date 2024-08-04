@@ -18,9 +18,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.plugins.ProblemJSON
 import pt.isel.ps.energysales.services.http.model.PriceJSON
 import pt.isel.ps.energysales.services.http.model.ServiceJSON
-import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.services.http.model.ServiceProblem
+import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
 
 class ServiceRoutesTest : BaseRouteTest() {
@@ -71,8 +73,8 @@ class ServiceRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
+                    response.shouldHaveStatus(UserProblem.unauthorized.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -135,8 +137,8 @@ class ServiceRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", -1)
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.serviceNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ServiceProblem.serviceNotFound.type)
+                    response.shouldHaveStatus(ServiceProblem.serviceNotFound.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -149,8 +151,8 @@ class ServiceRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.badRequest.type)
+                    response.shouldHaveStatus(UserProblem.badRequest.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -215,8 +217,8 @@ class ServiceRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
+                    response.shouldHaveStatus(UserProblem.unauthorized.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -253,8 +255,8 @@ class ServiceRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.serviceNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ServiceProblem.serviceNotFound.type)
+                    response.shouldHaveStatus(ServiceProblem.serviceNotFound.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -278,8 +280,8 @@ class ServiceRoutesTest : BaseRouteTest() {
                         ),
                     )
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(ServiceProblem.badRequest.type)
+                    response.shouldHaveStatus(ServiceProblem.badRequest.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }

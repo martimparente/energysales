@@ -17,6 +17,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import pt.isel.ps.energysales.BaseRouteTest
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.plugins.ProblemJSON
 import pt.isel.ps.energysales.sellers.http.model.SellerJSON
 import pt.isel.ps.energysales.teams.http.model.AddTeamClientRequest
 import pt.isel.ps.energysales.teams.http.model.AddTeamSellerRequest
@@ -25,8 +26,9 @@ import pt.isel.ps.energysales.teams.http.model.CreateTeamRequest
 import pt.isel.ps.energysales.teams.http.model.LocationJSON
 import pt.isel.ps.energysales.teams.http.model.TeamDetailsJSON
 import pt.isel.ps.energysales.teams.http.model.TeamJSON
+import pt.isel.ps.energysales.teams.http.model.TeamProblem
 import pt.isel.ps.energysales.teams.http.model.UpdateTeamRequest
-import pt.isel.ps.energysales.users.http.model.Problem
+import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
 
 class TeamRoutesTest : BaseRouteTest() {
@@ -56,8 +58,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     )
                     setBody(CreateTeamRequest("newTeam", LocationJSON("Lisboa"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(TeamProblem.unauthorized.type)
+                    response.shouldHaveStatus(TeamProblem.unauthorized.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -70,8 +72,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $sellerToken")
                     setBody(CreateTeamRequest("newTeam", LocationJSON("Lisboa"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -84,8 +86,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     setBody(CreateTeamRequest("Team 1", LocationJSON("Lisboa"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.teamAlreadyExists.type)
-                    response.shouldHaveStatus(HttpStatusCode.Conflict)
+                    response.body<ProblemJSON>().type.shouldBeEqual(TeamProblem.teamAlreadyExists.type)
+                    response.shouldHaveStatus(TeamProblem.teamAlreadyExists.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -129,8 +131,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", -1)
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.teamNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(TeamProblem.teamNotFound.type)
+                    response.shouldHaveStatus(TeamProblem.teamNotFound.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -143,8 +145,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("teamId", "paramTypeInvalid")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.badRequest.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.badRequest.type)
+                    response.shouldHaveStatus(UserProblem.badRequest.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -157,8 +159,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $sellerToken")
                     parameter("teamId", "1")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -195,8 +197,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     parameter("teamId", 2)
                     setBody(UpdateTeamRequest("newTeam", LocationJSON("Lisboa"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.unauthorized.type)
-                    response.shouldHaveStatus(HttpStatusCode.Unauthorized)
+                    response.body<ProblemJSON>().type.shouldBeEqual(TeamProblem.unauthorized.type)
+                    response.shouldHaveStatus(TeamProblem.unauthorized.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -210,8 +212,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     parameter("teamId", 2)
                     setBody(UpdateTeamRequest("newTeam", LocationJSON("Lisboa"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -225,8 +227,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     parameter("teamId", "-1")
                     setBody(UpdateTeamRequest("nonExistingTeam", LocationJSON("Lisboa"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.teamNotFound.type)
-                    response.shouldHaveStatus(HttpStatusCode.NotFound)
+                    response.body<ProblemJSON>().type.shouldBeEqual(TeamProblem.teamNotFound.type)
+                    response.shouldHaveStatus(TeamProblem.teamNotFound.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -240,8 +242,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     parameter("teamId", "1")
                     setBody(UpdateTeamRequest("", LocationJSON("Lisboa"), null))
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.teamInfoIsInvalid.type)
-                    response.shouldHaveStatus(HttpStatusCode.BadRequest)
+                    response.body<ProblemJSON>().type.shouldBeEqual(TeamProblem.teamInfoIsInvalid.type)
+                    response.shouldHaveStatus(TeamProblem.teamInfoIsInvalid.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
@@ -302,8 +304,8 @@ class TeamRoutesTest : BaseRouteTest() {
                     headers.append("Authorization", "Bearer $sellerToken")
                     parameter("teamId", "2")
                 }.also { response ->
-                    response.body<Problem>().type.shouldBeEqual(Problem.forbidden.type)
-                    response.shouldHaveStatus(HttpStatusCode.Forbidden)
+                    response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.forbidden.type)
+                    response.shouldHaveStatus(UserProblem.forbidden.status)
                     response.shouldHaveContentType(ContentType.Application.ProblemJson)
                 }
         }
