@@ -9,16 +9,17 @@ data class JwtConfig(
     val issuer: String,
     val audience: String,
     val realm: String,
+    val expiresIn: Int,
 )
 
-class JwtTokenService(
+class TokenServiceJwt(
     private val config: JwtConfig,
 ) : TokenService {
     override fun generateJwtToken(
         username: String,
         userId: String,
         role: String,
-        expireInt: Int,
+        expiresIn: Int?,
     ): String =
         JWT
             .create()
@@ -27,6 +28,6 @@ class JwtTokenService(
             .withClaim("username", username)
             .withClaim("userId", userId)
             .withClaim("role", role)
-            .withExpiresAt(Date(System.currentTimeMillis() + expireInt))
+            .withExpiresAt(Date(System.currentTimeMillis() + (expiresIn ?: config.expiresIn)))
             .sign(Algorithm.HMAC256(config.secret))
 }

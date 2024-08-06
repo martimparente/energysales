@@ -130,15 +130,27 @@ fun fillDb() {
         it[name] = "Name 12"
         it[surname] = "Surname 12"
         it[email] = "12@mail.com"
+        it[role] = "MANAGER"
+    }
+
+    UserTable.insert {
+        it[name] = "Name 13"
+        it[surname] = "Surname 13"
+        it[email] = "13@mail.com"
         it[role] = "SELLER"
     }
     SellerTable.insert {
-        it[id] = 12
+        it[id] = 13
         it[totalSales] = 0.0f
     }
 
     UserCredentialsTable.insert {
         it[username] = "adminUser" // pass = "SecurePass123!"
+        it[pwHash] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
+        it[salt] = "c3f842f3630ebb3d96543709bc316402"
+    }
+    UserCredentialsTable.insert {
+        it[username] = "managerUser" // pass = "SecurePass123!"
         it[pwHash] = "1c1b869d3e50dd3703ad4e02c5b143a8e55089fac03b442bb95398098a6e2fb4"
         it[salt] = "c3f842f3630ebb3d96543709bc316402"
     }

@@ -24,6 +24,7 @@ import pt.isel.ps.energysales.users.http.model.LoginResponse
 open class BaseRouteTest {
     companion object {
         lateinit var adminToken: String
+        lateinit var managerToken: String
         lateinit var sellerToken: String
 
         // Function to create a test http client
@@ -71,6 +72,12 @@ open class BaseRouteTest {
                             setBody(LoginRequest("adminUser", "SecurePass123!"))
                         }.also { response ->
                             adminToken = response.body<LoginResponse>().token
+                        }
+                    testClient
+                        .post(Uris.API + Uris.AUTH_LOGIN) {
+                            setBody(LoginRequest("managerUser", "SecurePass123!"))
+                        }.also { response ->
+                            managerToken = response.body<LoginResponse>().token
                         }
                     testClient
                         .post(Uris.API + Uris.AUTH_LOGIN) {

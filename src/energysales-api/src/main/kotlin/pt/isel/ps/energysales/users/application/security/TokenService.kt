@@ -5,6 +5,6 @@ interface TokenService {
         username: String,
         userId: String,
         role: String,
-        expireInt: Int,
+        expiresIn: Int?,
     ): String
 }

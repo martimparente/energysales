@@ -26,12 +26,14 @@ import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
 
 class ClientRoutesTest : BaseRouteTest() {
+    private val testToken = managerToken
+
     @Test
     fun `Create Client - Success`() =
         testApplication {
             testClient()
                 .post(Uris.API + Uris.CLIENTS) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     setBody(CreateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.headers["Location"]?.shouldBeEqual("${Uris.CLIENTS}/2")
@@ -101,7 +103,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "1")
                 }.also { response ->
                     val client = response.call.response.body<ClientJSON>()
@@ -115,7 +117,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "-1")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
@@ -129,7 +131,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.badRequest.type)
@@ -143,7 +145,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.CLIENTS) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                 }.also { response ->
                     response.body<List<ClientJSON>>()
                 }
@@ -154,7 +156,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .patch(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "1")
                     setBody(PatchClientRequest("updateName", "123456789", "email1@mail.com", LocationJSON("Lisboa"), "1"))
                 }.also { response ->
@@ -194,7 +196,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .patch(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "-1")
                     setBody(PatchClientRequest("nonClient", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
@@ -209,7 +211,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .patch(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "1")
                     setBody(PatchClientRequest("client", "123456789", "invalidEmail", LocationJSON("Lisboa"), "1"))
                 }.also { response ->
@@ -224,7 +226,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "1")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
@@ -249,7 +251,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "-1")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
@@ -262,7 +264,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "-1")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
@@ -275,7 +277,7 @@ class ClientRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.badRequest.type)

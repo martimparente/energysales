@@ -79,7 +79,7 @@ class UserServiceKtor(
             ensure(passwordIsValid) { TokenCreationError.WrongPassword }
             val role = userRepository.getUserRole(credentials.id!!)
             // Generate token TODO HARDCODED EXPIRATION TIME
-            tokenService.generateJwtToken(credentials.username, credentials.id.toString(), role.toString(), 3600000)
+            tokenService.generateJwtToken(credentials.username, credentials.id.toString(), role.toString(), null)
         }
 
     override suspend fun changeUserPassword(

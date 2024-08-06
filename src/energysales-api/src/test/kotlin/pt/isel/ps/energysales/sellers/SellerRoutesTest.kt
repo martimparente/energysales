@@ -23,15 +23,17 @@ import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
 
 class SellerRoutesTest : BaseRouteTest() {
+    private val testToken = managerToken
+
     @Test
     fun `Create Seller - Success`() =
         testApplication {
             testClient()
                 .post(Uris.API + Uris.SELLERS) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     setBody(CreateSellerRequest("name", "surname", "email", "1"))
                 }.also { response ->
-                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/13")
+                    response.headers["Location"]?.shouldBeEqual("${Uris.SELLERS}/14")
                     response.shouldHaveStatus(HttpStatusCode.Created)
                 }
         }
@@ -77,7 +79,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", 1)
                 }.also { response ->
                     val seller = response.call.response.body<SellerJSON>()
@@ -91,7 +93,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.sellerNotFound.type)
@@ -105,7 +107,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.badRequest.type)
@@ -119,7 +121,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .get(Uris.API + Uris.SELLERS) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                 }.also { response ->
                     response.body<List<SellerJSON>>()
                     response.shouldHaveStatus(HttpStatusCode.OK)
@@ -133,7 +135,7 @@ class SellerRoutesTest : BaseRouteTest() {
          testApplication {
              testClient()
                  .put(Uris.API + Uris.SELLERS_BY_ID) {
-                     headers.append("Authorization", "Bearer $adminToken")
+                     headers.append("Authorization", "Bearer $testToken")
                      parameter("id", 1)
                      setBody(UpdateSellerRequest("1", 1.0f))
                  }.also { response ->
@@ -160,7 +162,7 @@ class SellerRoutesTest : BaseRouteTest() {
          testApplication {
              testClient()
                  .put(Uris.API + Uris.SELLERS_BY_ID) {
-                     headers.append("Authorization", "Bearer $sellerToken")
+                     headers.append("Authorization", "Bearer $testToken")
                      parameter("id", 2)
                      setBody(UpdateSellerRequest("1", 0.0f))
                  }.also { response ->
@@ -175,7 +177,7 @@ class SellerRoutesTest : BaseRouteTest() {
          testApplication {
              testClient()
                  .put(Uris.API + Uris.SELLERS_BY_ID) {
-                     headers.append("Authorization", "Bearer $adminToken")
+                     headers.append("Authorization", "Bearer $testToken")
                      parameter("id", -1)
                      setBody(UpdateSellerRequest("-1", 0.0f))
                  }.also { response ->
@@ -190,7 +192,7 @@ class SellerRoutesTest : BaseRouteTest() {
          testApplication {
              testClient()
                  .put(Uris.API + Uris.SELLERS_BY_ID) {
-                     headers.append("Authorization", "Bearer $adminToken")
+                     headers.append("Authorization", "Bearer $testToken")
                      parameter("id", "abc")
                      setBody(UpdateSellerRequest("1", 0.0f))
                  }.also { response ->
@@ -205,7 +207,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "1")
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
@@ -230,7 +232,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.sellerNotFound.type)
@@ -243,7 +245,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", -1)
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.sellerNotFound.type)
@@ -256,7 +258,7 @@ class SellerRoutesTest : BaseRouteTest() {
         testApplication {
             testClient()
                 .delete(Uris.API + Uris.SELLERS_BY_ID) {
-                    headers.append("Authorization", "Bearer $adminToken")
+                    headers.append("Authorization", "Bearer $testToken")
                     parameter("id", "paramTypeInvalid")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(SellerProblem.badRequest.type)

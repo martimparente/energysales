@@ -27,7 +27,7 @@ import {IconBrandAsana, IconBuilding, IconBulb, IconHome, IconSettings, IconUser
  */
 export const navLinks = [
     {link: '/', label: 'Home', icon: IconHome, roles: ['ADMIN', 'MANAGER']},
-    {link: '/teams', label: 'Teams', icon: IconBrandAsana, roles: ['ADMIN']},
+    {link: '/teams', label: 'Teams', icon: IconBrandAsana, roles: ['ADMIN', 'SELLER']},
     {link: '/users', label: 'Users', icon: IconUsersGroup, roles: ['ADMIN']},
     {link: '/services', label: 'Services', icon: IconBulb, roles: ['ADMIN']},
     {link: '/clients', label: 'Clients', icon: IconBuilding, roles: ['ADMIN', 'SELLER']},
@@ -49,26 +49,23 @@ export const router = createBrowserRouter([
                 ]
             },
             {
-                element: <ProtectedRoute role={'ADMIN'}/>,
+                element: <ProtectedRoute roles={['ADMIN']}/>,
                 children: [
-                    {path: '/teams', element: <TeamsPage/>},
-                    {path: '/teams/:id', element: <TeamPage/>},
-                    {path: '/teams/create', element: <CreateTeamPage/>},
+
                     {path: '/users', element: <UsersPage/>},
                     {path: '/users/:id', element: <UserPage/>},
                     {path: '/users/create', element: <CreateUserPage/>},
                     {path: '/services', element: <ServicesPage/>},
                     {path: '/services/:id', element: <ServicePage/>},
                     {path: '/services/create', element: <CreateServicePage/>},
-                    {path: '/clients', element: <ClientsPage/>},
-                    {path: '/clients/:id', element: <ClientPage/>},
-                    {path: '/clients/create', element: <CreateClientPage/>},
-                    {path: '/clients/:id/make-offer', element: <MakeOfferPage/>}
                 ]
             },
             {
-                element: <ProtectedRoute role={'SELLER'}/>,
+                element: <ProtectedRoute roles={['ADMIN', 'SELLER']}/>,
                 children: [
+                    {path: '/teams', element: <TeamsPage/>},
+                    {path: '/teams/:id', element: <TeamPage/>},
+                    {path: '/teams/create', element: <CreateTeamPage/>},
                     {path: '/clients', element: <ClientsPage/>},
                     {path: '/clients/:id', element: <ClientPage/>},
                     {path: '/clients/create', element: <CreateClientPage/>},
