@@ -8,11 +8,11 @@ import pt.isel.ps.energysales.users.application.dto.ResetPasswordResult
 import pt.isel.ps.energysales.users.application.dto.RoleAssignResult
 import pt.isel.ps.energysales.users.application.dto.RoleReadingResult
 import pt.isel.ps.energysales.users.application.dto.TokenCreationResult
+import pt.isel.ps.energysales.users.application.dto.UpdateUserInput
 import pt.isel.ps.energysales.users.application.dto.UpdateUserResult
 import pt.isel.ps.energysales.users.application.dto.UserCreationResult
 import pt.isel.ps.energysales.users.application.dto.UserReadingResult
 import pt.isel.ps.energysales.users.http.UserQueryParams
-import pt.isel.ps.energysales.users.http.model.PatchUserRequest
 
 interface UserService {
     suspend fun createUser(input: CreateUserInput): UserCreationResult
@@ -42,7 +42,7 @@ interface UserService {
 
     suspend fun getUser(id: String): UserReadingResult
 
-    suspend fun updateUser(input: PatchUserRequest): UpdateUserResult
+    suspend fun updateUser(input: UpdateUserInput): UpdateUserResult
 
     suspend fun deleteUser(id: String): DeleteUserResult
 }

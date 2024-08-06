@@ -21,6 +21,31 @@ data class ServiceProblem(
                 status = HttpStatusCode.NotFound,
                 detail = "Seller not found",
             )
+        val serviceEmailIsInvalid =
+            ServiceProblem(
+                title = "Invalid Email",
+                type = PROBLEM_URL + "serviceEmailIsInvalid.md",
+                instance = "",
+                status = HttpStatusCode.BadRequest,
+                detail = "Email is invalid",
+            )
+        val serviceNameIsInvalid =
+            ServiceProblem(
+                title = "Invalid Name",
+                type = PROBLEM_URL + "serviceNameIsInvalid.md",
+                instance = "",
+                status = HttpStatusCode.BadRequest,
+                detail = "Name is invalid",
+            )
+
+        val serviceSurnameIsInvalid =
+            ServiceProblem(
+                title = "Invalid Surname",
+                type = PROBLEM_URL + "serviceSurnameIsInvalid.md",
+                instance = "",
+                status = HttpStatusCode.BadRequest,
+                detail = "Surname is invalid",
+            )
 
         val serviceAlreadyExists =
             ServiceProblem(

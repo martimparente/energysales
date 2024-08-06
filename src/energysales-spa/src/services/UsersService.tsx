@@ -23,7 +23,7 @@ export function useGetUser(id: string) {
     })
 }
 
-export function useUpdateUser() {
+export function usePatchUser() {
     return useMutation({
         mutationFn: (newUserInfo: PatchUserInputModel) => mutateData(ApiUris.updateUser(newUserInfo.id), 'PATCH', newUserInfo)
     })

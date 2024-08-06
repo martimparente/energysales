@@ -1,7 +1,7 @@
 package pt.isel.ps.energysales.services.http
 
 import CreateServiceRequest
-import UpdateServiceRequest
+import PatchServiceRequest
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import io.ktor.http.HttpStatusCode
@@ -10,8 +10,8 @@ import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.resources.delete
 import io.ktor.server.resources.get
+import io.ktor.server.resources.patch
 import io.ktor.server.resources.post
-import io.ktor.server.resources.put
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -95,8 +95,8 @@ fun Route.serviceRoutes(serviceService: ServiceServiceKtor) {
         call.respond(serviceJson)
     }
 
-    put<ServiceResource.Id> { pathParams ->
-        val body = call.receive<UpdateServiceRequest>()
+    patch<ServiceResource.Id> { pathParams ->
+        val body = call.receive<PatchServiceRequest>()
         val input =
             UpdateServiceInput(
                 pathParams.id,
@@ -116,12 +116,10 @@ fun Route.serviceRoutes(serviceService: ServiceServiceKtor) {
             is Left -> {
                 when (res.value) {
                     UpdateServiceError.ServiceNotFound -> call.respondProblem(ServiceProblem.serviceNotFound)
-
                     UpdateServiceError.ServiceInfoIsInvalid -> call.respondProblem(ServiceProblem.serviceInfoIsInvalid)
-
-                    UpdateServiceError.ServiceEmailIsInvalid -> TODO()
-                    UpdateServiceError.ServiceNameIsInvalid -> TODO()
-                    UpdateServiceError.ServiceSurnameIsInvalid -> TODO()
+                    UpdateServiceError.ServiceEmailIsInvalid -> call.respondProblem(ServiceProblem.serviceEmailIsInvalid)
+                    UpdateServiceError.ServiceNameIsInvalid -> call.respondProblem(ServiceProblem.serviceNameIsInvalid)
+                    UpdateServiceError.ServiceSurnameIsInvalid -> call.respondProblem(ServiceProblem.serviceSurnameIsInvalid)
                 }
             }
         }

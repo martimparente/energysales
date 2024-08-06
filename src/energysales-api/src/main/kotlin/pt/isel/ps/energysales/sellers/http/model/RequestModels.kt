@@ -11,8 +11,6 @@ data class CreateSellerRequest(
 )
 
 @Serializable
-data class UpdateSellerRequest(
-    val uid: String,
-    val totalSales: Float,
+data class PatchSellerRequest(
     val team: String? = null,
 )

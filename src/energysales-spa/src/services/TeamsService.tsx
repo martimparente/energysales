@@ -47,13 +47,13 @@ export function useGetTeamDetails(id: string) {
     })
 }
 
-export function useUpdateTeam() {
+export function usePatchTeam() {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: ({id, input}: {
             id: string
             input: UpdateTeamInputModel
-        }) => mutateData(ApiUris.updateTeam(id), 'PUT', input),
+        }) => mutateData(ApiUris.updateTeam(id), 'PATCH', input),
         onSuccess: () => {
             // Invalidate and refetch the teams query to get the updated list
             queryClient.invalidateQueries({queryKey: ['teamDetails']})

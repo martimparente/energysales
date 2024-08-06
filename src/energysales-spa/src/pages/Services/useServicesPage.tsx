@@ -1,4 +1,4 @@
-import {useCreateService, useDeleteService, useGetServices, useUpdateService} from '../../services/ServicesService'
+import {useCreateService, useDeleteService, useGetServices, usePatchService} from '../../services/ServicesService'
 import {useNavigate} from 'react-router-dom'
 import {PatchServiceInputModel, Service} from '../../services/models/ServiceModel'
 import {useMemo, useRef, useState} from 'react'
@@ -14,7 +14,7 @@ export function useServicesPage() {
     const gridRef = useRef<AgGridReact>(null)
     const {data: services, error: fetchError, isFetching} = useGetServices()
     const {mutateAsync: createService} = useCreateService()
-    const {mutateAsync: updateService} = useUpdateService()
+    const {mutateAsync: updateService} = usePatchService()
     const {mutateAsync: deleteService} = useDeleteService()
     const [error, setError] = useState<string>(null)
 

@@ -12,3 +12,8 @@ data class GetAllSellerInput(
     val noTeam: Boolean = false,
     val searchQuery: String?,
 )
+
+data class UpdateSellerInput(
+    val id: String,
+    val team: String,
+)

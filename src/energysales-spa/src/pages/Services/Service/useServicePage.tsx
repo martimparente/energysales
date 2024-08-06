@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
-import {useDeleteService, useGetService, useUpdateService} from '../../../services/ServicesService'
+import {useDeleteService, useGetService, usePatchService} from '../../../services/ServicesService'
 import {Service, UpdateServiceInputModel} from '../../../services/models/ServiceModel'
 
 export function useServicePage() {
@@ -8,7 +8,7 @@ export function useServicePage() {
     const {id} = useParams<{ id: string }>()
 
     const {data: service, isLoading: isLoadingService} = useGetService(id || '')
-    const {mutateAsync: updateService} = useUpdateService()
+    const {mutateAsync: updateService} = usePatchService()
     const {mutateAsync: deleteService} = useDeleteService()
 
     const [error, setError] = useState<string | null>(null)

@@ -64,6 +64,13 @@ fun Application.configureHTTP() {
             call.respondProblem(UserProblem.badRequest)
             // call.respond(status = HttpStatusCode.BadRequest, message = cause.message ?: "Bad request!")
         }
+        exception<IllegalArgumentException> { call, e ->
+            if (e.message == "Invalid role") {
+                call.respondProblem(UserProblem.userRoleIsInvalid)
+            } else {
+                call.respondProblem(UserProblem.badRequest)
+            }
+        }
     }
 
     install(CORS) {

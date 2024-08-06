@@ -28,6 +28,7 @@ import pt.isel.ps.energysales.users.application.dto.ResetPasswordError
 import pt.isel.ps.energysales.users.application.dto.RoleAssignError
 import pt.isel.ps.energysales.users.application.dto.RoleReadingError
 import pt.isel.ps.energysales.users.application.dto.TokenCreationError
+import pt.isel.ps.energysales.users.application.dto.UpdateUserInput
 import pt.isel.ps.energysales.users.application.dto.UserCreationError
 import pt.isel.ps.energysales.users.application.dto.UserDeletingError
 import pt.isel.ps.energysales.users.application.dto.UserUpdatingError
@@ -91,26 +92,6 @@ fun Route.authRoutes(userService: UserService) {
                 }
         }
     }
-
-    route(Uris.AUTH_CHANGE_PASSWORD) {
-        post {
-            val uid = call.parameters["id"] ?: return@post call.respondProblem(UserProblem.badRequest)
-            val body = call.receive<ChangePasswordRequest>()
-            val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
-
-            when (res) {
-                is Right -> call.respond(HttpStatusCode.OK)
-                is Left ->
-                    when (res.value) {
-                        ChangeUserPasswordError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
-                        ChangeUserPasswordError.PasswordMismatch -> call.respondProblem(UserProblem.passwordMismatch)
-                        ChangeUserPasswordError.UserOrPasswordAreInvalid -> call.respondProblem(UserProblem.userOrPasswordAreInvalid)
-                        ChangeUserPasswordError.UserNotFound -> call.respondProblem(UserProblem.userOrPasswordAreInvalid)
-                        ChangeUserPasswordError.WrongPassword -> call.respondProblem(UserProblem.userOrPasswordAreInvalid)
-                    }
-            }
-        }
-    }
 }
 
 fun Route.userRoutes(userService: UserService) {
@@ -119,124 +100,113 @@ fun Route.userRoutes(userService: UserService) {
      */
     authenticate {
         authorize("ADMIN") {
-            post(Uris.USERS) {
-                val body = call.receive<CreateUserRequest>()
-                val input =
-                    CreateUserInput(
-                        body.username,
-                        body.password,
-                        body.repeatPassword,
-                        body.name,
-                        body.surname,
-                        body.email,
-                        body.role,
-                    )
-                val res = userService.createUser(input)
-
-                when (res) {
-                    is Right -> {
-                        call.response.header("Location", "${Uris.USERS}/${res.value}")
-                        call.response.status(HttpStatusCode.Created)
-                    }
-
-                    is Left ->
-                        when (res.value) {
-                            UserCreationError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
-                            UserCreationError.PasswordMismatch -> call.respondProblem(UserProblem.passwordMismatch)
-                            UserCreationError.UserAlreadyExists -> call.respondProblem(UserProblem.userAlreadyExists)
-                            UserCreationError.UserIsInvalid -> call.respondProblem(UserProblem.userIsInvalid)
-                            UserCreationError.UserEmailIsInvalid -> call.respondProblem(UserProblem.userEmailIsInvalid)
-                            UserCreationError.UserInfoIsInvalid -> call.respondProblem(UserProblem.userInfoIsInvalid)
-                            UserCreationError.UserNameIsInvalid -> call.respondProblem(UserProblem.userNameIsInvalid)
-                            UserCreationError.UserSurnameIsInvalid -> call.respondProblem(UserProblem.userSurnameIsInvalid)
-                            UserCreationError.UserEmailAlreadyUsed -> call.respondProblem(UserProblem.userEmailAlreadyUsed)
-                            UserCreationError.UserRoleIsInvalid -> call.respondProblem(UserProblem.userRoleIsInvalid)
-                            UserCreationError.UserUsernameIsInvalid -> call.respondProblem(UserProblem.userUsernameIsInvalid)
-                        }
-                }
-            }
-
-            get(Uris.USERS) {
-                val params = UserQueryParams(call.request.queryParameters["role"])
-                val res = userService.getUsers(params)
-
-                when (res) {
-                    is Right -> {
-                        val users = res.value.map { UserJSON.fromUser(it) }
-                        call.respond(users)
-                    }
-
-                    is Left ->
-                        when (res.value) {
-                            GetUsersError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                            GetUserError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                        }
-                }
-            }
-
-            get(Uris.USERS_BY_ID) {
-                val uid = call.parameters["id"] ?: return@get call.respondProblem(UserProblem.badRequest)
-                val res = userService.getUser(uid)
-
-                when (res) {
-                    is Right -> call.respond(UserJSON.fromUser(res.value))
-                    is Left ->
-                        when (res.value) {
-                            GetUsersError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                            GetUserError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                        }
-                }
-            }
-
-            patch(Uris.USERS_BY_ID) {
-                val body = call.receive<PatchUserRequest>()
-                val res = userService.updateUser(body)
-
-                when (res) {
-                    is Right -> {
-                        call.response.header("Location", "${Uris.USERS}/${res.value}")
-                        call.response.status(HttpStatusCode.OK)
-                    }
-
-                    is Left ->
-                        when (res.value) {
-                            UserUpdatingError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                        }
-                }
-            }
-
-            delete(Uris.USERS_BY_ID) {
-                val uid = call.parameters["id"] ?: return@delete call.respondProblem(UserProblem.badRequest)
-                val res = userService.deleteUser(uid)
-
-                when (res) {
-                    is Right -> call.response.status(HttpStatusCode.NoContent)
-                    is Left ->
-                        when (res.value) {
-                            UserDeletingError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                        }
-                }
-            }
-
-            route(Uris.USER_CHANGE_PASSWORD) {
+            route(Uris.USERS) {
                 post {
-                    val uid = call.parameters["id"] ?: return@post call.respondProblem(UserProblem.badRequest)
-                    val body = call.receive<ChangePasswordRequest>()
-                    val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
+                    val body = call.receive<CreateUserRequest>()
+                    val input =
+                        CreateUserInput(
+                            body.username,
+                            body.password,
+                            body.repeatPassword,
+                            body.name,
+                            body.surname,
+                            body.email,
+                            body.role,
+                        )
+                    val res = userService.createUser(input)
 
                     when (res) {
-                        is Right -> call.respond(HttpStatusCode.OK)
+                        is Right -> {
+                            call.response.header("Location", "${Uris.USERS}/${res.value}")
+                            call.response.status(HttpStatusCode.Created)
+                        }
+
                         is Left ->
                             when (res.value) {
-                                ChangeUserPasswordError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
-                                ChangeUserPasswordError.PasswordMismatch -> call.respondProblem(UserProblem.passwordMismatch)
-                                ChangeUserPasswordError.UserOrPasswordAreInvalid ->
-                                    call.respondProblem(
-                                        UserProblem.userOrPasswordAreInvalid,
-                                    )
+                                UserCreationError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
+                                UserCreationError.PasswordMismatch -> call.respondProblem(UserProblem.passwordMismatch)
+                                UserCreationError.UserAlreadyExists -> call.respondProblem(UserProblem.userAlreadyExists)
+                                UserCreationError.UserIsInvalid -> call.respondProblem(UserProblem.userIsInvalid)
+                                UserCreationError.UserEmailIsInvalid -> call.respondProblem(UserProblem.userEmailIsInvalid)
+                                UserCreationError.UserInfoIsInvalid -> call.respondProblem(UserProblem.userInfoIsInvalid)
+                                UserCreationError.UserNameIsInvalid -> call.respondProblem(UserProblem.userNameIsInvalid)
+                                UserCreationError.UserSurnameIsInvalid -> call.respondProblem(UserProblem.userSurnameIsInvalid)
+                                UserCreationError.UserEmailAlreadyUsed -> call.respondProblem(UserProblem.userEmailAlreadyUsed)
+                                UserCreationError.UserRoleIsInvalid -> call.respondProblem(UserProblem.userRoleIsInvalid)
+                                UserCreationError.UserUsernameIsInvalid -> call.respondProblem(UserProblem.userUsernameIsInvalid)
+                            }
+                    }
+                }
+                get {
+                    val params = UserQueryParams(call.request.queryParameters["role"])
+                    val res = userService.getUsers(params)
 
-                                ChangeUserPasswordError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                                ChangeUserPasswordError.WrongPassword -> call.respondProblem(UserProblem.wrongPassword)
+                    when (res) {
+                        is Right -> {
+                            val users = res.value.map { UserJSON.fromUser(it) }
+                            call.respond(users)
+                        }
+
+                        is Left ->
+                            when (res.value) {
+                                GetUsersError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                                GetUserError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                            }
+                    }
+                }
+            }
+
+            route(Uris.USERS_BY_ID) {
+                get {
+                    val uid = call.parameters["id"] ?: return@get call.respondProblem(UserProblem.badRequest)
+                    val res = userService.getUser(uid)
+
+                    when (res) {
+                        is Right -> call.respond(UserJSON.fromUser(res.value))
+                        is Left ->
+                            when (res.value) {
+                                GetUsersError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                                GetUserError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                            }
+                    }
+                }
+                patch {
+                    val id = call.parameters["id"] ?: return@patch call.respondProblem(UserProblem.badRequest)
+                    val body = call.receive<PatchUserRequest>()
+                    val input = UpdateUserInput(id, body.name, body.surname, body.email, body.role)
+                    val res = userService.updateUser(input)
+
+                    when (res) {
+                        is Right -> {
+                            call.response.header("Location", "${Uris.USERS}/${res.value}")
+                            call.response.status(HttpStatusCode.OK)
+                        }
+
+                        is Left ->
+                            when (res.value) {
+                                UserUpdatingError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                                UserUpdatingError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
+                                UserUpdatingError.UserAlreadyExists -> call.respondProblem(UserProblem.userAlreadyExists)
+                                UserUpdatingError.UserEmailAlreadyUsed -> call.respondProblem(UserProblem.userEmailAlreadyUsed)
+                                UserUpdatingError.UserEmailIsInvalid -> call.respondProblem(UserProblem.userEmailIsInvalid)
+                                UserUpdatingError.UserInfoIsInvalid -> call.respondProblem(UserProblem.userInfoIsInvalid)
+                                UserUpdatingError.UserIsInvalid -> call.respondProblem(UserProblem.userIsInvalid)
+                                UserUpdatingError.UserNameIsInvalid -> call.respondProblem(UserProblem.userNameIsInvalid)
+                                UserUpdatingError.UserRoleIsInvalid -> call.respondProblem(UserProblem.userRoleIsInvalid)
+                                UserUpdatingError.UserSurnameIsInvalid -> call.respondProblem(UserProblem.userSurnameIsInvalid)
+                                UserUpdatingError.Todo -> call.respondProblem(UserProblem.internalServerError)
+                            }
+                    }
+                }
+                delete {
+                    val uid = call.parameters["id"] ?: return@delete call.respondProblem(UserProblem.badRequest)
+                    val res = userService.deleteUser(uid)
+
+                    when (res) {
+                        is Right -> call.response.status(HttpStatusCode.NoContent)
+                        is Left ->
+                            when (res.value) {
+                                UserDeletingError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
                             }
                     }
                 }
@@ -267,6 +237,29 @@ fun Route.userRoutes(userService: UserService) {
                             when (res.value) {
                                 RoleAssignError.RoleNotFound -> call.respondProblem(UserProblem.roleNotFound)
                                 RoleAssignError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                            }
+                    }
+                }
+            }
+
+            route(Uris.USER_CHANGE_PASSWORD) {
+                post {
+                    val uid = call.parameters["id"] ?: return@post call.respondProblem(UserProblem.badRequest)
+                    val body = call.receive<ChangePasswordRequest>()
+                    val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
+
+                    when (res) {
+                        is Right -> call.respond(HttpStatusCode.OK)
+                        is Left ->
+                            when (res.value) {
+                                ChangeUserPasswordError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
+                                ChangeUserPasswordError.PasswordMismatch -> call.respondProblem(UserProblem.passwordMismatch)
+                                ChangeUserPasswordError.UserOrPasswordAreInvalid ->
+                                    call.respondProblem(
+                                        UserProblem.userOrPasswordAreInvalid,
+                                    )
+                                ChangeUserPasswordError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                                ChangeUserPasswordError.WrongPassword -> call.respondProblem(UserProblem.wrongPassword)
                             }
                     }
                 }

@@ -13,12 +13,12 @@ data class CreateServiceRequest(
 )
 
 @Serializable
-data class UpdateServiceRequest(
-    val name: String,
-    val description: String,
-    val cycleName: String,
-    val cycleType: String,
-    val periodName: String,
-    val periodNumPeriods: Int,
-    val price: PriceJSON,
+data class PatchServiceRequest(
+    val name: String? = null,
+    val description: String? = null,
+    val cycleName: String? = null,
+    val cycleType: String? = null,
+    val periodName: String? = null,
+    val periodNumPeriods: Int? = null,
+    val price: PriceJSON? = null,
 )

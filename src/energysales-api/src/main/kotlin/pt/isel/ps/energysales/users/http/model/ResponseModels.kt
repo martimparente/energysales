@@ -20,12 +20,12 @@ data class UserJSON(
                 surname = user.surname,
                 email = user.email,
                 role =
-                user.role.name[0] +
-                    user
-                        .role
-                        .name
-                        .substring(1)
-                        .lowercase(Locale.getDefault()),
+                    user.role.name[0] +
+                        user
+                            .role
+                            .name
+                            .substring(1)
+                            .lowercase(Locale.getDefault()),
             )
     }
 }

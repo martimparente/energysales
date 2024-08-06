@@ -24,10 +24,10 @@ export function useGetClient(id: string) {
     })
 }
 
-export function useUpdateClient() {
+export function usePatchClient() {
     return useMutation({
         mutationFn: ({clientId, input}: { clientId: string; input: UpdateServiceInputModel }) =>
-            mutateData(ApiUris.updateClient(clientId), 'PUT', input)
+            mutateData(ApiUris.updateClient(clientId), 'PATCH', input)
     })
 }
 

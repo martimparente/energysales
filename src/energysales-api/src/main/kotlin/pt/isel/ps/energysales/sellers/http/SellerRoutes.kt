@@ -46,7 +46,6 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
                 val sellers = res.value.map { SellerJSON.fromSeller(it) }
                 call.respond(sellers)
             }
-
             is Left -> call.respondProblem(SellerProblem.sellerNotFound)
         }
     }
@@ -64,47 +63,16 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
 
             is Left ->
                 when (res.value) {
-                    CreateSellerError.SellerAlreadyExists -> TODO()
-                    CreateSellerError.SellerInfoIsInvalid -> TODO()
+                    CreateSellerError.SellerAlreadyExists -> call.respondProblem(SellerProblem.sellerAlreadyExists)
+                    CreateSellerError.SellerInfoIsInvalid -> call.respondProblem(SellerProblem.sellerIsInvalid)
                 }
         }
     }
 
     get<SellerResource.Id> { params ->
-        val seller =
-            sellerService.getById(params.id)
-                ?: return@get call.respondProblem(SellerProblem.sellerNotFound)
-        val sellerJson = SellerJSON.fromSeller(seller)
-        call.respond(sellerJson)
+        val seller = sellerService.getById(params.id) ?: return@get call.respondProblem(SellerProblem.sellerNotFound)
+        call.respond(SellerJSON.fromSeller(seller))
     }
-
-    /*
-    todo update
-    put<SellerResource.Id> { params ->
-        val body = call.receive<UpdateSellerRequest>()
-        if (body.uid.toInt() != params.id) {
-            call.respondProblem(SellerProblem.sellerInfoIsInvalid, HttpStatusCode.BadRequest)
-            return@put
-        }
-        val updatedSeller = Seller(params.id, body.totalSales, body.team)
-        val res = sellerService.updateSeller(updatedSeller)
-        when (res) {
-            is Right -> {
-                call.response.status(HttpStatusCode.OK)
-            }
-
-            is Left -> {
-                when (res.value) {
-                    SellerUpdatingError.SellerNotFound -> call.respondProblem(SellerProblem.sellerNotFound, HttpStatusCode.NotFound)
-                    SellerUpdatingError.SellerInfoIsInvalid ->
-                        call.respondProblem(
-                            Problem.sellerInfoIsInvalid,
-                            HttpStatusCode.BadRequest,
-                        )
-                }
-            }
-        }
-    }*/
 
     delete<SellerResource.Id> { params ->
         val res = sellerService.deleteSeller(params.id)

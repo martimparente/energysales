@@ -10,8 +10,8 @@ import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.resources.delete
 import io.ktor.server.resources.get
+import io.ktor.server.resources.patch
 import io.ktor.server.resources.post
-import io.ktor.server.resources.put
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -30,7 +30,7 @@ import pt.isel.ps.energysales.clients.http.model.ClientProblem
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
 import pt.isel.ps.energysales.clients.http.model.MakeOfferRequest
 import pt.isel.ps.energysales.clients.http.model.OfferLinkJSON
-import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
+import pt.isel.ps.energysales.clients.http.model.PatchClientRequest
 import pt.isel.ps.energysales.plugins.respondProblem
 
 @Resource(Uris.CLIENTS)
@@ -107,20 +107,19 @@ fun Route.clientRoutes(
         call.respond(clientJson)
     }
 
-    put<ClientResource.Id> { params ->
+    patch<ClientResource.Id> { params ->
         val userId =
             call.principal<JWTPrincipal>()?.getClaim("userId", String::class)
-                ?: return@put call.respondProblem(ClientProblem.clientNotFound)
-        val body = call.receive<UpdateClientRequest>()
+                ?: return@patch call.respondProblem(ClientProblem.clientNotFound)
+        val body = call.receive<PatchClientRequest>()
         val input =
             UpdateClientInput(
                 params.id,
                 body.name,
-                body.nif,
                 body.phone,
                 body.email,
-                body.location.toLocation(),
-                userId,
+                body.location?.toLocation(),
+                body.sellerId,
             )
         val res = clientService.updateClient(input)
 

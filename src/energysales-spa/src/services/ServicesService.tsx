@@ -25,10 +25,10 @@ export function useGetService(id: string) {
     })
 }
 
-export function useUpdateService() {
+export function usePatchService() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (input: UpdateServiceInputModel) => mutateData(ApiUris.updateService(input.id), 'PUT', input),
+        mutationFn: (input: UpdateServiceInputModel) => mutateData(ApiUris.updateService(input.id), 'PATCH', input),
         onSuccess: (data, variables) => {
             // Assuming 'data' is the updated resource returned from the API
             // Update your cache or state here

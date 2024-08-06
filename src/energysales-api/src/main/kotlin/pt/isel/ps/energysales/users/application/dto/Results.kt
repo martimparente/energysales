@@ -46,6 +46,26 @@ sealed interface UserCreationError {
 
 sealed interface UserUpdatingError {
     data object UserNotFound : UserUpdatingError
+
+    data object UserNameIsInvalid : UserUpdatingError
+
+    data object UserSurnameIsInvalid : UserUpdatingError
+
+    data object UserAlreadyExists : UserUpdatingError
+
+    data object InsecurePassword : UserUpdatingError
+
+    data object UserIsInvalid : UserUpdatingError
+
+    data object UserEmailAlreadyUsed : UserUpdatingError
+
+    data object UserInfoIsInvalid : UserUpdatingError
+
+    data object UserRoleIsInvalid : UserUpdatingError
+
+    data object UserEmailIsInvalid : UserUpdatingError
+
+    data object Todo : UserUpdatingError
 }
 
 sealed interface UserDeletingError {

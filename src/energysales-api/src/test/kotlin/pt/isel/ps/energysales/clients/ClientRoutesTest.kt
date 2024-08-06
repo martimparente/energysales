@@ -8,8 +8,8 @@ import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
-import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -20,7 +20,7 @@ import pt.isel.ps.energysales.clients.http.model.ClientJSON
 import pt.isel.ps.energysales.clients.http.model.ClientProblem
 import pt.isel.ps.energysales.clients.http.model.CreateClientRequest
 import pt.isel.ps.energysales.clients.http.model.LocationJSON
-import pt.isel.ps.energysales.clients.http.model.UpdateClientRequest
+import pt.isel.ps.energysales.clients.http.model.PatchClientRequest
 import pt.isel.ps.energysales.plugins.ProblemJSON
 import pt.isel.ps.energysales.users.http.model.UserProblem
 import kotlin.test.Test
@@ -102,7 +102,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", 1)
+                    parameter("id", "1")
                 }.also { response ->
                     val client = response.call.response.body<ClientJSON>()
                     client.name.shouldBe("Client 1")
@@ -116,7 +116,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .get(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", -1)
+                    parameter("id", "-1")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
                     response.shouldHaveStatus(ClientProblem.clientNotFound.status)
@@ -153,10 +153,10 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Success`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENTS_BY_ID) {
+                .patch(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "1")
-                    setBody(UpdateClientRequest("updateName", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
+                    setBody(PatchClientRequest("updateName", "123456789", "email1@mail.com", LocationJSON("Lisboa"), "1"))
                 }.also { response ->
                     response.shouldHaveStatus(HttpStatusCode.OK)
                 }
@@ -166,9 +166,9 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Unauthorized`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENTS_BY_ID) {
+                .patch(Uris.API + Uris.CLIENTS_BY_ID) {
                     parameter("id", "2")
-                    setBody(UpdateClientRequest("newClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
+                    setBody(PatchClientRequest("newClient", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
                     response.shouldHaveStatus(UserProblem.unauthorized.status)
@@ -193,10 +193,10 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Not Found`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENTS_BY_ID) {
+                .patch(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", -1)
-                    setBody(UpdateClientRequest("nonClient", "123456789", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
+                    parameter("id", "-1")
+                    setBody(PatchClientRequest("nonClient", "123456789", "email1@mail.com", LocationJSON("Lisboa")))
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
                     response.shouldHaveStatus(ClientProblem.clientNotFound.status)
@@ -208,10 +208,10 @@ class ClientRoutesTest : BaseRouteTest() {
     fun `Update Client - Bad Request - Invalid E-mail`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.CLIENTS_BY_ID) {
+                .patch(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", "1c")
-                    setBody(UpdateClientRequest("client", "123456789", "123456789", "invalidEmail", LocationJSON("Lisboa")))
+                    parameter("id", "1")
+                    setBody(PatchClientRequest("client", "123456789", "invalidEmail", LocationJSON("Lisboa"), "1"))
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.badRequest.type)
                     response.shouldHaveStatus(ClientProblem.badRequest.status)
@@ -237,7 +237,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Invalid Token")
-                    parameter("id", 1)
+                    parameter("id", "1")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(UserProblem.unauthorized.type)
                     response.shouldHaveStatus(UserProblem.unauthorized.status)
@@ -250,7 +250,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", -1)
+                    parameter("id", "-1")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
                     response.shouldHaveStatus(ClientProblem.clientNotFound.status)
@@ -263,7 +263,7 @@ class ClientRoutesTest : BaseRouteTest() {
             testClient()
                 .delete(Uris.API + Uris.CLIENTS_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
-                    parameter("id", -1)
+                    parameter("id", "-1")
                 }.also { response ->
                     response.body<ProblemJSON>().type.shouldBeEqual(ClientProblem.clientNotFound.type)
                     response.shouldHaveStatus(ClientProblem.clientNotFound.status)

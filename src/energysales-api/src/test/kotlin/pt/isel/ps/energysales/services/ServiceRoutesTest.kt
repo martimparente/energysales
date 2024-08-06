@@ -1,7 +1,7 @@
 package pt.isel.ps.energysales.services
 
 import CreateServiceRequest
-import UpdateServiceRequest
+import PatchServiceRequest
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.equals.shouldBeEqual
@@ -10,8 +10,8 @@ import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
-import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -176,11 +176,11 @@ class ServiceRoutesTest : BaseRouteTest() {
     fun `Update Service - Success`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.SERVICES_BY_ID) {
+                .patch(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "2")
                     setBody(
-                        UpdateServiceRequest(
+                        PatchServiceRequest(
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -203,10 +203,10 @@ class ServiceRoutesTest : BaseRouteTest() {
     fun `Update Service - Unauthorized`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.SERVICES_BY_ID) {
+                .patch(Uris.API + Uris.SERVICES_BY_ID) {
                     parameter("id", "2")
                     setBody(
-                        UpdateServiceRequest(
+                        PatchServiceRequest(
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -240,11 +240,11 @@ class ServiceRoutesTest : BaseRouteTest() {
     fun `Update Service - Not Found`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.SERVICES_BY_ID) {
+                .patch(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "-1")
                     setBody(
-                        UpdateServiceRequest(
+                        PatchServiceRequest(
                             "newService",
                             "newDescription",
                             "newCycleName",
@@ -265,11 +265,11 @@ class ServiceRoutesTest : BaseRouteTest() {
     fun `Update Service - Bad Request`() =
         testApplication {
             testClient()
-                .put(Uris.API + Uris.SERVICES_BY_ID) {
+                .patch(Uris.API + Uris.SERVICES_BY_ID) {
                     headers.append("Authorization", "Bearer $adminToken")
                     parameter("id", "abc")
                     setBody(
-                        UpdateServiceRequest(
+                        PatchServiceRequest(
                             "newService",
                             "newDescription",
                             "newCycleName",

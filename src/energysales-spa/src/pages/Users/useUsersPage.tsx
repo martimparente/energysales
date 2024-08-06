@@ -1,4 +1,4 @@
-import {useDeleteUser, useGetUsers, useUpdateUser} from '../../services/UsersService'
+import {useDeleteUser, useGetUsers, usePatchUser} from '../../services/UsersService'
 import {useNavigate} from 'react-router-dom'
 import {PatchUserInputModel, User} from '../../services/models/UserModel.tsx'
 import {useMemo, useRef, useState} from 'react'
@@ -13,7 +13,7 @@ export function useUsersPage() {
     const {colorScheme} = useMantineColorScheme({keepTransitions: true})
     const gridRef = useRef<AgGridReact>(null)
     const {data: users, error: fetchError, isFetching} = useGetUsers()
-    const {mutateAsync: updateUser} = useUpdateUser()
+    const {mutateAsync: updateUser} = usePatchUser()
     const {mutateAsync: deleteUser} = useDeleteUser()
     const [error, setError] = useState<string | null>(null)
 

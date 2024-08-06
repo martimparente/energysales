@@ -22,7 +22,6 @@ data class CreateUserRequest(
 
 @Serializable
 data class PatchUserRequest(
-    val id: String,
     val name: String? = null,
     val surname: String? = null,
     val email: String? = null,

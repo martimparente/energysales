@@ -6,7 +6,7 @@ import {
     useDeleteTeamSeller,
     useGetAvailableSellers,
     useGetTeamDetails,
-    useUpdateTeam,
+    usePatchTeam,
     useUploadTeamAvatar
 } from '../../../services/TeamsService'
 import {useGetServices} from '../../../services/ServicesService.tsx'
@@ -42,7 +42,7 @@ export function useTeamPage() {
 
     const [selectedSeller, setSelectedSeller] = useState<string>('')
     const [selectedService, setSelectedService] = useState<string>('')
-    const {mutateAsync: updateTeam} = useUpdateTeam()
+    const {mutateAsync: updateTeam} = usePatchTeam()
     const {mutateAsync: deleteTeam} = useDeleteTeam()
     const [error, setError] = useState<string | null>(null)
     const isFetching = useIsFetching()

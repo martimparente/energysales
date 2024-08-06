@@ -20,11 +20,11 @@ data class UserProblem(
                 instance = "",
                 status = HttpStatusCode.BadRequest,
                 detail =
-                "Passwords should have at least 8 characters and at least one of the following types:\n" +
-                    "Uppercase letters: A-Z\n" +
-                    "Lowercase letters: a-z\n" +
-                    "Numbers: 0-9\n" +
-                    "Symbols: ~`!@#\$%^&*()_-+={[:\"'<,>.?/",
+                    "Passwords should have at least 8 characters and at least one of the following types:\n" +
+                        "Uppercase letters: A-Z\n" +
+                        "Lowercase letters: a-z\n" +
+                        "Numbers: 0-9\n" +
+                        "Symbols: ~`!@#\$%^&*()_-+={[:\"'<,>.?/",
             )
 
         val passwordMismatch =

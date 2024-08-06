@@ -1,4 +1,4 @@
-import {useCreateClient, useDeleteClient, useGetClients, useUpdateClient} from '../../services/ClientService.tsx'
+import {useCreateClient, useDeleteClient, useGetClients, usePatchClient} from '../../services/ClientService.tsx'
 import {useNavigate} from 'react-router-dom'
 import {Client} from '../../services/models/ClientModel'
 import {useMemo, useRef, useState} from 'react'
@@ -16,7 +16,7 @@ export function useClientsPage() {
     const gridRef = useRef<AgGridReact>(null)
     const {data: clients, error: fetchError, isFetching} = useGetClients()
     const {mutateAsync: createClient} = useCreateClient()
-    const {mutateAsync: updateClient} = useUpdateClient()
+    const {mutateAsync: updateClient} = usePatchClient()
     const {mutateAsync: deleteClient} = useDeleteClient()
     const [error, setError] = useState<string | null>(null)
 

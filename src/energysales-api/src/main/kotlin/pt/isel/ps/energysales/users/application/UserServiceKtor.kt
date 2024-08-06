@@ -19,6 +19,7 @@ import pt.isel.ps.energysales.users.application.dto.RoleReadingError
 import pt.isel.ps.energysales.users.application.dto.RoleReadingResult
 import pt.isel.ps.energysales.users.application.dto.TokenCreationError
 import pt.isel.ps.energysales.users.application.dto.TokenCreationResult
+import pt.isel.ps.energysales.users.application.dto.UpdateUserInput
 import pt.isel.ps.energysales.users.application.dto.UpdateUserResult
 import pt.isel.ps.energysales.users.application.dto.UserCreationError
 import pt.isel.ps.energysales.users.application.dto.UserCreationResult
@@ -33,7 +34,6 @@ import pt.isel.ps.energysales.users.domain.User
 import pt.isel.ps.energysales.users.domain.UserCredentials
 import pt.isel.ps.energysales.users.domain.toRole
 import pt.isel.ps.energysales.users.http.UserQueryParams
-import pt.isel.ps.energysales.users.http.model.PatchUserRequest
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -135,8 +135,16 @@ class UserServiceKtor(
             userRepository.getUserById(id) ?: raise(GetUserError.UserNotFound)
         }
 
-    override suspend fun updateUser(input: PatchUserRequest): UpdateUserResult =
+    override suspend fun updateUser(input: UpdateUserInput): UpdateUserResult =
         either {
+            ensure(input.name?.length in 2..16) { UserUpdatingError.UserNameIsInvalid }
+            ensure(input.surname?.length in 2..16) { UserUpdatingError.UserSurnameIsInvalid }
+            ensureNotNull(input.role?.toRole()) { UserUpdatingError.UserRoleIsInvalid }
+            input.email?.let {
+                ensure(isValidEmail(it)) { UserUpdatingError.UserEmailIsInvalid }
+                ensure(userRepository.isEmailAvailable(input.email)) { UserUpdatingError.UserEmailAlreadyUsed }
+            }
+
             val user = userRepository.getUserById(input.id) ?: raise(UserUpdatingError.UserNotFound)
             val patchedUser =
                 user.copy(
@@ -145,8 +153,7 @@ class UserServiceKtor(
                     email = input.email ?: user.email,
                     role = input.role?.toRole() ?: user.role,
                 )
-
-            userRepository.updateUser(patchedUser) ?: raise(UserUpdatingError.UserNotFound)
+            userRepository.updateUser(patchedUser) ?: raise(UserUpdatingError.Todo)
         }
 
     override suspend fun deleteUser(id: String): DeleteUserResult =

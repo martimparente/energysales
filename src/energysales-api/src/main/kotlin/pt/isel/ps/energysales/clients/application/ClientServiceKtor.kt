@@ -42,24 +42,23 @@ class ClientServiceKtor(
     // Update
     override suspend fun updateClient(input: UpdateClientInput): UpdateClientResult =
         either {
-            ensure(input.name.length in 2..16) { UpdateClientError.ClientNameIsInvalid }
-            ensure(input.nif.length == 9) { UpdateClientError.ClientInfoIsInvalid }
-            ensure(input.phone.length == 9) { UpdateClientError.ClientInfoIsInvalid }
-            ensure(isValidEmail(input.email)) { UpdateClientError.ClientEmailIsInvalid }
-            val client = clientRepository.getById(input.id)
-            ensureNotNull(client) { UpdateClientError.ClientNotFound }
+            ensure(input.name?.length in 2..16) { UpdateClientError.ClientNameIsInvalid }
+            ensure(input.phone?.length == 9) { UpdateClientError.ClientInfoIsInvalid }
+            input.email?.let {
+                ensure(isValidEmail(input.email)) { UpdateClientError.ClientEmailIsInvalid }
+            }
 
-            val newClient =
+            val client = clientRepository.getById(input.id) ?: raise(UpdateClientError.ClientNotFound)
+            val patchedClient =
                 client.copy(
-                    name = input.name,
-                    nif = input.nif,
-                    phone = input.phone,
-                    location = Location(input.location.district),
-                    sellerId = input.sellerId,
+                    name = input.name ?: client.name,
+                    phone = input.phone ?: client.phone,
+                    email = input.email ?: client.email,
+                    location = input.location?.let { Location(it.district) } ?: client.location,
+                    sellerId = input.sellerId ?: client.sellerId,
                 )
 
-            val updatedClient = clientRepository.update(newClient)
-            ensureNotNull(updatedClient) { UpdateClientError.ClientNotFound }
+            clientRepository.update(patchedClient) ?: raise(UpdateClientError.ClientNotFound)
         }
 
     override suspend fun deleteClient(id: String): DeleteClientResult =

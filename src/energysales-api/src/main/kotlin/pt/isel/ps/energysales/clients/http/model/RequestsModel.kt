@@ -12,12 +12,12 @@ data class CreateClientRequest(
 )
 
 @Serializable
-data class UpdateClientRequest(
-    val name: String,
-    val nif: String,
-    val phone: String,
-    val email: String,
-    val location: LocationJSON,
+data class PatchClientRequest(
+    val name: String? = null,
+    val phone: String? = null,
+    val email: String? = null,
+    val location: LocationJSON? = null,
+    val sellerId: String? = null,
 )
 
 @Serializable
