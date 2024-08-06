@@ -13,6 +13,7 @@ import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import pt.isel.ps.energysales.Uris
+import pt.isel.ps.energysales.plugins.authorize
 import pt.isel.ps.energysales.plugins.respondProblem
 import pt.isel.ps.energysales.sellers.application.SellerServiceKtor
 import pt.isel.ps.energysales.sellers.application.dto.CreateSellerError
@@ -37,16 +38,19 @@ class SellerResource(
 }
 
 fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
-    get<SellerResource> { queryParams ->
-        val input = GetAllSellerInput(queryParams.lastKeySeen, queryParams.noTeam, queryParams.searchQuery)
-        val res = sellerService.getAllSellers(input)
+    authorize("ADMIN") {
+        get<SellerResource> { queryParams ->
+            val input = GetAllSellerInput(queryParams.lastKeySeen, queryParams.noTeam, queryParams.searchQuery)
+            val res = sellerService.getAllSellers(input)
 
-        when (res) {
-            is Right -> {
-                val sellers = res.value.map { SellerJSON.fromSeller(it) }
-                call.respond(sellers)
+            when (res) {
+                is Right -> {
+                    val sellers = res.value.map { SellerJSON.fromSeller(it) }
+                    call.respond(sellers)
+                }
+
+                is Left -> call.respondProblem(SellerProblem.sellerNotFound)
             }
-            is Left -> call.respondProblem(SellerProblem.sellerNotFound)
         }
     }
 

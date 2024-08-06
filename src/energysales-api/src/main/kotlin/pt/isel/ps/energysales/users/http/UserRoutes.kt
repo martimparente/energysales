@@ -92,6 +92,24 @@ fun Route.authRoutes(userService: UserService) {
                 }
         }
     }
+
+    post(Uris.USER_CHANGE_PASSWORD) {
+        val uid = call.parameters["id"] ?: return@post call.respondProblem(UserProblem.badRequest)
+        val body = call.receive<ChangePasswordRequest>()
+        val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
+
+        when (res) {
+            is Right -> call.respond(HttpStatusCode.OK)
+            is Left ->
+                when (res.value) {
+                    ChangeUserPasswordError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
+                    ChangeUserPasswordError.PasswordMismatch -> call.respondProblem(UserProblem.passwordMismatch)
+                    ChangeUserPasswordError.UserOrPasswordAreInvalid -> call.respondProblem(UserProblem.userOrPasswordAreInvalid)
+                    ChangeUserPasswordError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
+                    ChangeUserPasswordError.WrongPassword -> call.respondProblem(UserProblem.wrongPassword)
+                }
+        }
+    }
 }
 
 fun Route.userRoutes(userService: UserService) {
@@ -237,29 +255,6 @@ fun Route.userRoutes(userService: UserService) {
                             when (res.value) {
                                 RoleAssignError.RoleNotFound -> call.respondProblem(UserProblem.roleNotFound)
                                 RoleAssignError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                            }
-                    }
-                }
-            }
-
-            route(Uris.USER_CHANGE_PASSWORD) {
-                post {
-                    val uid = call.parameters["id"] ?: return@post call.respondProblem(UserProblem.badRequest)
-                    val body = call.receive<ChangePasswordRequest>()
-                    val res = userService.changeUserPassword(uid, body.oldPassword, body.newPassword, body.repeatNewPassword)
-
-                    when (res) {
-                        is Right -> call.respond(HttpStatusCode.OK)
-                        is Left ->
-                            when (res.value) {
-                                ChangeUserPasswordError.InsecurePassword -> call.respondProblem(UserProblem.insecurePassword)
-                                ChangeUserPasswordError.PasswordMismatch -> call.respondProblem(UserProblem.passwordMismatch)
-                                ChangeUserPasswordError.UserOrPasswordAreInvalid ->
-                                    call.respondProblem(
-                                        UserProblem.userOrPasswordAreInvalid,
-                                    )
-                                ChangeUserPasswordError.UserNotFound -> call.respondProblem(UserProblem.userNotFound)
-                                ChangeUserPasswordError.WrongPassword -> call.respondProblem(UserProblem.wrongPassword)
                             }
                     }
                 }
