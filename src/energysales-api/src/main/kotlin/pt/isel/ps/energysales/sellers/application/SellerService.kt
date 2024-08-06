@@ -16,7 +16,7 @@ interface SellerService {
     suspend fun getAllSellersPaging(
         pageSize: Int,
         lastKeySeen: String?,
-        noTeam: Boolean,
+        noPartner: Boolean,
     ): List<Seller>
 
     suspend fun getById(id: String): Seller?

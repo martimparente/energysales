@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {CreateUserInputModel} from '../../../services/models/UserModel'
-import {useCreateUser} from '../../../services/UsersService.tsx'
+import {useCreateUser} from '../../../services/UserService.tsx'
 
 export function useCreateUserPage() {
     const {control, handleSubmit} = useForm<CreateUserInputModel>({

@@ -1,5 +1,5 @@
 import {useParams} from 'react-router-dom'
-import {useGetUser} from '../../../services/UsersService'
+import {useGetUser} from '../../../services/UserService.tsx'
 
 export function UserPage() {
     const {id} = useParams<string>()

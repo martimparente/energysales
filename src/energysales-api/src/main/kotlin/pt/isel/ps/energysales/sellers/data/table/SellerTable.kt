@@ -4,7 +4,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
-import pt.isel.ps.energysales.teams.data.table.TeamTable
+import pt.isel.ps.energysales.partners.data.table.PartnerTable
 import pt.isel.ps.energysales.users.data.table.UserTable
 
 object SellerTable : IdTable<Int>() {
@@ -12,5 +12,5 @@ object SellerTable : IdTable<Int>() {
     override val primaryKey = PrimaryKey(id)
 
     val totalSales = float("total_sales").default(0.0f)
-    val team = reference("team_id", TeamTable.id, ReferenceOption.SET_NULL).nullable()
+    val partner = reference("partner_id", PartnerTable.id, ReferenceOption.SET_NULL).nullable()
 }

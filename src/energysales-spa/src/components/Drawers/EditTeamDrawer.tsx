@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react'
 import {Button, Drawer, Select, TextInput} from '@mantine/core'
 import {Controller, useForm} from 'react-hook-form'
-import {UpdateTeamInputModel} from '../../services/models/TeamModel.tsx'
+import {UpdatePartnerInputModel} from '../../services/models/TeamModel.tsx'
 
 interface EditTeamDrawerProps {
     opened: boolean
     onClose: () => void
-    onSubmit: (data: UpdateTeamInputModel) => void
-    initialData: UpdateTeamInputModel
+    onSubmit: (data: UpdatePartnerInputModel) => void
+    initialData: UpdatePartnerInputModel
 }
 
 const portugalDistricts = [
@@ -30,7 +30,7 @@ const portugalDistricts = [
 ]
 
 export const EditTeamDrawer: React.FC<EditTeamDrawerProps> = ({opened, onClose, onSubmit, initialData}) => {
-    const {control, handleSubmit, reset} = useForm<UpdateTeamInputModel>({
+    const {control, handleSubmit, reset} = useForm<UpdatePartnerInputModel>({
         defaultValues: initialData
     })
 
@@ -38,7 +38,7 @@ export const EditTeamDrawer: React.FC<EditTeamDrawerProps> = ({opened, onClose, 
         reset(initialData)
     }, [initialData, reset])
 
-    const handleFormSubmit = (data: UpdateTeamInputModel) => {
+    const handleFormSubmit = (data: UpdatePartnerInputModel) => {
         onSubmit(data)
         onClose()
     }

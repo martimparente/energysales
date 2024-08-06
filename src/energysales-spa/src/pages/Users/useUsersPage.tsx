@@ -1,4 +1,4 @@
-import {useDeleteUser, useGetUsers, usePatchUser} from '../../services/UsersService'
+import {useDeleteUser, useGetUsers, usePatchUser} from '../../services/UserService.tsx'
 import {useNavigate} from 'react-router-dom'
 import {PatchUserInputModel, User} from '../../services/models/UserModel.tsx'
 import {useMemo, useRef, useState} from 'react'

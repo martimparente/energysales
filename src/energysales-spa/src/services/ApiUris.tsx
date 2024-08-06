@@ -7,22 +7,22 @@ export namespace ApiUris {
     export const resetPassword = `${API_BASE_URL}/auth/reset-password`
     export const changePassword = `${API_BASE_URL}/auth/change-password`
 
-    // Teams
-    export const getTeams = (lastKeySeen: string) => `${API_BASE_URL}/teams?lastKeySeen=${lastKeySeen}`
-    export const getTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`
-    export const getTeamDetails = (teamId: string) => `${API_BASE_URL}/teams/${teamId}?include=details`
-    export const createTeam = `${API_BASE_URL}/teams`
-    export const updateTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`
-    export const deleteTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}`
+    // Partners
+    export const getPartners = (lastKeySeen: string) => `${API_BASE_URL}/partners?lastKeySeen=${lastKeySeen}`
+    export const getPartner = (partnerId: string) => `${API_BASE_URL}/partners/${partnerId}`
+    export const getPartnerDetails = (partnerId: string) => `${API_BASE_URL}/partners/${partnerId}?include=details`
+    export const createPartner = `${API_BASE_URL}/partners`
+    export const updatePartner = (partnerId: string) => `${API_BASE_URL}/partners/${partnerId}`
+    export const deletePartner = (partnerId: string) => `${API_BASE_URL}/partners/${partnerId}`
 
     export const getAvailableSellers = (searchQuery: string) => `${API_BASE_URL}/sellers?&noTeam=true&searchQuery=${searchQuery}`
-    export const addTeamSeller = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/sellers`
-    export const deleteTeamSeller = (teamId: string, sellerId: string) => `${API_BASE_URL}/teams/${teamId}/sellers/${sellerId}`
-    export const uploadAvatar = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/avatar`
+    export const addPartnerSeller = (partnerId: string) => `${API_BASE_URL}/partners/${partnerId}/sellers`
+    export const deletePartnerSeller = (partnerId: string, sellerId: string) => `${API_BASE_URL}/partners/${partnerId}/sellers/${sellerId}`
+    export const uploadAvatar = (partnerId: string) => `${API_BASE_URL}/partners/${partnerId}/avatar`
 
-    // Team Services
-    export const addServiceToTeam = (teamId: string) => `${API_BASE_URL}/teams/${teamId}/services`
-    export const deleteServiceFromTeam = (teamId: string, serviceId: string) => `${API_BASE_URL}/teams/${teamId}/services/${serviceId}`
+    // Partner Services
+    export const addPartnerService = (partnerId: string) => `${API_BASE_URL}/partners/${partnerId}/services`
+    export const deletePartnerService = (partnerId: string, serviceId: string) => `${API_BASE_URL}/partners/${partnerId}/services/${serviceId}`
 
     // Managers
     export const getManagerCandidates = () => `${API_BASE_URL}/users?role=MANAGER&available=true`

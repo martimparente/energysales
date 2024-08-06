@@ -13,7 +13,7 @@ import pt.isel.ps.energysales.clients.application.dto.UpdateClientInput
 import pt.isel.ps.energysales.clients.application.dto.UpdateClientResult
 import pt.isel.ps.energysales.clients.data.ClientRepository
 import pt.isel.ps.energysales.clients.domain.Client
-import pt.isel.ps.energysales.teams.domain.Location
+import pt.isel.ps.energysales.partners.domain.Location
 
 class ClientServiceKtor(
     private val clientRepository: ClientRepository,

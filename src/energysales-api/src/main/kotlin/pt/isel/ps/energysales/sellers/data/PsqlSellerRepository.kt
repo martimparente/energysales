@@ -3,11 +3,11 @@ package pt.isel.ps.energysales.sellers.data
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
+import pt.isel.ps.energysales.partners.data.entity.PartnerEntity
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.sellers.domain.Seller
-import pt.isel.ps.energysales.teams.data.entity.TeamEntity
 import pt.isel.ps.energysales.users.data.entity.RoleEntity
 import pt.isel.ps.energysales.users.data.entity.UserEntity
 import pt.isel.ps.energysales.users.data.table.RoleTable
@@ -38,7 +38,7 @@ class PsqlSellerRepository : SellerRepository {
             SellerEntity
                 .new(userEntity.id.value) {
                     totalSales = seller.totalSales
-                    team = seller.team?.let { TeamEntity.findById(it.toInt()) }
+                    partner = seller.partner?.let { PartnerEntity.findById(it.toInt()) }
                 }.id
                 .value
                 .toString()
@@ -48,20 +48,20 @@ class PsqlSellerRepository : SellerRepository {
         dbQuery {
             SellerEntity
                 .all()
-                .with(SellerEntity::team)
+                .with(SellerEntity::partner)
                 .map { it.toSeller() }
         }
 
     override suspend fun getAllKeyPaging(
         pageSize: Int,
         lastKeySeen: String?,
-        noTeam: Boolean,
+        noPartner: Boolean,
     ): List<Seller> =
         dbQuery {
             SellerEntity
                 .find {
                     SellerTable.id greater (lastKeySeen!!.toInt()) and
-                        (if (noTeam) SellerTable.team.isNull() else SellerTable.team.isNotNull())
+                        (if (noPartner) SellerTable.partner.isNull() else SellerTable.partner.isNotNull())
                 }.orderBy(SellerTable.id to SortOrder.ASC)
                 .limit(pageSize)
                 .map { it.toSeller() }
@@ -77,7 +77,7 @@ class PsqlSellerRepository : SellerRepository {
                     user.surname = seller.user.surname
                     user.email = seller.user.email
                     totalSales = seller.totalSales
-                    team = seller.team?.let { TeamEntity.findById(it.toInt()) }
+                    partner = seller.partner?.let { PartnerEntity.findById(it.toInt()) }
                 }?.toSeller()
         }
 
@@ -87,7 +87,7 @@ class PsqlSellerRepository : SellerRepository {
             true
         }
 
-    override suspend fun getSellersWithNoTeam(searchQuery: String?): List<Seller> =
+    override suspend fun getSellersWithNoPartner(searchQuery: String?): List<Seller> =
         dbQuery {
             val query =
                 SellerTable
@@ -95,9 +95,9 @@ class PsqlSellerRepository : SellerRepository {
                     .select(SellerTable.columns)
                     .where {
                         if (searchQuery != null) {
-                            SellerTable.team.isNull() and (UserTable.name like "%$searchQuery%")
+                            SellerTable.partner.isNull() and (UserTable.name like "%$searchQuery%")
                         } else {
-                            SellerTable.team.isNull()
+                            SellerTable.partner.isNull()
                         }
                     }
 

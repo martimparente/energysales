@@ -19,7 +19,7 @@ import {useAuth} from '../context/useAuth.tsx'
 import {IconLogin, IconLogout, IconMoonStars, IconSun} from '@tabler/icons-react'
 import logoName from '../assets/logo+name.svg'
 import {useEffect, useState} from 'react'
-import {navLinks} from '../router/Router.tsx'
+import {routesConfig} from '../router/Router.tsx'
 
 const energySalesIcon = <img src={logoName} width='150' height='50' alt='Logo'/>
 
@@ -77,14 +77,14 @@ export function MainLayout() {
                         </Card>
                     )}
                     <Space h='xl'/>
-                    {navLinks
-                        .filter((item) => item.roles.includes(user?.role || 'NOUSER'))
+                    {routesConfig
+                        .filter((item) => item.roles.includes(user?.role || 'NOUSER') && item.navLinkInfo)
                         .map((item, index) => (
                             <NavLink
-                                to={item.link}
-                                label={item.label}
-                                key={item.label}
-                                leftSection={<item.icon/>}
+                                to={item.path}
+                                label={item.navLinkInfo?.label}
+                                key={item.navLinkInfo?.label}
+                                leftSection={<item.navLinkInfo.icon/>}
                                 component={Link}
                                 active={index === active}
                                 onClick={() => setActive(index)}

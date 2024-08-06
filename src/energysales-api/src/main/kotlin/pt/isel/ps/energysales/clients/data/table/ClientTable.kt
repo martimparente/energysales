@@ -2,8 +2,8 @@ package pt.isel.ps.energysales.clients.data.table
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import pt.isel.ps.energysales.partners.data.table.LocationTable
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
-import pt.isel.ps.energysales.teams.data.table.LocationTable
 
 object ClientTable : IntIdTable() {
     val name = varchar("name", 50)

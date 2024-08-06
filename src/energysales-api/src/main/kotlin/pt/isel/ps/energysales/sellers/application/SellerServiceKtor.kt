@@ -22,7 +22,7 @@ class SellerServiceKtor(
     override suspend fun createSeller(info: CreateSellerInput): CreateSellerResult =
         either {
             val user = User(null, info.name, info.surname, info.email, Role.SELLER)
-            val seller = Seller(user, 0.0f, info.team)
+            val seller = Seller(user, 0.0f, info.partner)
 
             sellerRepository.create(seller)
         }
@@ -30,8 +30,8 @@ class SellerServiceKtor(
     // Read
     override suspend fun getAllSellers(input: GetAllSellerInput): GetAllSellersResult =
         either {
-            if (input.noTeam) {
-                sellerRepository.getSellersWithNoTeam(input.searchQuery)
+            if (input.noPartner) {
+                sellerRepository.getSellersWithNoPartner(input.searchQuery)
             } else {
                 sellerRepository.getAll()
             }
@@ -40,8 +40,8 @@ class SellerServiceKtor(
     override suspend fun getAllSellersPaging(
         pageSize: Int,
         lastKeySeen: String?,
-        noTeam: Boolean,
-    ) = sellerRepository.getAllKeyPaging(pageSize, lastKeySeen, noTeam)
+        noPartner: Boolean,
+    ) = sellerRepository.getAllKeyPaging(pageSize, lastKeySeen, noPartner)
 
     // override suspend fun getByName(name: String): Seller? = sellerRepository.getByName(name)
 

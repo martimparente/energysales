@@ -10,7 +10,7 @@ data class SellerJSON(
     val surname: String,
     val email: String,
     val totalSales: Float,
-    val team: String?,
+    val partner: String?,
 ) {
     companion object {
         fun fromSeller(seller: Seller) =
@@ -20,7 +20,7 @@ data class SellerJSON(
                 seller.user.surname,
                 seller.user.email,
                 seller.totalSales,
-                seller.team,
+                seller.partner,
             )
     }
 }

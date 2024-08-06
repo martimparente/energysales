@@ -21,6 +21,9 @@ import pt.isel.ps.energysales.clients.data.PsqlOfferRepository
 import pt.isel.ps.energysales.clients.http.clientRoutes
 import pt.isel.ps.energysales.email.SimpleJavaMailService
 import pt.isel.ps.energysales.email.model.MailConfig
+import pt.isel.ps.energysales.partners.application.PartnerServiceKtor
+import pt.isel.ps.energysales.partners.data.PsqlPartnerRepository
+import pt.isel.ps.energysales.partners.http.partnerRoutes
 import pt.isel.ps.energysales.plugins.authorize
 import pt.isel.ps.energysales.plugins.configureAuth
 import pt.isel.ps.energysales.plugins.configureDatabases
@@ -32,9 +35,6 @@ import pt.isel.ps.energysales.sellers.http.sellerRoutes
 import pt.isel.ps.energysales.services.application.ServiceServiceKtor
 import pt.isel.ps.energysales.services.data.PsqlServiceRepository
 import pt.isel.ps.energysales.services.http.serviceRoutes
-import pt.isel.ps.energysales.teams.application.TeamServiceKtor
-import pt.isel.ps.energysales.teams.data.PsqlTeamRepository
-import pt.isel.ps.energysales.teams.http.teamRoutes
 import pt.isel.ps.energysales.users.application.UserServiceKtor
 import pt.isel.ps.energysales.users.application.security.HashingServiceSHA256
 import pt.isel.ps.energysales.users.application.security.JwtConfig
@@ -99,9 +99,9 @@ fun Application.module() {
         )
     }
 
-    val teamService by lazy {
-        TeamServiceKtor(
-            teamRepository = PsqlTeamRepository(),
+    val partnerService by lazy {
+        PartnerServiceKtor(
+            partnerRepository = PsqlPartnerRepository(),
             sellerRepository = PsqlSellerRepository(),
         )
     }
@@ -153,7 +153,7 @@ fun Application.module() {
             authenticate {
                 authorize("ADMIN") {
                     userRoutes(userService)
-                    teamRoutes(teamService)
+                    partnerRoutes(partnerService)
                     serviceRoutes(productService)
                 }
                 authorize("MANAGER") {

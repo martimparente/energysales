@@ -43,5 +43,5 @@ export interface PatchUserInputModel {
     name: string | null
     surname: string | null
     email: string | null
-    team: string | null
+    partner: string | null
 }

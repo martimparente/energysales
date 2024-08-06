@@ -5,14 +5,14 @@ import org.jetbrains.exposed.sql.insert
 import pt.isel.ps.energysales.clients.data.table.ClientTable
 import pt.isel.ps.energysales.clients.data.table.OfferLinkTable
 import pt.isel.ps.energysales.clients.data.table.OfferTable
+import pt.isel.ps.energysales.partners.data.table.LocationTable
+import pt.isel.ps.energysales.partners.data.table.PartnerClients
+import pt.isel.ps.energysales.partners.data.table.PartnerServices
+import pt.isel.ps.energysales.partners.data.table.PartnerTable
+import pt.isel.ps.energysales.partners.domain.District
 import pt.isel.ps.energysales.sellers.data.table.SellerTable
 import pt.isel.ps.energysales.services.data.table.PriceTable
 import pt.isel.ps.energysales.services.data.table.ServiceTable
-import pt.isel.ps.energysales.teams.data.table.LocationTable
-import pt.isel.ps.energysales.teams.data.table.TeamClients
-import pt.isel.ps.energysales.teams.data.table.TeamServices
-import pt.isel.ps.energysales.teams.data.table.TeamTable
-import pt.isel.ps.energysales.teams.domain.District
 import pt.isel.ps.energysales.users.data.entity.UserRolesTable
 import pt.isel.ps.energysales.users.data.table.RoleTable
 import pt.isel.ps.energysales.users.data.table.UserCredentialsTable
@@ -26,13 +26,13 @@ fun fillDb() {
             UserTable,
             RoleTable,
             UserRolesTable,
-            TeamTable,
+            PartnerTable,
             UserCredentialsTable,
             SellerTable,
             ServiceTable,
             LocationTable,
-            TeamClients,
-            TeamServices,
+            PartnerClients,
+            PartnerServices,
             ClientTable,
             OfferLinkTable,
             OfferTable,
@@ -81,8 +81,8 @@ fun fillDb() {
             }
         }
 
-        TeamTable.insert {
-            it[name] = "Team $i"
+        PartnerTable.insert {
+            it[name] = "Partner $i"
             it[location] = i
             it[manager] = i
         }
@@ -164,8 +164,8 @@ fun fillDb() {
          LocationTable.insert {
              it[district] = "Location $i"
          }
-         TeamTable.insert {
-             it[name] = "Team $i"
+         PartnerTable.insert {
+             it[name] = "Partner $i"
              it[location] = i
          }
 
@@ -206,15 +206,15 @@ fun fillDb() {
 fun dropDb() {
     SchemaUtils.drop(
         SellerTable,
-        TeamTable,
+        PartnerTable,
         UserCredentialsTable,
         UserRolesTable,
         RoleTable,
         UserTable,
         ServiceTable,
         LocationTable,
-        TeamServices,
-        TeamClients,
+        PartnerServices,
+        PartnerClients,
         ClientTable,
         OfferLinkTable,
         OfferTable,

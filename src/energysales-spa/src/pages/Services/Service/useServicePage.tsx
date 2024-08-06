@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
-import {useDeleteService, useGetService, usePatchService} from '../../../services/ServicesService'
+import {useDeleteService, useGetService, usePatchService} from '../../../services/ServiceService.tsx'
 import {Service, UpdateServiceInputModel} from '../../../services/models/ServiceModel'
 
 export function useServicePage() {

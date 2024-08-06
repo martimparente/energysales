@@ -1,4 +1,4 @@
-import {useCreateService} from '../../../services/ServicesService'
+import {useCreateService} from '../../../services/ServiceService.tsx'
 import {CreateServiceInputModel} from '../../../services/models/ServiceModel'
 import {useState} from 'react'
 

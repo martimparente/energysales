@@ -27,7 +27,7 @@ import pt.isel.ps.energysales.sellers.http.model.SellerProblem
 @Resource(Uris.SELLERS)
 class SellerResource(
     val lastKeySeen: String? = null,
-    val noTeam: Boolean = false,
+    val noPartner: Boolean = false,
     val searchQuery: String? = null,
 ) {
     @Resource("{id}")
@@ -40,7 +40,7 @@ class SellerResource(
 fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
     authorize("ADMIN") {
         get<SellerResource> { queryParams ->
-            val input = GetAllSellerInput(queryParams.lastKeySeen, queryParams.noTeam, queryParams.searchQuery)
+            val input = GetAllSellerInput(queryParams.lastKeySeen, queryParams.noPartner, queryParams.searchQuery)
             val res = sellerService.getAllSellers(input)
 
             when (res) {
@@ -56,7 +56,7 @@ fun Route.sellerRoutes(sellerService: SellerServiceKtor) {
 
     post<SellerResource> {
         val body = call.receive<CreateSellerRequest>()
-        val input = CreateSellerInput(body.name, body.surname, body.email, body.team)
+        val input = CreateSellerInput(body.name, body.surname, body.email, body.partner)
         val res = sellerService.createSeller(input)
 
         when (res) {

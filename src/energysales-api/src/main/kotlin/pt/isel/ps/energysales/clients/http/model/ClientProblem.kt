@@ -13,22 +13,22 @@ data class ClientProblem(
     override val detail: String? = null,
 ) : Problem {
     companion object {
-        val teamNotFound =
+        val partnerNotFound =
             ClientProblem(
-                title = "Team Not Found",
-                type = PROBLEM_URL + "teamNotFound.md",
+                title = "Partner Not Found",
+                type = PROBLEM_URL + "partnerNotFound.md",
                 instance = "",
                 status = HttpStatusCode.NotFound,
-                detail = "The specified team was not found",
+                detail = "The specified partner was not found",
             )
 
-        val noTeamProvided =
+        val noPartnerProvided =
             ClientProblem(
-                title = "No Team Provided",
-                type = PROBLEM_URL + "noTeamProvided.md",
+                title = "No Partner Provided",
+                type = PROBLEM_URL + "noPartnerProvided.md",
                 instance = "",
                 status = HttpStatusCode.BadRequest,
-                detail = "No team information was provided",
+                detail = "No partner information was provided",
             )
 
         val invalidToken =
@@ -49,31 +49,31 @@ data class ClientProblem(
                 detail = "You are not authorized to perform this action",
             )
 
-        val noTeamsFound =
+        val noPartnersFound =
             ClientProblem(
-                title = "No Teams Found",
-                type = PROBLEM_URL + "noTeamsFound.md",
+                title = "No Partners Found",
+                type = PROBLEM_URL + "noPartnersFound.md",
                 instance = "",
                 status = HttpStatusCode.NotFound,
-                detail = "No teams were found",
+                detail = "No partners were found",
             )
 
-        val teamInfoIsInvalid =
+        val partnerInfoIsInvalid =
             ClientProblem(
-                title = "Invalid Team Information",
-                type = PROBLEM_URL + "teamNameIsInvalid.md",
+                title = "Invalid Partner Information",
+                type = PROBLEM_URL + "partnerNameIsInvalid.md",
                 instance = "",
                 status = HttpStatusCode.BadRequest,
-                detail = "The provided team information is invalid",
+                detail = "The provided partner information is invalid",
             )
 
-        val teamAlreadyExists =
+        val partnerAlreadyExists =
             ClientProblem(
-                title = "Team Already Exists",
-                type = PROBLEM_URL + "teamAlreadyExists.md",
+                title = "Partner Already Exists",
+                type = PROBLEM_URL + "partnerAlreadyExists.md",
                 instance = "",
                 status = HttpStatusCode.Conflict,
-                detail = "A team with the specified name already exists",
+                detail = "A partner with the specified name already exists",
             )
 
         val internalServerError =

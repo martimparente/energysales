@@ -10,7 +10,7 @@ interface SellerRepository {
     suspend fun getAllKeyPaging(
         pageSize: Int,
         lastKeySeen: String? = null,
-        noTeam: Boolean,
+        noPartner: Boolean,
     ): List<Seller>
 
     suspend fun getById(id: String): Seller?
@@ -21,5 +21,5 @@ interface SellerRepository {
 
     suspend fun delete(seller: Seller): Boolean
 
-    suspend fun getSellersWithNoTeam(searchQuery: String?): List<Seller>
+    suspend fun getSellersWithNoPartner(searchQuery: String?): List<Seller>
 }

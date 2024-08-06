@@ -4,10 +4,10 @@ import org.jetbrains.exposed.sql.SortOrder
 import pt.isel.ps.energysales.clients.data.entity.ClientEntity
 import pt.isel.ps.energysales.clients.data.table.ClientTable
 import pt.isel.ps.energysales.clients.domain.Client
+import pt.isel.ps.energysales.partners.data.entity.LocationEntity
+import pt.isel.ps.energysales.partners.data.table.LocationTable
 import pt.isel.ps.energysales.plugins.DatabaseSingleton.dbQuery
 import pt.isel.ps.energysales.sellers.data.entity.SellerEntity
-import pt.isel.ps.energysales.teams.data.entity.LocationEntity
-import pt.isel.ps.energysales.teams.data.table.LocationTable
 
 class PsqlClientRepository : ClientRepository {
     override suspend fun getById(id: String): Client? =

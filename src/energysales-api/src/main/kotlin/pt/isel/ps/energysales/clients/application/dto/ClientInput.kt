@@ -1,6 +1,6 @@
 package pt.isel.ps.energysales.clients.application.dto
 
-import pt.isel.ps.energysales.teams.domain.Location
+import pt.isel.ps.energysales.partners.domain.Location
 
 data class CreateClientInput(
     val name: String,

@@ -1,4 +1,4 @@
-import {useCreateService, useDeleteService, useGetServices, usePatchService} from '../../services/ServicesService'
+import {useCreateService, useDeleteService, useGetServices, usePatchService} from '../../services/ServiceService.tsx'
 import {useNavigate} from 'react-router-dom'
 import {PatchServiceInputModel, Service} from '../../services/models/ServiceModel'
 import {useMemo, useRef, useState} from 'react'

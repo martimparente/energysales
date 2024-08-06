@@ -27,16 +27,16 @@ object Uris {
     const val ADMIN_HOME = "$ADMIN/me"
     const val ADMIN_SETTINGS = "$ADMIN/settings"
 
-    // Team routes
-    const val TEAMS = "/teams"
-    const val TEAMS_BY_ID = "$TEAMS/{teamId}"
-    const val TEAMS_HOME = "$TEAMS/me"
-    const val TEAMS_SELLERS = "$TEAMS/{teamId}/sellers"
-    const val TEAMS_SELLER = "$TEAMS/{teamId}/sellers/{sellerId}"
-    const val TEAMS_SERVICES = "$TEAMS/{teamId}/services"
-    const val TEAMS_SERVICE = "$TEAMS/{teamId}/services/{serviceId}"
-    const val TEAMS_CLIENTS = "$TEAMS/{teamId}/clients"
-    const val TEAMS_CLIENT = "$TEAMS/{teamId}/clients/{clientId}"
+    // Partner routes
+    const val PARTNERS = "/partners"
+    const val PARTNERS_BY_ID = "$PARTNERS/{partnerId}"
+    const val PARTNERS_HOME = "$PARTNERS/me"
+    const val PARTNERS_SELLERS = "$PARTNERS/{partnerId}/sellers"
+    const val PARTNERS_SELLER = "$PARTNERS/{partnerId}/sellers/{sellerId}"
+    const val PARTNERS_SERVICES = "$PARTNERS/{partnerId}/services"
+    const val PARTNERS_SERVICE = "$PARTNERS/{partnerId}/services/{serviceId}"
+    const val PARTNERS_CLIENTS = "$PARTNERS/{partnerId}/clients"
+    const val PARTNERS_CLIENT = "$PARTNERS/{partnerId}/clients/{clientId}"
 
     // Seller routes
     const val SELLERS = "/sellers"

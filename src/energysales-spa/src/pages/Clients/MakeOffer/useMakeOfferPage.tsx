@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {useForm} from 'react-hook-form'
-import {useGetServices} from '../../../services/ServicesService.tsx'
+import {useGetServices} from '../../../services/ServiceService.tsx'
 import {useGetClient, useMakeOffer, useSendOfferEmail} from '../../../services/ClientService.tsx'
 import {useParams} from 'react-router-dom'
 import {MakeOfferInputModel} from '../../../services/models/ClientModel.tsx'

@@ -1,7 +1,7 @@
 import {User} from './UserModel.tsx'
 import {Service} from './ServiceModel.tsx'
 
-export interface Team {
+export interface Partner {
     id: string
     name: string
     manager: string
@@ -13,48 +13,48 @@ interface Location {
     district: string
 }
 
-export interface TeamDetails {
-    team: Team
+export interface PartnerDetails {
+    partner: Partner
     members: User[]
     services: Service[]
 }
 
-export interface CreateTeamInputModel {
+export interface CreatePartnerInputModel {
     name: string
     managerId: string
     location: Location
 }
 
-export interface UpdateTeamInputModel {
+export interface UpdatePartnerInputModel {
     name: string
     managerId: string
     location: Location
 }
 
-export interface PatchTeamInputModel {
+export interface PatchPartnerInputModel {
     name: string | null
     managerId: string | null
     location: Location | null
 }
 
-export interface AddTeamSellerInputModel {
+export interface AddPartnerSellerInputModel {
     sellerId: string
 }
 
-export interface DeleteTeamSellerParams {
-    teamId: string
+export interface DeletePartnerSellerParams {
+    partnerId: string
     sellerId: string
 }
 
-export interface AddTeamServiceInputModel {
+export interface AddPartnerServiceInputModel {
     serviceId: string
 }
 
-export interface DeleteTeamServiceParams {
-    teamId: string
+export interface DeletePartnerServiceParams {
+    partnerId: string
     serviceId: string
 }
 
-export interface AddTeamAvatarInputModel {
+export interface AddPartnerAvatarInputModel {
     avatarImg: File
 }
